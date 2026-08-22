@@ -462,7 +462,7 @@ function renderPhaseSection(phase, steps) {
     <details class="phase-section" open>
       <summary>
         <span>${phase.icon} ${escapeHtml(phase.label)}</span>
-        <span class="muted">${doneCount}/${steps.length}</span>
+        <span class="phase-progress-pill ${doneCount === steps.length ? "complete" : ""}">${doneCount === steps.length ? "✓ " : ""}${doneCount}/${steps.length}</span>
       </summary>
       <div class="step-list">
         ${steps.map((s, i) => renderStepCard(s, phase.id, i, false)).join("")}
@@ -475,19 +475,35 @@ function renderStepCard(s, phaseId, idx, compact) {
   const key = questKeyFor(phaseId, s, idx);
   const checked = !!state.progress[key];
   const qc = QUEST_CATEGORIES[s.questCategory] || QUEST_CATEGORIES.legal;
+  const checkboxInput = `<input type="checkbox" data-progress-toggle="${key}" data-quest-category="${s.questCategory}" data-quest-points="${s.points}" ${checked ? "checked" : ""}>`;
+
+  if (checked) {
+    // Completed quests collapse to a compact row instead of staying full
+    // height with struck-through paragraphs — keeps the board readable as
+    // progress builds up instead of getting messier.
+    return `
+      <div class="step-card done" style="--badge-color:${qc.color}">
+        <label class="step-check">${checkboxInput}</label>
+        <div class="step-body">
+          <span class="quest-badge" style="--badge-color:${qc.color}">${qc.icon} ${qc.label}</span>
+          <h4>${escapeHtml(s.title)}</h4>
+          <span class="step-points-earned">✓ +${s.points} pts earned</span>
+        </div>
+      </div>
+    `;
+  }
+
   return `
-    <div class="step-card ${checked ? "done" : ""}">
-      <label class="step-check">
-        <input type="checkbox" data-progress-toggle="${key}" data-quest-category="${s.questCategory}" data-quest-points="${s.points}" ${checked ? "checked" : ""}>
-      </label>
+    <div class="step-card" style="--badge-color:${qc.color}">
+      <label class="step-check">${checkboxInput}</label>
       <div class="step-body">
         <div class="step-cat">
           <span class="quest-badge" style="--badge-color:${qc.color}">${qc.icon} ${qc.label}</span>
-          <span class="step-points">+${s.points} pts</span>
+          <span class="step-points">🪙 +${s.points} pts</span>
         </div>
         <h4>${escapeHtml(s.title)}</h4>
         <p class="step-why">${escapeHtml(s.why)}</p>
-        <p class="step-action"><strong>Do this:</strong> ${escapeHtml(s.action)}</p>
+        <p class="step-action">🎯 <strong>Do this:</strong> ${escapeHtml(s.action)}</p>
         <a class="step-source" href="${s.source.url}" target="_blank" rel="noopener">📎 ${escapeHtml(s.source.name)}</a>
       </div>
     </div>
