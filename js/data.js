@@ -62,6 +62,13 @@ const SOURCES = {
   infoFinlandVolunteering: { name: "InfoFinland — voluntary work in Finland", url: "https://infofinland.fi/en/leisure/voluntary-work" },
   vapaaehtoistyoFi: { name: "Vapaaehtoistyö.fi — Finland's national volunteering database", url: "https://vapaaehtoistyo.fi/en/" },
   redCrossVolunteer: { name: "Finnish Red Cross — volunteer to support immigrants and refugees", url: "https://www.redcross.fi/become-a-volunteer/support-immigrants/" },
+  forenomApartments: { name: "Forenom — serviced apartments in Finland, built for relocations", url: "https://www.forenom.com/furnished-apartments/" },
+  airbnb: { name: "Airbnb — short-term rentals", url: "https://www.airbnb.com/" },
+  bookingCom: { name: "Booking.com — hotels & short stays", url: "https://www.booking.com/" },
+  meetup: { name: "Meetup — find local groups and events", url: "https://www.meetup.com/" },
+  infoFinlandChildrensHealth: { name: "InfoFinland — children's health (neuvola / child health clinics)", url: "https://infofinland.fi/en/health/childrens-health" },
+  espooEnglishSchools: { name: "City of Espoo — English-language basic education (Espoo & Kivimies International Schools)", url: "https://www.espoo.fi/en/childcare-and-education/basic-education/school-admissions/weighted-curriculum-education/english-language-education" },
+  helsinkiEnglishSchools: { name: "City of Helsinki — English-language basic education", url: "https://www.hel.fi/en/childhood-and-education/basic-education/enrolling-and-applying-to-school/weighted-curriculum-and-basic-education-in-different-languages/english-language-basic-education" },
 };
 
 /*
@@ -356,6 +363,27 @@ const ROADMAP_GENERATORS = {
     if ((a.who === "My children" || a.who === "Both") && profile.childrenCount > 0) {
       const city = profile.destination === "Helsinki" ? "helsinki" : "espoo";
       steps.push({
+        phase: "week2",
+        title: "Start learning Finnish as a family, early",
+        why: "Kids pick up a new language fastest through daily exposure, and it also makes settling into daycare/school far less disorienting for them — worth starting the moment you're settled, not waiting for a formal course.",
+        action: "Look at InfoFinland's overview of how and where to study Finnish, and build a few basic words into daily routines at home from week one.",
+        source: SOURCES.infoFinlandStudyingFinnish,
+      });
+      steps.push({
+        phase: "week2",
+        title: `Browse English-medium school options in ${profile.destination || city}`,
+        why: "Finnish comprehensive schools are mostly Finnish/Swedish-medium — a small number of named schools specifically offer English-language instruction, and knowing which ones exist before you apply saves a lot of guessing.",
+        action: city === "helsinki" ? "Check the City of Helsinki's list of English-language basic education options, including the International School of Helsinki, The English School, and Ressu Comprehensive School." : "Check the City of Espoo's English-language basic education page, which names Espoo International School and Kivimies International School.",
+        source: city === "helsinki" ? SOURCES.helsinkiEnglishSchools : SOURCES.espooEnglishSchools,
+      });
+      steps.push({
+        phase: "week2",
+        title: "Register with your neuvola (maternity/child health clinic)",
+        why: "Neuvola is Finland's free public health clinic system for pregnant parents and children up to age 6 — it covers growth checkups, vaccinations, and parenting support, and almost every Finnish family uses it, so it's worth knowing it exists rather than defaulting to private care.",
+        action: "Contact the child health clinic (neuvola) in your new municipality of residence once you've registered your address — see InfoFinland's overview of children's health.",
+        source: SOURCES.infoFinlandChildrensHealth,
+      });
+      steps.push({
         phase: "before",
         title: "Apply for early childhood education / daycare early",
         why: profile.childrenAges ? `You told us: ${profile.childrenAges}. Daycare and pre-primary places in the capital region fill up, and non-resident applications can usually start before you've even registered your address.` : "Daycare places in the capital region fill up — start the application before you arrive if you can.",
@@ -388,8 +416,8 @@ const ROADMAP_GENERATORS = {
         phase: "before",
         title: "Book temporary accommodation for your first few weeks",
         why: "Long-term rentals in Finland often expect a Finnish personal identity code or local references you won't have yet — a short-term base gives you somewhere to land while you search properly.",
-        action: "Book a hotel, serviced apartment, or short-term rental for your first 2–4 weeks. Specific listings and prices change too fast to cite one directly, so start from InfoFinland's housing overview.",
-        source: SOURCES.infoFinlandHome,
+        action: "Book 2–4 weeks somewhere flexible while you search for a long-term place. Forenom's serviced apartments are Finland-specific and built for exactly this (relocations, month-to-month terms, no local references needed) — or compare against general short-stay listings on Airbnb or Booking.com.",
+        sources: [SOURCES.forenomApartments, SOURCES.airbnb, SOURCES.bookingCom],
       });
 
       if (a.housingType === "Student housing") {
@@ -586,7 +614,7 @@ const ROADMAP_GENERATORS = {
       title: langs.length ? `Find ${langs.join(" / ")}-speaking community groups` : "Find community groups in your languages",
       why: "Community and language groups aren't centrally listed anywhere official — they mostly live on Facebook and Meetup, organised by the community itself.",
       action: "Search Facebook Groups and Meetup for your city name plus 'Indian community' or your specific language, once you've arrived and can verify a group is currently active.",
-      source: SOURCES.infoFinlandHome,
+      sources: [SOURCES.meetup, SOURCES.infoFinlandHome],
     });
     steps.push({
       phase: "ongoing",
@@ -601,7 +629,7 @@ const ROADMAP_GENERATORS = {
         title: "Find clubs matching your interests",
         why: `You mentioned: ${a.interests}. We can't promise a specific named club exists without checking live — that's exactly the kind of question worth asking your city's leisure services directly.`,
         action: `Check your destination city's official site for hobby/leisure listings ("harrastukset"), and search Meetup for ${a.interests}.`,
-        source: profile.destination === "Helsinki" ? SOURCES.helsinkiHome : SOURCES.espooHome,
+        sources: [profile.destination === "Helsinki" ? SOURCES.helsinkiHome : SOURCES.espooHome, SOURCES.meetup],
       });
     }
     return steps;
