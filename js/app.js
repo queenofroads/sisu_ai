@@ -27,7 +27,7 @@ function defaultState() {
     authError: null,
     authNotice: null, // e.g. "check your email to confirm"
     profile: {},
-    categorySelection: ["housing", "publicServices", "digitalSkills", "familyLife"],
+    categorySelection: ["housing", "publicServices", "education", "familyLife"],
     categoryAnswers: {},
     wizardOrder: [],
     wizardIndex: 0,

@@ -158,6 +158,35 @@ const CATEGORIES = [
     ],
   },
   {
+    id: "education",
+    label: "Education",
+    icon: "🎓",
+    questCategory: "legal",
+    blurb: "Daycare and school for your children, or further studies for yourself — navigating a new education system.",
+    questions: [
+      {
+        id: "who",
+        type: "select",
+        label: "Is this mainly for yourself or for your children?",
+        options: ["My children", "Myself", "Both"],
+      },
+      {
+        id: "instructionLanguage",
+        type: "select",
+        label: "Preferred language of instruction for your children?",
+        options: ["Finnish", "Swedish", "English / international / bilingual", "Not sure yet"],
+        showIf: { field: "who", oneOf: ["My children", "Both"] },
+      },
+      {
+        id: "qualification",
+        type: "select",
+        label: "If for yourself — what are you aiming for?",
+        options: ["Bachelor's degree", "Master's degree", "Doctoral studies"],
+        showIf: { field: "who", oneOf: ["Myself", "Both"] },
+      },
+    ],
+  },
+  {
     id: "publicServices",
     label: "Public Services",
     icon: "🏛️",
@@ -216,18 +245,18 @@ const CATEGORIES = [
     label: "Work, Entrepreneurship & Studying",
     icon: "💼",
     questCategory: "social",
-    blurb: "Finding work, starting a business, or continuing your studies.",
+    blurb: "Finding work or starting a business — further studies now live under Education.",
     questions: [
       {
         id: "goal",
         type: "select",
         label: "What's your main goal here?",
-        options: ["Find employment", "Start a business or freelance", "Further studies (Bachelor's/Master's/PhD)", "Not sure yet"],
+        options: ["Find employment", "Start a business or freelance", "Not sure yet"],
       },
       {
         id: "field",
         type: "text",
-        label: "What field do you work in / plan to study? (optional)",
+        label: "What field do you work in? (optional)",
         placeholder: "e.g. software engineering, nursing, academia",
       },
       {
@@ -236,13 +265,6 @@ const CATEGORIES = [
         label: "Job search status?",
         options: ["Already have a Finnish job offer", "Actively searching", "Just researching options"],
         showIf: { field: "goal", oneOf: ["Find employment"] },
-      },
-      {
-        id: "qualification",
-        type: "select",
-        label: "What are you aiming for?",
-        options: ["Bachelor's degree", "Master's degree", "Doctoral studies"],
-        showIf: { field: "goal", oneOf: ["Further studies (Bachelor's/Master's/PhD)"] },
       },
     ],
   },
@@ -287,7 +309,7 @@ const CATEGORIES = [
     label: "Family Life & Building Social Connections",
     icon: "👨‍👩‍👧",
     questCategory: "social",
-    blurb: "Who's with you, what languages you speak, your children's schooling, and finding people with shared interests.",
+    blurb: "Who's with you, what languages you speak, and finding people with shared interests — children's schooling now lives under Education.",
     questions: [
       {
         id: "familyLanguages",
@@ -300,12 +322,6 @@ const CATEGORIES = [
         type: "text",
         label: "What are you and your family interested in? (hobbies, sports, culture)",
         placeholder: "e.g. cricket, classical music, hiking, coding meetups",
-      },
-      {
-        id: "instructionLanguage",
-        type: "select",
-        label: "If you have children — preferred language of instruction for daycare/school?",
-        options: ["Finnish", "Swedish", "English / international / bilingual", "Not sure yet"],
       },
     ],
   },
@@ -332,6 +348,34 @@ const CATEGORIES = [
  * "why" is where personalization happens: it reads the profile + answers.
  */
 const ROADMAP_GENERATORS = {
+  education(profile, a) {
+    const steps = [];
+    if ((a.who === "My children" || a.who === "Both") && profile.childrenCount > 0) {
+      const city = profile.destination === "Helsinki" ? "helsinki" : "espoo";
+      steps.push({
+        phase: "before",
+        title: "Apply for early childhood education / daycare early",
+        why: profile.childrenAges ? `You told us: ${profile.childrenAges}. Daycare and pre-primary places in the capital region fill up, and non-resident applications can usually start before you've even registered your address.` : "Daycare places in the capital region fill up — start the application before you arrive if you can.",
+        action: city === "helsinki" ? "Apply through Helsinki's Edlevo e-service." : "Apply through Espoo's eVaka e-service.",
+        source: city === "helsinki" ? SOURCES.helsinkiEce : SOURCES.espooEce,
+      });
+      if (a.instructionLanguage) {
+        steps.push({ phase: "month1", title: `Confirm ${a.instructionLanguage} availability at nearby schools`, why: `You told us you're aiming for ${a.instructionLanguage} instruction — availability varies a lot by area, so confirming early avoids a surprise catchment assignment.`, action: "Cross-check InfoFinland's early childhood education overview against your city's own school/daycare finder.", source: SOURCES.infoFinlandEce });
+      }
+      steps.push({ phase: "month3", title: "Know about free pre-primary education for 5-year-olds", why: "If you have a child turning 5, Espoo (and most Finnish municipalities) offer free pre-primary education — easy to miss if you're not looking for it.", action: "Check eligibility and enrolment windows.", source: SOURCES.espooEceFree5 });
+    }
+    if (a.who === "Myself" || a.who === "Both") {
+      steps.push({
+        phase: "month1",
+        title: `Plan your ${a.qualification || "further studies"} pathway`,
+        why: "Finnish universities have specific application windows and language requirements that differ from Indian ones — worth mapping before you commit time to one institution.",
+        action: "Confirm your target programme's language of instruction, intake dates, and whether your existing qualification is recognised.",
+        source: SOURCES.infoFinlandHome,
+      });
+    }
+    return steps;
+  },
+
   housing(profile, a) {
     const steps = [];
     const alreadyArranged = a.housingStatus === "Long-term place already arranged";
@@ -501,14 +545,6 @@ const ROADMAP_GENERATORS = {
           source: SOURCES.infoFinlandEntrepreneurNonEU,
         });
       }
-    } else if (a.goal === "Further studies (Bachelor's/Master's/PhD)") {
-      steps.push({
-        phase: "month1",
-        title: `Plan your ${a.qualification || "further studies"} pathway`,
-        why: "Finnish universities have specific application windows and language requirements that differ from Indian ones — worth mapping before you commit time to one institution.",
-        action: "Confirm your target programme's language of instruction, intake dates, and whether your existing qualification is recognised.",
-        source: SOURCES.infoFinlandHome,
-      });
     }
     return steps;
   },
@@ -564,20 +600,6 @@ const ROADMAP_GENERATORS = {
         action: `Check your destination city's official site for hobby/leisure listings ("harrastukset"), and search Meetup for ${a.interests}.`,
         source: profile.destination === "Helsinki" ? SOURCES.helsinkiHome : SOURCES.espooHome,
       });
-    }
-    if (profile.childrenCount > 0) {
-      const city = profile.destination === "Helsinki" ? "helsinki" : "espoo";
-      steps.push({
-        phase: "before",
-        title: "Apply for early childhood education / daycare early",
-        why: profile.childrenAges ? `You told us: ${profile.childrenAges}. Daycare and pre-primary places in the capital region fill up, and non-resident applications can usually start before you've even registered your address.` : "Daycare places in the capital region fill up — start the application before you arrive if you can.",
-        action: city === "helsinki" ? "Apply through Helsinki's Edlevo e-service." : "Apply through Espoo's eVaka e-service.",
-        source: city === "helsinki" ? SOURCES.helsinkiEce : SOURCES.espooEce,
-      });
-      if (a.instructionLanguage) {
-        steps.push({ phase: "month1", title: `Confirm ${a.instructionLanguage} availability at nearby schools`, why: `You told us you're aiming for ${a.instructionLanguage} instruction — availability varies a lot by area, so confirming early avoids a surprise catchment assignment.`, action: "Cross-check InfoFinland's early childhood education overview against your city's own school/daycare finder.", source: SOURCES.infoFinlandEce });
-      }
-      steps.push({ phase: "month3", title: "Know about free pre-primary education for 5-year-olds", why: "If you have a child turning 5, Espoo (and most Finnish municipalities) offer free pre-primary education — easy to miss if you're not looking for it.", action: "Check eligibility and enrolment windows.", source: SOURCES.espooEceFree5 });
     }
     return steps;
   },
