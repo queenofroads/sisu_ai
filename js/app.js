@@ -15,7 +15,32 @@
  */
 
 const STORAGE_KEY = "kaveri_state_v1";
+const THEME_STORAGE_KEY = "kaveri_theme";
 const $app = document.getElementById("app");
+
+// Light/dark theme toggle. The inline script in index.html's <head> already
+// set data-theme on <html> before first paint (from localStorage, falling
+// back to the OS preference) — this just keeps the toggle button's
+// aria-label in sync and handles clicks. The visible icon itself is pure
+// CSS (see .theme-toggle::before in style.css), driven by the same
+// data-theme attribute, so it can never drift out of sync with the applied
+// theme.
+function getTheme() {
+  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (e) {
+    /* localStorage blocked — theme still applies for this page view */
+  }
+  const btn = document.querySelector('[data-action="toggle-theme"]');
+  if (btn) btn.setAttribute("aria-label", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+}
+
+setTheme(getTheme());
 
 function defaultState() {
   return {
@@ -818,7 +843,9 @@ document.addEventListener("click", (e) => {
   if (!el) return;
   const action = el.dataset.action;
 
-  if (action === "go-home") {
+  if (action === "toggle-theme") {
+    setTheme(getTheme() === "dark" ? "light" : "dark");
+  } else if (action === "go-home") {
     setState({ view: "landing", authError: null, authNotice: null });
   } else if (action === "go-auth") {
     setState({ view: "auth", authMode: el.dataset.mode, authError: null, authNotice: null });

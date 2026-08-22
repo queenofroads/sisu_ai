@@ -19,8 +19,15 @@
   --font-heading: "Lexend", "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* Dark tokens apply either when the OS prefers dark and the user hasn't
+   explicitly chosen light (the media-query block), or when the topbar
+   toggle has explicitly set data-theme="dark" (the attribute block below)
+   — the attribute always wins over the OS setting, in both directions. The
+   inline script in index.html's <head> sets data-theme before first paint
+   (from localStorage, falling back to the OS preference), so there's no
+   flash of the wrong theme and no flash of unstyled content either. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #0a1220;
     --surface: #101d33;
     --border: #1e2a4a;
@@ -31,6 +38,17 @@
     --accent: #7cc4ea;
     --shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
   }
+}
+:root[data-theme="dark"] {
+  --bg: #0a1220;
+  --surface: #101d33;
+  --border: #1e2a4a;
+  --text: #eaf1fb;
+  --muted: #9fb1cc;
+  --primary: #4da8da;
+  --primary-dark: #2f7fb0;
+  --accent: #7cc4ea;
+  --shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
 }
 
 * { box-sizing: border-box; }
@@ -50,7 +68,7 @@ body {
   gap: 12px;
 }
 .topbar-actions {
-  display: flex; gap: 8px; flex-wrap: nowrap; min-width: 0;
+  display: flex; gap: 8px; flex-wrap: nowrap; min-width: 0; flex: 1 1 auto;
   overflow-x: auto; overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x proximity;
@@ -67,6 +85,16 @@ body {
   border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 13px;
 }
 .topbar-actions .link-btn:hover { background: var(--bg); }
+.theme-toggle {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--surface); cursor: pointer;
+  font-size: 15px; line-height: 1;
+}
+.theme-toggle::before { content: "🌙"; }
+:root[data-theme="dark"] .theme-toggle::before { content: "☀️"; }
+.theme-toggle:hover { background: var(--bg); }
+.theme-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .brand {
   font-family: var(--font-heading);
   font-weight: 700; font-size: 18px; color: var(--primary); flex-shrink: 0;

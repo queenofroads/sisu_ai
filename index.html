@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kaveri — Gamified Finland Relocation Quests</title>
   <meta name="description" content="A gamified, AI-assisted relocation quest board for people moving from India to Finland.">
+  <script>
+    // Applied before CSS renders, so there's no flash of the wrong theme on
+    // load. Falls back to the OS preference the first time (no stored
+    // choice yet); after that, the explicit toggle in the topbar wins.
+    (function () {
+      try {
+        var stored = localStorage.getItem("kaveri_theme");
+        var theme = stored === "light" || stored === "dark"
+          ? stored
+          : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {
+        /* localStorage blocked — CSS still defaults to light */
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap">
@@ -19,6 +35,7 @@
       <button class="link-btn" type="button" data-action="open-volunteer">🙌 Volunteer</button>
       <button class="link-btn" type="button" data-action="open-resources">📚 Resources</button>
     </div>
+    <button class="theme-toggle" type="button" data-action="toggle-theme" aria-label="Switch to dark theme" title="Switch theme"></button>
   </header>
   <div id="app"></div>
   <div id="confetti-layer" aria-hidden="true"></div>
