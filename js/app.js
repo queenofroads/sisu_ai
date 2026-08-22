@@ -283,11 +283,7 @@ function renderSetupBanner() {
 function renderLanding() {
   return `
     <section class="hero">
-      <div class="hero-flags">
-        <span class="hero-flag" aria-label="India">🇮🇳</span>
-        <span class="hero-wordmark">Kaveri</span>
-        <span class="hero-flag" aria-label="Finland">🇫🇮</span>
-      </div>
+      <img class="hero-image" src="assets/hero.png" alt="Kaveri — AI relocation friend, India to Finland" width="1536" height="1024">
       <p class="hero-tagline">Your friend for <span class="hero-tagline-word" id="hero-tagline-word">${escapeHtml(HERO_TAGLINES[0])}</span></p>
       <h1>Moving from India to Finland?<br>Turn it into a game you can <em>win</em>.</h1>
       <p class="hero-sub">
