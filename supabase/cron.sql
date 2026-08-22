@@ -43,3 +43,35 @@ select cron.schedule(
 
 -- To stop the reminder entirely:
 -- select cron.unschedule('kaveri-slack-reminder-daily');
+
+-- ---------------------------------------------------------------------------
+-- Personal reminder emails (send-personal-reminders) — one email per inactive
+-- user, unlike the team-wide Slack post above. Deploy that function and set
+-- its RESEND_API_KEY / APP_URL secrets first (see its index.ts), then replace
+-- the same two <PLACEHOLDER> values as above (this needs the anon key only —
+-- the function itself uses its auto-injected service_role key internally to
+-- read emails/points, never exposed here).
+
+select cron.unschedule('kaveri-personal-reminders-daily')
+where exists (select 1 from cron.job where jobname = 'kaveri-personal-reminders-daily');
+
+select cron.schedule(
+  'kaveri-personal-reminders-daily',
+  '0 9 * * *', -- every day at 09:00 UTC — an hour after the Slack check-in above
+  $$
+  select net.http_post(
+    url := 'https://<YOUR-PROJECT-REF>.supabase.co/functions/v1/send-personal-reminders',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer <YOUR-ANON-KEY>'
+    ),
+    body := jsonb_build_object('trigger', 'cron')
+  );
+  $$
+);
+
+-- Verify it's scheduled:
+-- select * from cron.job where jobname = 'kaveri-personal-reminders-daily';
+
+-- To stop this reminder entirely:
+-- select cron.unschedule('kaveri-personal-reminders-daily');
