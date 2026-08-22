@@ -265,8 +265,8 @@ function startHeroTaglineRotation() {
   }, 2600);
 }
 
-// Rotates the "Kaveri" wordmark itself through the word for "friend" in
-// English, Finnish, and major Indian languages — same fade-and-swap
+// Rotates the "Kaveri" wordmark itself through its transliteration in
+// English, Finnish, and major Indian language scripts — same fade-and-swap
 // mechanism as the tagline rotation above, just on a longer interval since
 // each word needs a moment to actually be read (and some are in unfamiliar
 // scripts).

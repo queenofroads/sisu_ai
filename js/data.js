@@ -767,26 +767,26 @@ const HERO_TAGLINES = [
 ];
 
 /*
- * Rotates the big wordmark on the landing hero — "kaveri" is Finnish for
- * "friend," so this cycles the wordmark through the word for "friend" in
- * English, Finnish, and the ten major Indian languages so both sides of the
- * move ("India" and "Finland" in the hero flags) are represented by more
- * than one script. Common, everyday words for "friend" in each language —
- * not a citation-needing claim, just vocabulary.
+ * Rotates the big wordmark on the landing hero — the name "Kaveri" itself,
+ * transliterated into English, Finnish, and ten major Indian language
+ * scripts (it's already a real, well-known word in Indian languages: the
+ * name of a major South Indian river). Standard transliterations of the
+ * name, not translations — the word stays "Kaveri," only the script
+ * changes.
  */
 const FRIEND_WORDS = [
   { lang: "Finnish", code: "fi", word: "Kaveri" },
-  { lang: "English", code: "en", word: "Friend" },
-  { lang: "Hindi", code: "hi", word: "दोस्त" },
-  { lang: "Bengali", code: "bn", word: "বন্ধু" },
-  { lang: "Marathi", code: "mr", word: "मित्र" },
-  { lang: "Telugu", code: "te", word: "స్నేహితుడు" },
-  { lang: "Tamil", code: "ta", word: "நண்பன்" },
-  { lang: "Gujarati", code: "gu", word: "મિત્ર" },
-  { lang: "Kannada", code: "kn", word: "ಸ್ನೇಹಿತ" },
-  { lang: "Malayalam", code: "ml", word: "സുഹൃത്ത്" },
-  { lang: "Punjabi", code: "pa", word: "ਦੋਸਤ" },
-  { lang: "Urdu", code: "ur", word: "دوست" },
+  { lang: "English", code: "en", word: "Kaveri" },
+  { lang: "Hindi", code: "hi", word: "कावेरी" },
+  { lang: "Bengali", code: "bn", word: "কাবেরী" },
+  { lang: "Marathi", code: "mr", word: "कावेरी" },
+  { lang: "Telugu", code: "te", word: "కావేరి" },
+  { lang: "Tamil", code: "ta", word: "காவேரி" },
+  { lang: "Gujarati", code: "gu", word: "કાવેરી" },
+  { lang: "Kannada", code: "kn", word: "ಕಾವೇರಿ" },
+  { lang: "Malayalam", code: "ml", word: "കാവേരി" },
+  { lang: "Punjabi", code: "pa", word: "ਕਾਵੇਰੀ" },
+  { lang: "Urdu", code: "ur", word: "کاویری" },
 ];
 
 /*
