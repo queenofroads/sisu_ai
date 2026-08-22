@@ -43,16 +43,28 @@ body {
 .topbar {
   display: flex; align-items: center; justify-content: space-between; padding: 14px 20px;
   border-bottom: 1px solid var(--border); background: var(--surface);
-  flex-wrap: wrap; row-gap: 8px;
+  gap: 12px;
 }
-.topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.topbar-actions {
+  display: flex; gap: 8px; flex-wrap: nowrap; min-width: 0;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none; /* Firefox */
+  padding: 2px 2px 8px; margin-bottom: -8px; /* room to scroll-touch without adding visible height */
+  /* fade the edges so a scrollable row reads as scrollable, not just cut off */
+  mask-image: linear-gradient(to right, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+}
+.topbar-actions::-webkit-scrollbar { display: none; } /* Chrome/Safari/Edge */
 .topbar-actions .link-btn {
-  display: inline-block; width: auto; text-decoration: none; color: var(--text);
+  display: inline-block; width: auto; flex-shrink: 0; white-space: nowrap;
+  text-decoration: none; color: var(--text); scroll-snap-align: start;
   border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 13px;
 }
 .topbar-actions .link-btn:hover { background: var(--bg); }
 .brand {
-  font-weight: 800; font-size: 17px; color: var(--primary);
+  font-weight: 800; font-size: 17px; color: var(--primary); flex-shrink: 0;
   background: none; border: none; padding: 4px 2px; margin: -4px -2px;
   cursor: pointer; border-radius: 6px; font-family: inherit;
 }

@@ -536,7 +536,11 @@ function renderRoadmap() {
 
     ${renderAssistantIntro(total, possiblePoints, touchedCategories.size)}
 
-    ${renderAiBuddy()}
+    ${
+      /* AI Buddy (Claude API key entry) pulled from the UI on purpose — not
+       * meant for every visitor to see. renderAiBuddy() is still intact;
+       * re-add "${renderAiBuddy()}" here to bring it back. */ ""
+    }
 
     ${
       priorities.length
