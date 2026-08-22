@@ -525,6 +525,7 @@ function renderRoadmap() {
       </div>
       <div class="header-actions">
         <button class="btn btn-ghost" data-action="edit-profile">Edit my details</button>
+        <button class="btn btn-ghost" data-action="download-pdf">📄 Download PDF</button>
         <button class="btn btn-ghost" data-action="log-out">Log out</button>
       </div>
     </section>
@@ -856,6 +857,12 @@ document.addEventListener("click", (e) => {
     refreshLeaderboard();
   } else if (action === "refresh-community") {
     refreshCommunity();
+  } else if (action === "download-pdf") {
+    // Expand every phase so nothing is missing from the printed/saved PDF,
+    // then hand off to the browser's native print-to-PDF — no extra library,
+    // no network dependency, works offline.
+    document.querySelectorAll(".phase-section").forEach((d) => (d.open = true));
+    window.print();
   } else if (action === "log-out") {
     signOutUser()
       .then(() => handleSignedOut())
