@@ -278,20 +278,33 @@ function renderSetupBanner() {
 
 function renderLanding() {
   return `
-    <section class="hero-plain">
-      <div class="hero-message">
-        <div class="hero-brandmark">
-          <span aria-label="India">🇮🇳</span>
-          <span class="hero-name">Kaveri</span>
-          <span aria-label="Finland">🇫🇮</span>
-        </div>
-        <h1>Your AI friend for moving to Finland.</h1>
-        <p class="hero-message-sub">One personalized relocation plan — permits, housing, daycare, and more — grounded in real official sources, not guesses.</p>
-        <div class="hero-actions">
+    <section class="hero-mood">
+      <div class="hero-mood-brandmark">
+        <span aria-label="India">🇮🇳</span>
+        <span class="hero-name">Kaveri</span>
+        <span aria-label="Finland">🇫🇮</span>
+      </div>
+      <div class="hero-mood-labels" aria-hidden="true">
+        <span class="mood-label mood-label-1">Settled faster</span>
+        <span class="mood-label mood-label-2">Clear on the paperwork</span>
+        <span class="mood-label mood-label-3">Closer to your community</span>
+      </div>
+      <div class="hero-mood-content">
+        <h1>One goal in mind: to help you belong.</h1>
+        <p class="hero-mood-sub">Your AI friend for moving to Finland — permits, housing, daycare, and more, grounded in real official sources.</p>
+        <div class="hero-actions hero-mood-actions">
           <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Sign up & start my quests</button>
-          <button class="btn btn-ghost" data-action="go-auth" data-mode="login">Log in</button>
+          <button class="btn btn-ghost hero-mood-ghost" data-action="go-auth" data-mode="login">Log in</button>
         </div>
       </div>
+    </section>
+    <div class="hero-trust">
+      <span class="trust-item">🛡️ Real official sources</span>
+      <span class="trust-item">🎯 Personalized to your move</span>
+      <span class="trust-item">🏆 Earn points as you go</span>
+    </div>
+    <section class="plan-preview-section">
+      <h2>See your plan before you start</h2>
       <div class="plan-preview" aria-hidden="true">
         <div class="plan-preview-header">
           <span>Ananya's quest board</span>
@@ -322,11 +335,6 @@ function renderLanding() {
         </div>
       </div>
     </section>
-    <div class="hero-trust">
-      <span class="trust-item">🛡️ Real official sources</span>
-      <span class="trust-item">🎯 Personalized to your move</span>
-      <span class="trust-item">🏆 Earn points as you go</span>
-    </div>
     <section class="how">
       <h2>How it works</h2>
       <div class="how-grid">
