@@ -139,10 +139,29 @@ em { color: var(--primary-dark); font-style: normal; }
   box-shadow: var(--shadow);
   position: relative;
   overflow: hidden;
-  background:
+  /* A solid card background sits under the tricolor glow so the gradient
+     tints a real surface instead of fading straight to the page background
+     — without this, the same orange/blue/green stops read as a muddy stain
+     in dark mode, where the page background is near-black. */
+  background-color: var(--surface);
+  background-image:
     radial-gradient(circle at 15% 20%, rgba(255, 153, 51, 0.20), transparent 55%),
     radial-gradient(circle at 85% 20%, rgba(0, 53, 128, 0.16), transparent 55%),
     radial-gradient(circle at 50% 90%, rgba(19, 136, 8, 0.14), transparent 60%);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hero {
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(255, 179, 102, 0.16), transparent 55%),
+      radial-gradient(circle at 85% 20%, rgba(124, 196, 234, 0.14), transparent 55%),
+      radial-gradient(circle at 50% 90%, rgba(52, 199, 89, 0.12), transparent 60%);
+  }
+}
+:root[data-theme="dark"] .hero {
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(255, 179, 102, 0.16), transparent 55%),
+    radial-gradient(circle at 85% 20%, rgba(124, 196, 234, 0.14), transparent 55%),
+    radial-gradient(circle at 50% 90%, rgba(52, 199, 89, 0.12), transparent 60%);
 }
 .hero::after {
   content: "";
@@ -535,6 +554,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
   .topbar { padding: 12px 14px; }
 
   .hero { padding: 28px 16px 12px; }
+  .hero h1 { font-size: 23px; letter-spacing: -0.005em; }
   .hero-flag { font-size: 32px; }
   .hero-wordmark { font-size: 30px; }
   .hero-actions .btn { flex: 1 1 auto; }
