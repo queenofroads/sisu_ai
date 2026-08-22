@@ -39,6 +39,9 @@ const SOURCES = {
   workInFinlandJobs: { name: "Work in Finland — open jobs", url: "https://www.workinfinland.com/en/open-jobs/" },
   workInFinlandMarket: { name: "Work in Finland — the labour market", url: "https://www.workinfinland.com/en/why-finland/working-in-finland/labour-market/" },
   infoFinlandHome: { name: "InfoFinland — settling in Finland (start here for housing)", url: "https://infofinland.fi/en" },
+  housingOikotie: { name: "Oikotie Homes — Finnish rental & property portal", url: "https://asunnot.oikotie.fi/" },
+  housingVuokraovi: { name: "Vuokraovi — Finnish rental housing search", url: "https://www.vuokraovi.com/" },
+  housingHoas: { name: "HOAS — student housing in the Helsinki region", url: "https://hoas.fi/en/" },
   espooHome: { name: "City of Espoo — official site", url: "https://www.espoo.fi/en" },
   helsinkiHome: { name: "City of Helsinki — official site", url: "https://www.hel.fi/en" },
   infoFinlandEverydayLife: { name: "InfoFinland — everyday life in Finland (incl. opening a bank account)", url: "https://infofinland.fi/en/settling-in-finland/everyday-life-in-finland" },
@@ -132,6 +135,28 @@ const PHASES = [
  * answers feed the roadmap generator below).
  */
 const CATEGORIES = [
+  {
+    id: "housing",
+    label: "Housing",
+    icon: "🏠",
+    questCategory: "legal",
+    blurb: "Temporary accommodation, long-term rentals, deposits, and getting a roof over your head sorted.",
+    questions: [
+      {
+        id: "housingStatus",
+        type: "select",
+        label: "Where do things stand on housing?",
+        options: ["Nothing arranged yet", "Temporary place booked, still need long-term", "Long-term place already arranged"],
+      },
+      {
+        id: "housingType",
+        type: "select",
+        label: "What kind of housing are you looking for?",
+        options: ["Private rental", "Student housing", "Employer-provided housing", "Not sure yet"],
+        showIf: { field: "housingStatus", oneOf: ["Nothing arranged yet", "Temporary place booked, still need long-term"] },
+      },
+    ],
+  },
   {
     id: "publicServices",
     label: "Public Services",
@@ -307,6 +332,64 @@ const CATEGORIES = [
  * "why" is where personalization happens: it reads the profile + answers.
  */
 const ROADMAP_GENERATORS = {
+  housing(profile, a) {
+    const steps = [];
+    const alreadyArranged = a.housingStatus === "Long-term place already arranged";
+
+    if (!alreadyArranged) {
+      steps.push({
+        phase: "before",
+        title: "Book temporary accommodation for your first few weeks",
+        why: "Long-term rentals in Finland often expect a Finnish personal identity code or local references you won't have yet — a short-term base gives you somewhere to land while you search properly.",
+        action: "Book a hotel, serviced apartment, or short-term rental for your first 2–4 weeks. Specific listings and prices change too fast to cite one directly, so start from InfoFinland's housing overview.",
+        source: SOURCES.infoFinlandHome,
+      });
+
+      if (a.housingType === "Student housing") {
+        steps.push({
+          phase: "week2",
+          title: "Apply through your city's student housing organisation",
+          why: "Student housing organisations run separate waiting lists from the private market and are usually cheaper — worth applying to as early as possible, ideally before you arrive.",
+          action: "Check HOAS (Helsinki region) or your destination city's equivalent student housing organisation for availability and how to apply.",
+          source: SOURCES.housingHoas,
+        });
+      } else if (a.housingType === "Employer-provided housing") {
+        steps.push({
+          phase: "week2",
+          title: "Get your employer-provided housing terms in writing",
+          why: "Employer-provided housing arrangements vary a lot in what's actually covered (utilities, deposit, duration) — worth confirming in writing rather than assuming.",
+          action: "Ask HR for the exact terms in writing, and compare against InfoFinland's general housing overview.",
+          source: SOURCES.infoFinlandHome,
+        });
+      } else {
+        steps.push({
+          phase: "week2",
+          title: "Search Finland's main rental portals",
+          why: "Oikotie and Vuokraovi together list most of the private rental market in Finland — nearly every independent landlord and rental company uses one or both.",
+          action: `Set up saved searches for ${profile.destination || "your destination city"} on Oikotie Homes.`,
+          source: SOURCES.housingOikotie,
+        });
+        steps.push({
+          phase: "week2",
+          title: "Check Vuokraovi as a second rental portal",
+          why: "Listings differ between Finnish rental portals — checking a second one catches places the first doesn't list.",
+          action: `Browse Vuokraovi for ${profile.destination || "your destination city"} alongside Oikotie.`,
+          source: SOURCES.housingVuokraovi,
+        });
+      }
+    }
+
+    steps.push({
+      phase: "month1",
+      title: "Understand a Finnish rental contract before you sign",
+      why: "Finnish rental agreements commonly require a deposit worth one to three months' rent and have specific notice-period rules that differ from what you're used to in India — worth knowing even if a lease is already arranged.",
+      action: "Read InfoFinland's housing section for an overview of deposits and notice periods before you sign (or re-check a lease you've already signed).",
+      source: SOURCES.infoFinlandHome,
+    });
+
+    return steps;
+  },
+
   publicServices(profile, a) {
     const steps = [];
     if (a.status === "Not started yet") {
