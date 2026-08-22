@@ -85,6 +85,12 @@ inventing a rule that doesn't exist. Grounding first, generation second.
 A lighter, non-load-bearing addition for anyone reading this before their move — see
 [TRIVIA.md](TRIVIA.md).
 
+## Additional resources
+
+A curated directory of real websites for relocating from India to Finland — official
+government/authority sites kept clearly separate from community and commercial ones — see
+[RESOURCES.md](RESOURCES.md).
+
 ## Potential impact
 
 Extended further, this becomes the connective layer between Finland's already-excellent (but
