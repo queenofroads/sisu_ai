@@ -135,3 +135,14 @@ Extended further, this becomes the connective layer between Finland's already-ex
 scattered) public services and the people trying to navigate them — using game mechanics to
 turn a genuinely stressful admin slog into something with visible momentum, community, and an
 actual finish line.
+
+## Fun facts about Finland
+
+A lighter, non-load-bearing addition for anyone reading this before their move — see
+[TRIVIA.md](TRIVIA.md).
+
+## Additional resources
+
+A curated directory of real websites for relocating from India to Finland — official
+government/authority sites kept clearly separate from community and commercial ones — see
+[RESOURCES.md](RESOURCES.md).
