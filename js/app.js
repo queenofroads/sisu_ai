@@ -232,37 +232,52 @@ function timeAgo(iso) {
 
 // ---------- Views ----------
 
-// Rotates the "Your friend for ___" word on the landing hero — Kaveri means
-// something different depending on who's asking, so this cycles through a
-// few of the things it actually helps with instead of picking just one.
-let heroTaglineTimer = null;
-let heroTaglineIndex = 0;
+// Hero carousel — cycles through HERO_PERSONAS (data.js). Same fade-and-swap
+// mechanism as the wordmark rotation below, plus a dots row so a visitor can
+// jump straight to a persona instead of waiting for it to come around.
+let heroCarouselTimer = null;
+let heroCarouselIndex = 0;
 
-function stopHeroTaglineRotation() {
-  if (heroTaglineTimer) {
-    clearInterval(heroTaglineTimer);
-    heroTaglineTimer = null;
+function stopHeroCarousel() {
+  if (heroCarouselTimer) {
+    clearInterval(heroCarouselTimer);
+    heroCarouselTimer = null;
   }
 }
 
-function startHeroTaglineRotation() {
-  stopHeroTaglineRotation();
-  heroTaglineIndex = 0;
-  heroTaglineTimer = setInterval(() => {
-    const el = document.getElementById("hero-tagline-word");
-    if (!el) {
-      stopHeroTaglineRotation();
+function renderCarouselSlide(index) {
+  const icon = document.getElementById("carousel-icon");
+  const who = document.getElementById("carousel-who");
+  const benefit = document.getElementById("carousel-benefit");
+  if (!icon || !who || !benefit) return;
+  const p = HERO_PERSONAS[index];
+  icon.textContent = p.icon;
+  who.textContent = p.who;
+  benefit.textContent = p.benefit;
+  document.querySelectorAll(".carousel-dot").forEach((dot, i) => dot.classList.toggle("active", i === index));
+}
+
+function goToCarouselSlide(index) {
+  heroCarouselIndex = index;
+  const card = document.getElementById("hero-carousel");
+  if (!card) return;
+  card.classList.add("fading");
+  setTimeout(() => {
+    renderCarouselSlide(heroCarouselIndex);
+    const liveCard = document.getElementById("hero-carousel");
+    if (liveCard) liveCard.classList.remove("fading");
+  }, 220);
+}
+
+function startHeroCarousel() {
+  stopHeroCarousel();
+  heroCarouselTimer = setInterval(() => {
+    if (!document.getElementById("hero-carousel")) {
+      stopHeroCarousel();
       return;
     }
-    el.classList.add("fading");
-    setTimeout(() => {
-      const liveEl = document.getElementById("hero-tagline-word");
-      if (!liveEl) return;
-      heroTaglineIndex = (heroTaglineIndex + 1) % HERO_TAGLINES.length;
-      liveEl.textContent = HERO_TAGLINES[heroTaglineIndex];
-      liveEl.classList.remove("fading");
-    }, 280);
-  }, 2600);
+    goToCarouselSlide((heroCarouselIndex + 1) % HERO_PERSONAS.length);
+  }, 4200);
 }
 
 // Rotates the "Kaveri" wordmark itself through its transliteration in
@@ -303,7 +318,7 @@ function startHeroWordRotation() {
 }
 
 function render() {
-  stopHeroTaglineRotation();
+  stopHeroCarousel();
   stopHeroWordRotation();
   if (!isSupabaseConfigured()) {
     $app.innerHTML = renderSetupBanner();
@@ -311,7 +326,8 @@ function render() {
   }
   if (state.view === "landing") {
     $app.innerHTML = renderLanding();
-    startHeroTaglineRotation();
+    heroCarouselIndex = 0; // fresh markup always starts on slide 0
+    startHeroCarousel();
     startHeroWordRotation();
   } else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
@@ -359,8 +375,14 @@ function renderLanding() {
         <span class="hero-wordmark" id="hero-wordmark" lang="${FRIEND_WORDS[0].code}">${escapeHtml(FRIEND_WORDS[0].word)}</span>
         <span class="hero-flag" aria-label="Finland">🇫🇮</span>
       </div>
-      <p class="hero-tagline">Your friend for <span class="hero-tagline-word" id="hero-tagline-word">${escapeHtml(HERO_TAGLINES[0])}</span></p>
-      <h1>Your <em>AI friend</em> for moving to Finland.</h1>
+      <div class="hero-carousel" id="hero-carousel">
+        <span class="carousel-icon" id="carousel-icon" aria-hidden="true">${HERO_PERSONAS[0].icon}</span>
+        <h1 id="carousel-who">${escapeHtml(HERO_PERSONAS[0].who)}</h1>
+        <p class="carousel-benefit" id="carousel-benefit">${escapeHtml(HERO_PERSONAS[0].benefit)}</p>
+        <div class="carousel-dots">
+          ${HERO_PERSONAS.map((_, i) => `<button type="button" class="carousel-dot${i === 0 ? " active" : ""}" data-action="carousel-goto" data-slide="${i}" aria-label="Show persona ${i + 1} of ${HERO_PERSONAS.length}"></button>`).join("")}
+        </div>
+      </div>
       <div class="hero-actions">
         <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Sign up & start my quests</button>
         <button class="btn btn-ghost" data-action="go-auth" data-mode="login">Log in</button>
@@ -873,6 +895,10 @@ document.addEventListener("click", (e) => {
 
   if (action === "toggle-theme") {
     setTheme(getTheme() === "dark" ? "light" : "dark");
+  } else if (action === "carousel-goto") {
+    stopHeroCarousel();
+    goToCarouselSlide(Number(el.dataset.slide));
+    startHeroCarousel();
   } else if (action === "go-home") {
     setState({ view: "landing", authError: null, authNotice: null });
   } else if (action === "go-auth") {

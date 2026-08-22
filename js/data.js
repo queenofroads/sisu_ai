@@ -746,24 +746,16 @@ const VOLUNTEER_QUESTS = [
 ];
 
 /*
- * Rotates on the landing hero ("Your friend for ___") — Kaveri means
- * something different depending on who's asking, so this deliberately
- * cycles through the breadth of what it actually helps with (admin, work,
- * family, culture, food, community) instead of picking one framing.
+ * The landing hero carousel — a few persona-shaped situations Kaveri covers,
+ * so a visitor sees themselves reflected instead of one generic pitch.
+ * Deliberately illustrative ("who this is for"), not testimonials — no
+ * names or first-person quotes attributed to anyone real.
  */
-const HERO_TAGLINES = [
-  "finding your first apartment",
-  "your residence permit paperwork",
-  "getting your kid into daycare",
-  "understanding your first payslip",
-  "figuring out Suomi.fi",
-  "starting your own business",
-  "learning your first Finnish words",
-  "trying sauna for the first time",
-  "finding your people",
-  "knowing you're not alone",
-  "volunteering in your new city",
-  "your first karjalanpiirakka",
+const HERO_PERSONAS = [
+  { icon: "🎓", who: "Moving to study in Finland?", benefit: "Your permit, housing, and school timeline — planned before you land." },
+  { icon: "👨‍👩‍👧", who: "Relocating with family?", benefit: "Daycare deadlines, neuvola, and schools — sorted before the paperwork piles up." },
+  { icon: "🔬", who: "Coming as a researcher?", benefit: "Permit routes, integration, and your first payslip — explained clearly." },
+  { icon: "💼", who: "Starting a new job in Finland?", benefit: "Work permits, tax cards, and your first weeks — mapped out for you." },
 ];
 
 /*
