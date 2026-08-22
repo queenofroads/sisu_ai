@@ -80,6 +80,11 @@ inventing a rule that doesn't exist. Grounding first, generation second.
   tab closes), never written to a file, never committed, and never sent anywhere except
   Anthropic's API directly from your browser.
 
+## Fun facts about Finland
+
+A lighter, non-load-bearing addition for anyone reading this before their move — see
+[TRIVIA.md](TRIVIA.md).
+
 ## Potential impact
 
 Extended further, this becomes the connective layer between Finland's already-excellent (but
