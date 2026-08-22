@@ -34,7 +34,11 @@ function getSupabaseClient() {
 
 function friendlyAuthError(error) {
   if (!error) return "Something went wrong talking to Supabase.";
-  return error.message || String(error);
+  const msg = error.message || String(error);
+  if (/rate limit/i.test(msg)) {
+    return "Too many signup emails sent recently (Supabase's built-in email sender has a strict hourly limit — this isn't about your specific address). Try again later, or use \"Skip login\" below to try Kaveri without an account.";
+  }
+  return msg;
 }
 
 async function signUpWithEmail({ email, password }) {
