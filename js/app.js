@@ -305,9 +305,6 @@ function renderLanding() {
         <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Start my quests</button>
         <button class="btn btn-ghost" data-action="go-auth" data-mode="login">Log in</button>
       </div>
-      <div class="hero-note">
-        🔒 Your account is real (Supabase auth). Only your name and points are ever public, on the leaderboard.
-      </div>
     </section>
     <section class="how">
       <h2>How it works</h2>
