@@ -523,6 +523,8 @@ function renderRoadmap() {
       </div>
     </section>
 
+    ${renderLeaderboard()}
+
     ${renderAssistantIntro(total, possiblePoints, touchedCategories.size)}
 
     ${renderAiBuddy()}
@@ -542,7 +544,6 @@ function renderRoadmap() {
       ${PHASES.map((ph) => renderPhaseSection(ph, roadmap[ph.id] || [], ph.id === firstOpenPhaseId)).join("")}
     </section>
 
-    ${renderLeaderboard()}
     ${renderCommunity()}
   `;
 }
