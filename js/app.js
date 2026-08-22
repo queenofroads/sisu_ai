@@ -302,7 +302,7 @@ function renderLanding() {
           .join("")}
       </div>
       <div class="hero-actions">
-        <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Start my quests</button>
+        <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Sign up & start my quests</button>
         <button class="btn btn-ghost" data-action="go-auth" data-mode="login">Log in</button>
       </div>
     </section>
