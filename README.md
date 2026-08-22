@@ -112,6 +112,30 @@ python3 -m http.server 8080
 Or just open `index.html` directly in a browser (Supabase auth needs `http(s)://`, not `file://`,
 so use the server for anything beyond viewing the setup banner).
 
+### 4. (Optional) Scheduled Slack reminders
+
+Kaveri can post a real, automated check-in to Slack on a schedule — "⏰ Kaveri check-in: Ananya —
+40 pts, Rahul — 25 pts. Keep going!" — using Supabase's own cron (`pg_cron`) to call an Edge
+Function that posts to a Slack Incoming Webhook. Deliberately generic content (points/progress
+only, not specific quest titles): quest content only exists client-side in `js/data.js`,
+generated fresh per profile — Supabase never sees it, only which quest IDs got checked off, so a
+server-side job has no quest title to name.
+
+1. **Create a Slack Incoming Webhook** — in your Slack workspace: Apps → search "Incoming
+   Webhooks" → Add to Slack → pick a channel or a specific person's DM → copy the webhook URL
+   (`https://hooks.slack.com/services/...`). Keep this secret — anyone with it can post as this
+   webhook.
+2. **Deploy the Edge Function**: `supabase functions deploy send-slack-reminder` (from the repo
+   root, with the Supabase CLI logged in and linked to your project). Or paste
+   [`supabase/functions/send-slack-reminder/index.ts`](supabase/functions/send-slack-reminder/index.ts)
+   into a new Edge Function in the dashboard.
+3. **Set the webhook as a secret** (never commit it): `supabase secrets set SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...`
+4. **Schedule it**: edit the two `<PLACEHOLDER>` values in
+   [`supabase/cron.sql`](supabase/cron.sql) (your project ref and anon key) and run it in the SQL
+   editor. Defaults to daily at 08:00 UTC — edit the cron expression to taste.
+5. **To prove it live on stage** without waiting for the schedule: `supabase functions invoke send-slack-reminder`,
+   or the "Invoke" button on the function's page in the dashboard.
+
 ## Responsible AI
 
 - **Privacy:** quest-completion history (*which* quests you've done) is private to your account
@@ -146,3 +170,8 @@ A lighter, non-load-bearing addition for anyone reading this before their move �
 A curated directory of real websites for relocating from India to Finland — official
 government/authority sites kept clearly separate from community and commercial ones — see
 [RESOURCES.md](RESOURCES.md).
+
+## Indian community in Finland
+
+A reference list of Indian community organisations in Finland — pan-Indian groups, regional/
+language associations, and events — see [INDIAN_COMMUNITY.md](INDIAN_COMMUNITY.md).

@@ -815,6 +815,49 @@ const RESOURCES = [
   },
 ];
 
+/*
+ * Real Indian regional/community associations in Finland that run
+ * recurring cultural events (Ganesh Chaturthi, Navratri, Durga Puja, etc).
+ * Deliberately no specific event dates/venues here — those change every
+ * year and we can't guarantee they're still current, so this links to the
+ * real organizations instead and lets people check what's actually
+ * scheduled. Every entry verified via web search before being added, same
+ * bar as everything else in this app.
+ */
+const COMMUNITY_EVENTS = [
+  {
+    section: "Regional community associations",
+    links: [
+      { name: "Maharashtra Mandal Finland", url: "https://mmfinland.com/", note: "Marathi community in the Helsinki/Espoo region — runs Ganesh Chaturthi (Ganpati) celebrations and other Marathi cultural events." },
+      { name: "Gujarati Samaj Finland", url: "https://www.gujaratisamaj.fi/", note: "Gujarati community association, established 2018 — runs the annual Navratri Raas Garba festival plus other events." },
+      { name: "Bengali Association of Finland (BAF)", url: "https://bafin.fi/", note: "Bengali community association — has run Durga Puja in the capital region every year since 1999." },
+    ],
+  },
+  {
+    section: "Pan-Indian community groups",
+    links: [
+      { name: "Bharatvaasi in Finland", url: "https://www.bharatvaasi.fi/", note: "Community platform and network for Indians in Finland, with events across the year." },
+      { name: "Indian Women in Finland", url: "https://www.iwf.fi/", note: "Networking, mentoring, and events for Indian women across Finland." },
+      { name: "Finland-India Society", url: "https://suomiintiaseura.fi/", note: "Promotes cultural connections between Finland and India." },
+    ],
+  },
+];
+
+/*
+ * Real, verified volunteering portals and organizations in Finland.
+ */
+const VOLUNTEER_OPPORTUNITIES = [
+  {
+    section: "Find a volunteer role",
+    links: [
+      { name: "Vapaaehtoistyö.fi", url: "https://vapaaehtoistyo.fi/en/", note: "Finland's national volunteer-matching portal — browse open roles from organisations across the country." },
+      { name: "Volunteer Helsinki", url: "https://vapaaehtoistoiminta.hel.fi/en/", note: "City of Helsinki's own volunteering portal, for opportunities specific to the capital." },
+      { name: "Finnish Red Cross — support immigrants & refugees", url: "https://www.redcross.fi/become-a-volunteer/support-immigrants/", note: "One of the fastest ways to build a local network — doesn't require advanced Finnish to get started." },
+      { name: "InfoFinland — voluntary work in Finland", url: "https://infofinland.fi/en/leisure/voluntary-work", note: "Overview of how volunteering fits into life in Finland, including how it can help build local work experience." },
+    ],
+  },
+];
+
 function buildRoadmap(profile, categoryAnswers) {
   const stepsByPhase = {};
   PHASES.forEach((p) => (stepsByPhase[p.id] = []));

@@ -12,6 +12,8 @@
     <button class="brand" type="button" data-action="go-home" aria-label="Go to homepage">🇫🇮 Kaveri</button>
     <div class="topbar-actions">
       <button class="link-btn" type="button" data-action="open-fun-fact">🎉 Fun Fact</button>
+      <button class="link-btn" type="button" data-action="open-events">📅 Events</button>
+      <button class="link-btn" type="button" data-action="open-volunteer">🙌 Volunteer</button>
       <button class="link-btn" type="button" data-action="open-resources">📚 Resources</button>
     </div>
   </header>
@@ -35,6 +37,28 @@
       <div id="resources-list" class="resources-list"></div>
       <div class="wizard-nav">
         <button type="button" class="btn btn-ghost" data-action="close-resources">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-modal" id="events-modal" hidden>
+    <div class="settings-box resources-box">
+      <h3>📅 Community Events</h3>
+      <p class="muted">Real Indian community associations in Finland — the ones actually running things like Ganesh Chaturthi, Navratri, and Durga Puja. Dates change every year, so check each org's own site or social media for what's currently scheduled rather than trusting a fixed date here.</p>
+      <div id="events-list" class="resources-list"></div>
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost" data-action="close-events">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-modal" id="volunteer-modal" hidden>
+    <div class="settings-box resources-box">
+      <h3>🙌 Volunteer</h3>
+      <p class="muted">Real volunteering portals and organisations in Finland — a good way to build a local network before you have a job or fluent Finnish.</p>
+      <div id="volunteer-list" class="resources-list"></div>
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost" data-action="close-volunteer">Close</button>
       </div>
     </div>
   </div>
