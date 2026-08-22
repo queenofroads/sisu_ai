@@ -255,14 +255,14 @@ function renderAuth() {
   const isSignup = state.authMode === "signup";
   return `
     <section class="auth-card">
-      <h2>${isSignup ? "Create your Kaveri account" : "Log in"}</h2>
-      <p class="muted">Real account via Supabase — your email/password, your progress, synced.</p>
+      <h2>${isSignup ? "Join the Kaveri community" : "Welcome back, kaveri"}</h2>
+      <p class="muted">${isSignup ? "Kaveri means \"friend\" — sign up and your buddy starts guiding you, alongside everyone else on the same journey from India to Finland." : "Log back in to pick up where you and your buddy left off."}</p>
       ${state.authNotice ? `<p class="auth-notice">${escapeHtml(state.authNotice)}</p>` : ""}
       ${state.authError ? `<p class="auth-error">${escapeHtml(state.authError)}</p>` : ""}
       <form data-form="auth">
         <label>Email<input type="email" name="email" required placeholder="you@example.com"></label>
         <label>Password<input type="password" name="password" required minlength="6" placeholder="At least 6 characters"></label>
-        <button class="btn btn-primary" type="submit" ${state.authLoading ? "disabled" : ""}>${state.authLoading ? "Please wait…" : isSignup ? "Sign up & start" : "Log in"}</button>
+        <button class="btn btn-primary" type="submit" ${state.authLoading ? "disabled" : ""}>${state.authLoading ? "Please wait…" : isSignup ? "Join Kaveri" : "Log in"}</button>
       </form>
       <button class="link-btn" data-action="toggle-auth-mode">${isSignup ? "Already have an account? Log in" : "New here? Sign up"}</button>
       <button class="link-btn" data-action="skip-login">Skip login — try it without an account (test mode, no leaderboard sync)</button>
