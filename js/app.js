@@ -265,8 +265,46 @@ function startHeroTaglineRotation() {
   }, 2600);
 }
 
+// Rotates the "Kaveri" wordmark itself through the word for "friend" in
+// English, Finnish, and major Indian languages — same fade-and-swap
+// mechanism as the tagline rotation above, just on a longer interval since
+// each word needs a moment to actually be read (and some are in unfamiliar
+// scripts).
+let heroWordTimer = null;
+let heroWordIndex = 0;
+
+function stopHeroWordRotation() {
+  if (heroWordTimer) {
+    clearInterval(heroWordTimer);
+    heroWordTimer = null;
+  }
+}
+
+function startHeroWordRotation() {
+  stopHeroWordRotation();
+  heroWordIndex = 0;
+  heroWordTimer = setInterval(() => {
+    const el = document.getElementById("hero-wordmark");
+    if (!el) {
+      stopHeroWordRotation();
+      return;
+    }
+    el.classList.add("fading");
+    setTimeout(() => {
+      const liveEl = document.getElementById("hero-wordmark");
+      if (!liveEl) return;
+      heroWordIndex = (heroWordIndex + 1) % FRIEND_WORDS.length;
+      const entry = FRIEND_WORDS[heroWordIndex];
+      liveEl.textContent = entry.word;
+      liveEl.lang = entry.code;
+      liveEl.classList.remove("fading");
+    }, 280);
+  }, 2200);
+}
+
 function render() {
   stopHeroTaglineRotation();
+  stopHeroWordRotation();
   if (!isSupabaseConfigured()) {
     $app.innerHTML = renderSetupBanner();
     return;
@@ -274,6 +312,7 @@ function render() {
   if (state.view === "landing") {
     $app.innerHTML = renderLanding();
     startHeroTaglineRotation();
+    startHeroWordRotation();
   } else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
   else if (state.view === "roadmap") $app.innerHTML = renderRoadmap();
@@ -317,11 +356,11 @@ function renderLanding() {
     <section class="hero">
       <div class="hero-flags">
         <span class="hero-flag" aria-label="India">🇮🇳</span>
-        <span class="hero-wordmark">Kaveri</span>
+        <span class="hero-wordmark" id="hero-wordmark" lang="${FRIEND_WORDS[0].code}">${escapeHtml(FRIEND_WORDS[0].word)}</span>
         <span class="hero-flag" aria-label="Finland">🇫🇮</span>
       </div>
       <p class="hero-tagline">Your friend for <span class="hero-tagline-word" id="hero-tagline-word">${escapeHtml(HERO_TAGLINES[0])}</span></p>
-      <h1>Moving from India to Finland?<br>Meet <em>Kaveri</em>, your first friend here.</h1>
+      <h1>Moving from India to Finland?<br>Meet <em>Kaveri</em>, your AI friend here.</h1>
       <p class="hero-sub">
         Kaveri turns real official Finnish relocation guidance into quests —
         Administrative Work, Social, Cultural, and Food — worth points. Complete them, climb

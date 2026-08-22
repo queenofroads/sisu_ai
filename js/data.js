@@ -767,6 +767,29 @@ const HERO_TAGLINES = [
 ];
 
 /*
+ * Rotates the big wordmark on the landing hero — "kaveri" is Finnish for
+ * "friend," so this cycles the wordmark through the word for "friend" in
+ * English, Finnish, and the ten major Indian languages so both sides of the
+ * move ("India" and "Finland" in the hero flags) are represented by more
+ * than one script. Common, everyday words for "friend" in each language —
+ * not a citation-needing claim, just vocabulary.
+ */
+const FRIEND_WORDS = [
+  { lang: "Finnish", code: "fi", word: "Kaveri" },
+  { lang: "English", code: "en", word: "Friend" },
+  { lang: "Hindi", code: "hi", word: "दोस्त" },
+  { lang: "Bengali", code: "bn", word: "বন্ধু" },
+  { lang: "Marathi", code: "mr", word: "मित्र" },
+  { lang: "Telugu", code: "te", word: "స్నేహితుడు" },
+  { lang: "Tamil", code: "ta", word: "நண்பன்" },
+  { lang: "Gujarati", code: "gu", word: "મિત્ર" },
+  { lang: "Kannada", code: "kn", word: "ಸ್ನೇಹಿತ" },
+  { lang: "Malayalam", code: "ml", word: "സുഹൃത്ത്" },
+  { lang: "Punjabi", code: "pa", word: "ਦੋਸਤ" },
+  { lang: "Urdu", code: "ur", word: "دوست" },
+];
+
+/*
  * Fun Finland trivia — shown in the "Fun Fact" popup. Sourced from TRIVIA.md
  * (already vetted); this is light-hearted flavor content, not a quest
  * citation, so no SOURCES link is attached.
