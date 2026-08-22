@@ -117,3 +117,26 @@ async function fetchLeaderboard(limit) {
   if (error) throw new Error(friendlyAuthError(error));
   return data || [];
 }
+
+async function fetchCommunityQuestions(limit) {
+  const client = getSupabaseClient();
+  const { data, error } = await client
+    .from("community_questions")
+    .select("id, name, question, created_at, community_replies(id, name, reply, created_at)")
+    .order("created_at", { ascending: false })
+    .limit(limit || 30);
+  if (error) throw new Error(friendlyAuthError(error));
+  return data || [];
+}
+
+async function postCommunityQuestion({ userId, name, question }) {
+  const client = getSupabaseClient();
+  const { error } = await client.from("community_questions").insert({ user_id: userId, name, question });
+  if (error) throw new Error(friendlyAuthError(error));
+}
+
+async function postCommunityReply({ questionId, userId, name, reply }) {
+  const client = getSupabaseClient();
+  const { error } = await client.from("community_replies").insert({ question_id: questionId, user_id: userId, name, reply });
+  if (error) throw new Error(friendlyAuthError(error));
+}

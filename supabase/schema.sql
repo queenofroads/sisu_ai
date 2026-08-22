@@ -104,3 +104,50 @@ create view public.leaderboard as
   order by total_points desc, name asc;
 
 grant select on public.leaderboard to anon, authenticated;
+
+-- Ask Kaveri Community: a public, append-only Q&A board. Anyone can read
+-- every question/reply (this is meant to be a shared community feed, unlike
+-- profiles/quest_completions which are owner-only); posting requires the
+-- row's user_id to match the signed-in user. No update/delete policies are
+-- defined on purpose — keeps moderation out of scope for the hackathon by
+-- making posts permanent rather than silently editable.
+create table if not exists public.community_questions (
+  id bigint generated always as identity primary key,
+  user_id uuid not null references auth.users (id) on delete cascade,
+  name text not null,
+  question text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.community_questions enable row level security;
+
+drop policy if exists "Anyone can view community questions" on public.community_questions;
+create policy "Anyone can view community questions"
+  on public.community_questions for select
+  using (true);
+
+drop policy if exists "Users can post their own questions" on public.community_questions;
+create policy "Users can post their own questions"
+  on public.community_questions for insert
+  with check (auth.uid() = user_id);
+
+create table if not exists public.community_replies (
+  id bigint generated always as identity primary key,
+  question_id bigint not null references public.community_questions (id) on delete cascade,
+  user_id uuid not null references auth.users (id) on delete cascade,
+  name text not null,
+  reply text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.community_replies enable row level security;
+
+drop policy if exists "Anyone can view community replies" on public.community_replies;
+create policy "Anyone can view community replies"
+  on public.community_replies for select
+  using (true);
+
+drop policy if exists "Users can post their own replies" on public.community_replies;
+create policy "Users can post their own replies"
+  on public.community_replies for insert
+  with check (auth.uid() = user_id);

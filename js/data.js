@@ -816,40 +816,44 @@ const RESOURCES = [
 ];
 
 /*
- * Fuller Indian-community directory — shown in its own "Indian Community"
- * popup (same UI pattern as Fun Fact / Resources, added without touching
- * either). The Embassy of India's own bilateral brief counts 16 registered
- * Indian associations in Finland as of Feb 2024, and a June 2025 Embassy
- * event involved representatives from 20+ — so this list of 10 is a
- * starting point, not exhaustive. Every URL below was checked reachable
- * (HTTP 200) before being added; anything that only turned up as a
- * "search Facebook for X" lead was deliberately left out rather than
- * guessed, matching this repo's no-invented-URLs rule.
+ * Real Indian regional/community associations in Finland that run
+ * recurring cultural events (Ganesh Chaturthi, Navratri, Durga Puja, etc).
+ * Deliberately no specific event dates/venues here — those change every
+ * year and we can't guarantee they're still current, so this links to the
+ * real organizations instead and lets people check what's actually
+ * scheduled. Every entry verified via web search before being added, same
+ * bar as everything else in this app.
  */
-const INDIAN_COMMUNITY = [
+const COMMUNITY_EVENTS = [
   {
-    section: "Pan-Indian & women's communities",
+    section: "Regional community associations",
     links: [
-      { name: "Suomi-Intia-Seura (Finnish-Indian Society)", url: "https://suomiintiaseura.fi/", note: "Pan-Indian friendship society, founded 1949 — organises Gandhi Jayanti, Diwali, and other events." },
-      { name: "Bharatvaasi in Finland", url: "https://www.bharatvaasi.fi/", note: "Community platform and network for Indians living in Finland." },
-      { name: "Indian Women in Finland (IWF Ry)", url: "https://www.iwf.fi/", note: "Networking, mentoring, and events for Indian women in Finland." },
+      { name: "Maharashtra Mandal Finland", url: "https://mmfinland.com/", note: "Marathi community in the Helsinki/Espoo region — runs Ganesh Chaturthi (Ganpati) celebrations and other Marathi cultural events." },
+      { name: "Gujarati Samaj Finland", url: "https://www.gujaratisamaj.fi/", note: "Gujarati community association, established 2018 — runs the annual Navratri Raas Garba festival plus other events." },
+      { name: "Bengali Association of Finland (BAF)", url: "https://bafin.fi/", note: "Bengali community association — has run Durga Puja in the capital region every year since 1999." },
     ],
   },
   {
-    section: "Regional & language communities",
+    section: "Pan-Indian community groups",
     links: [
-      { name: "Gujarati Samaj Finland", url: "https://www.gujaratisamaj.fi/", note: "Community association for Gujarati speakers in Finland." },
-      { name: "Finland Telugu Association (FiTA)", url: "https://www.fintelugu.org/", note: "Non-profit for Telugu speakers, founded 2012." },
-      { name: "Finland Tamil Sangam (FINTA)", url: "https://www.finlandtamilsangam.com/", note: "Community association for Tamil speakers in Finland." },
-      { name: "Bengali Association of Finland (BAFIN)", url: "https://bafin.fi/", note: "Cultural and community association for Bengali speakers." },
-      { name: "Maharashtra Mandal Finland", url: "https://linktr.ee/mmfinland12", note: "Community hub for Marathi/Maharashtra speakers (Linktree)." },
+      { name: "Bharatvaasi in Finland", url: "https://www.bharatvaasi.fi/", note: "Community platform and network for Indians in Finland, with events across the year." },
+      { name: "Indian Women in Finland", url: "https://www.iwf.fi/", note: "Networking, mentoring, and events for Indian women across Finland." },
+      { name: "Finland-India Society", url: "https://suomiintiaseura.fi/", note: "Promotes cultural connections between Finland and India." },
     ],
   },
+];
+
+/*
+ * Real, verified volunteering portals and organizations in Finland.
+ */
+const VOLUNTEER_OPPORTUNITIES = [
   {
-    section: "Events & official",
+    section: "Find a volunteer role",
     links: [
-      { name: "India Day / Intia-päivä", url: "https://blog.intiapaiva.fi/", note: "Annual pan-Indian cultural event in Helsinki, run with the Finnish-Indian Society and Embassy of India." },
-      { name: "Embassy of India in Helsinki", url: "https://www.indembhelsinki.gov.in/", note: "Official government contact — also the best place to verify associations not listed here." },
+      { name: "Vapaaehtoistyö.fi", url: "https://vapaaehtoistyo.fi/en/", note: "Finland's national volunteer-matching portal — browse open roles from organisations across the country." },
+      { name: "Volunteer Helsinki", url: "https://vapaaehtoistoiminta.hel.fi/en/", note: "City of Helsinki's own volunteering portal, for opportunities specific to the capital." },
+      { name: "Finnish Red Cross — support immigrants & refugees", url: "https://www.redcross.fi/become-a-volunteer/support-immigrants/", note: "One of the fastest ways to build a local network — doesn't require advanced Finnish to get started." },
+      { name: "InfoFinland — voluntary work in Finland", url: "https://infofinland.fi/en/leisure/voluntary-work", note: "Overview of how volunteering fits into life in Finland, including how it can help build local work experience." },
     ],
   },
 ];
