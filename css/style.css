@@ -114,8 +114,8 @@ em { color: var(--primary-dark); font-style: normal; }
   color: transparent;
 }
 .hero-tagline {
-  font-size: 15px; font-weight: 600; color: var(--muted);
-  margin: 0 0 14px; min-height: 22px;
+  font-size: clamp(18px, 3vw, 26px); font-weight: 700; color: var(--text);
+  margin: 0 0 18px; min-height: 34px;
 }
 .hero-tagline-word {
   display: inline-block; color: var(--primary);
