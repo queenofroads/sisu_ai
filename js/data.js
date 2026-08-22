@@ -815,6 +815,45 @@ const RESOURCES = [
   },
 ];
 
+/*
+ * Fuller Indian-community directory — shown in its own "Indian Community"
+ * popup (same UI pattern as Fun Fact / Resources, added without touching
+ * either). The Embassy of India's own bilateral brief counts 16 registered
+ * Indian associations in Finland as of Feb 2024, and a June 2025 Embassy
+ * event involved representatives from 20+ — so this list of 10 is a
+ * starting point, not exhaustive. Every URL below was checked reachable
+ * (HTTP 200) before being added; anything that only turned up as a
+ * "search Facebook for X" lead was deliberately left out rather than
+ * guessed, matching this repo's no-invented-URLs rule.
+ */
+const INDIAN_COMMUNITY = [
+  {
+    section: "Pan-Indian & women's communities",
+    links: [
+      { name: "Suomi-Intia-Seura (Finnish-Indian Society)", url: "https://suomiintiaseura.fi/", note: "Pan-Indian friendship society, founded 1949 — organises Gandhi Jayanti, Diwali, and other events." },
+      { name: "Bharatvaasi in Finland", url: "https://www.bharatvaasi.fi/", note: "Community platform and network for Indians living in Finland." },
+      { name: "Indian Women in Finland (IWF Ry)", url: "https://www.iwf.fi/", note: "Networking, mentoring, and events for Indian women in Finland." },
+    ],
+  },
+  {
+    section: "Regional & language communities",
+    links: [
+      { name: "Gujarati Samaj Finland", url: "https://www.gujaratisamaj.fi/", note: "Community association for Gujarati speakers in Finland." },
+      { name: "Finland Telugu Association (FiTA)", url: "https://www.fintelugu.org/", note: "Non-profit for Telugu speakers, founded 2012." },
+      { name: "Finland Tamil Sangam (FINTA)", url: "https://www.finlandtamilsangam.com/", note: "Community association for Tamil speakers in Finland." },
+      { name: "Bengali Association of Finland (BAFIN)", url: "https://bafin.fi/", note: "Cultural and community association for Bengali speakers." },
+      { name: "Maharashtra Mandal Finland", url: "https://linktr.ee/mmfinland12", note: "Community hub for Marathi/Maharashtra speakers (Linktree)." },
+    ],
+  },
+  {
+    section: "Events & official",
+    links: [
+      { name: "India Day / Intia-päivä", url: "https://blog.intiapaiva.fi/", note: "Annual pan-Indian cultural event in Helsinki, run with the Finnish-Indian Society and Embassy of India." },
+      { name: "Embassy of India in Helsinki", url: "https://www.indembhelsinki.gov.in/", note: "Official government contact — also the best place to verify associations not listed here." },
+    ],
+  },
+];
+
 function buildRoadmap(profile, categoryAnswers) {
   const stepsByPhase = {};
   PHASES.forEach((p) => (stepsByPhase[p.id] = []));

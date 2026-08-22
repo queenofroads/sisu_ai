@@ -749,6 +749,11 @@ document.addEventListener("click", (e) => {
     document.getElementById("resources-modal").hidden = false;
   } else if (action === "close-resources") {
     document.getElementById("resources-modal").hidden = true;
+  } else if (action === "open-community") {
+    renderCommunityList();
+    document.getElementById("community-modal").hidden = false;
+  } else if (action === "close-community") {
+    document.getElementById("community-modal").hidden = true;
   }
 });
 
@@ -762,6 +767,24 @@ function showRandomFunFact() {
 
 function renderResourcesList() {
   document.getElementById("resources-list").innerHTML = RESOURCES.map(
+    (group) => `
+      <div class="resources-group">
+        <h4>${escapeHtml(group.section)}</h4>
+        <ul>
+          ${group.links
+            .map(
+              (l) =>
+                `<li><a href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.name)}</a> — <span class="muted">${escapeHtml(l.note)}</span></li>`
+            )
+            .join("")}
+        </ul>
+      </div>
+    `
+  ).join("");
+}
+
+function renderCommunityList() {
+  document.getElementById("community-list").innerHTML = INDIAN_COMMUNITY.map(
     (group) => `
       <div class="resources-group">
         <h4>${escapeHtml(group.section)}</h4>

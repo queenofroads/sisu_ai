@@ -13,6 +13,7 @@
     <div class="topbar-actions">
       <button class="link-btn" type="button" data-action="open-fun-fact">🎉 Fun Fact</button>
       <button class="link-btn" type="button" data-action="open-resources">📚 Resources</button>
+      <button class="link-btn" type="button" data-action="open-community">🇮🇳 Indian Community</button>
     </div>
   </header>
   <div id="app"></div>
@@ -35,6 +36,17 @@
       <div id="resources-list" class="resources-list"></div>
       <div class="wizard-nav">
         <button type="button" class="btn btn-ghost" data-action="close-resources">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-modal" id="community-modal" hidden>
+    <div class="settings-box resources-box">
+      <h3>🇮🇳 Indian Community in Finland</h3>
+      <p class="muted">Self-organised community groups — not official government advice. The Embassy of India's own brief counts 20+ registered Indian associations in Finland, so this is a starting point, not the full list.</p>
+      <div id="community-list" class="resources-list"></div>
+      <div class="wizard-nav">
+        <button type="button" class="btn btn-ghost" data-action="close-community">Close</button>
       </div>
     </div>
   </div>
