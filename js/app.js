@@ -232,104 +232,13 @@ function timeAgo(iso) {
 
 // ---------- Views ----------
 
-// Hero carousel — cycles through HERO_PERSONAS (data.js). Same fade-and-swap
-// mechanism as the wordmark rotation below, plus a dots row so a visitor can
-// jump straight to a persona instead of waiting for it to come around.
-let heroCarouselTimer = null;
-let heroCarouselIndex = 0;
-
-function stopHeroCarousel() {
-  if (heroCarouselTimer) {
-    clearInterval(heroCarouselTimer);
-    heroCarouselTimer = null;
-  }
-}
-
-function renderCarouselSlide(index) {
-  const icon = document.getElementById("carousel-icon");
-  const who = document.getElementById("carousel-who");
-  const benefit = document.getElementById("carousel-benefit");
-  if (!icon || !who || !benefit) return;
-  const p = HERO_PERSONAS[index];
-  icon.textContent = p.icon;
-  who.textContent = p.who;
-  benefit.textContent = p.benefit;
-  document.querySelectorAll(".carousel-dot").forEach((dot, i) => dot.classList.toggle("active", i === index));
-}
-
-function goToCarouselSlide(index) {
-  heroCarouselIndex = index;
-  const card = document.getElementById("hero-carousel");
-  if (!card) return;
-  card.classList.add("fading");
-  setTimeout(() => {
-    renderCarouselSlide(heroCarouselIndex);
-    const liveCard = document.getElementById("hero-carousel");
-    if (liveCard) liveCard.classList.remove("fading");
-  }, 220);
-}
-
-function startHeroCarousel() {
-  stopHeroCarousel();
-  heroCarouselTimer = setInterval(() => {
-    if (!document.getElementById("hero-carousel")) {
-      stopHeroCarousel();
-      return;
-    }
-    goToCarouselSlide((heroCarouselIndex + 1) % HERO_PERSONAS.length);
-  }, 4200);
-}
-
-// Rotates the "Kaveri" wordmark itself through its transliteration in
-// English, Finnish, and major Indian language scripts — same fade-and-swap
-// mechanism as the tagline rotation above, just on a longer interval since
-// each word needs a moment to actually be read (and some are in unfamiliar
-// scripts).
-let heroWordTimer = null;
-let heroWordIndex = 0;
-
-function stopHeroWordRotation() {
-  if (heroWordTimer) {
-    clearInterval(heroWordTimer);
-    heroWordTimer = null;
-  }
-}
-
-function startHeroWordRotation() {
-  stopHeroWordRotation();
-  heroWordIndex = 0;
-  heroWordTimer = setInterval(() => {
-    const el = document.getElementById("hero-wordmark");
-    if (!el) {
-      stopHeroWordRotation();
-      return;
-    }
-    el.classList.add("fading");
-    setTimeout(() => {
-      const liveEl = document.getElementById("hero-wordmark");
-      if (!liveEl) return;
-      heroWordIndex = (heroWordIndex + 1) % FRIEND_WORDS.length;
-      const entry = FRIEND_WORDS[heroWordIndex];
-      liveEl.textContent = entry.word;
-      liveEl.lang = entry.code;
-      liveEl.classList.remove("fading");
-    }, 280);
-  }, 2200);
-}
-
 function render() {
-  stopHeroCarousel();
-  stopHeroWordRotation();
   if (!isSupabaseConfigured()) {
     $app.innerHTML = renderSetupBanner();
     return;
   }
-  if (state.view === "landing") {
-    $app.innerHTML = renderLanding();
-    heroCarouselIndex = 0; // fresh markup always starts on slide 0
-    startHeroCarousel();
-    startHeroWordRotation();
-  } else if (state.view === "auth") $app.innerHTML = renderAuth();
+  if (state.view === "landing") $app.innerHTML = renderLanding();
+  else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
   else if (state.view === "roadmap") $app.innerHTML = renderRoadmap();
   if (state.view === "wizard") applyConditionalVisibility();
@@ -369,65 +278,55 @@ function renderSetupBanner() {
 
 function renderLanding() {
   return `
-    <section class="hero hero-split">
-      <div class="hero-content">
-        <div class="hero-flags">
-          <span class="hero-flag" aria-label="India">🇮🇳</span>
-          <span class="hero-wordmark" id="hero-wordmark" lang="${FRIEND_WORDS[0].code}">${escapeHtml(FRIEND_WORDS[0].word)}</span>
-          <span class="hero-flag" aria-label="Finland">🇫🇮</span>
+    <section class="hero-plain">
+      <div class="hero-message">
+        <div class="hero-brandmark">
+          <span aria-label="India">🇮🇳</span>
+          <span class="hero-name">Kaveri</span>
+          <span aria-label="Finland">🇫🇮</span>
         </div>
-        <div class="hero-carousel" id="hero-carousel">
-          <span class="carousel-icon" id="carousel-icon" aria-hidden="true">${HERO_PERSONAS[0].icon}</span>
-          <h1 id="carousel-who">${escapeHtml(HERO_PERSONAS[0].who)}</h1>
-          <p class="carousel-benefit" id="carousel-benefit">${escapeHtml(HERO_PERSONAS[0].benefit)}</p>
-          <div class="carousel-dots">
-            ${HERO_PERSONAS.map((_, i) => `<button type="button" class="carousel-dot${i === 0 ? " active" : ""}" data-action="carousel-goto" data-slide="${i}" aria-label="Show persona ${i + 1} of ${HERO_PERSONAS.length}"></button>`).join("")}
-          </div>
-        </div>
+        <h1>Your AI friend for moving to Finland.</h1>
+        <p class="hero-message-sub">One personalized relocation plan — permits, housing, daycare, and more — grounded in real official sources, not guesses.</p>
         <div class="hero-actions">
           <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Sign up & start my quests</button>
           <button class="btn btn-ghost" data-action="go-auth" data-mode="login">Log in</button>
         </div>
-        <div class="hero-trust">
-          <span class="trust-item">🛡️ Real official sources</span>
-          <span class="trust-item">🎯 Personalized to your move</span>
-          <span class="trust-item">🏆 Earn points as you go</span>
-        </div>
       </div>
-      <div class="hero-illustration" aria-hidden="true">
-        <svg viewBox="0 0 480 480" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#bcd9f0" />
-              <stop offset="100%" stop-color="#eaf3fb" />
-            </linearGradient>
-            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#8fb8d6" />
-              <stop offset="100%" stop-color="#5f93b8" />
-            </linearGradient>
-          </defs>
-          <rect width="480" height="480" fill="url(#skyGrad)" />
-          <circle cx="90" cy="330" r="34" fill="#3d7a4f" />
-          <circle cx="120" cy="345" r="26" fill="#4a8f5e" />
-          <circle cx="410" cy="320" r="30" fill="#3d7a4f" />
-          <rect x="240" y="230" width="60" height="130" fill="#e7ddcf" />
-          <polygon points="240,230 270,170 300,230" fill="#5a7a63" />
-          <rect x="262" y="190" width="16" height="40" fill="#5a7a63" />
-          <rect x="150" y="270" width="70" height="90" fill="#d9c9b8" />
-          <rect x="310" y="255" width="80" height="105" fill="#cbb9a5" />
-          <rect x="255" y="270" width="12" height="18" fill="#8fa9c4" />
-          <rect x="165" y="290" width="14" height="18" fill="#8fa9c4" />
-          <rect x="330" y="280" width="14" height="18" fill="#8fa9c4" />
-          <rect y="360" width="480" height="120" fill="url(#waterGrad)" />
-          <path d="M0,372 Q60,364 120,372 T240,372 T360,372 T480,372" fill="none" stroke="#eaf3fb" stroke-width="3" opacity="0.5" />
-        </svg>
-        <div class="illustration-badges">
-          <span class="illustration-badge" style="--badge-bg:#e5f0ea;">🏠</span>
-          <span class="illustration-badge" style="--badge-bg:#e6ecf9;">📄</span>
-          <span class="illustration-badge" style="--badge-bg:#fbeae1;">👥</span>
+      <div class="plan-preview" aria-hidden="true">
+        <div class="plan-preview-header">
+          <span>Ananya's quest board</span>
+          <span class="plan-preview-progress">2 of 24 done</span>
+        </div>
+        <div class="progress-bar plan-preview-bar"><div class="progress-fill" style="width:8%"></div></div>
+        <div class="plan-preview-list">
+          <div class="plan-preview-item done">
+            <span class="plan-check">✓</span>
+            <span class="plan-title">Book temporary accommodation</span>
+            <span class="quest-badge" style="--badge-color:#003580">⚖️ Admin</span>
+          </div>
+          <div class="plan-preview-item done">
+            <span class="plan-check">✓</span>
+            <span class="plan-title">Register with DVV</span>
+            <span class="quest-badge" style="--badge-color:#003580">⚖️ Admin</span>
+          </div>
+          <div class="plan-preview-item">
+            <span class="plan-check"></span>
+            <span class="plan-title">Get your tax card (verokortti)</span>
+            <span class="quest-badge" style="--badge-color:#003580">⚖️ Admin</span>
+          </div>
+          <div class="plan-preview-item">
+            <span class="plan-check"></span>
+            <span class="plan-title">Try a Finnish sauna</span>
+            <span class="quest-badge" style="--badge-color:#4da8da">🎭 Culture</span>
+          </div>
         </div>
       </div>
     </section>
+    <div class="hero-trust">
+      <span class="trust-item">🛡️ Real official sources</span>
+      <span class="trust-item">🎯 Personalized to your move</span>
+      <span class="trust-item">🏆 Earn points as you go</span>
+    </div>
     <section class="how">
       <h2>How it works</h2>
       <div class="how-grid">
@@ -935,10 +834,6 @@ document.addEventListener("click", (e) => {
 
   if (action === "toggle-theme") {
     setTheme(getTheme() === "dark" ? "light" : "dark");
-  } else if (action === "carousel-goto") {
-    stopHeroCarousel();
-    goToCarouselSlide(Number(el.dataset.slide));
-    startHeroCarousel();
   } else if (action === "go-home") {
     setState({ view: "landing", authError: null, authNotice: null });
   } else if (action === "go-auth") {

@@ -29,15 +29,17 @@
 <body>
   <header class="topbar">
     <button class="brand" type="button" data-action="go-home" aria-label="Go to homepage">🇫🇮 Kaveri</button>
-    <div class="topbar-actions">
+    <button class="theme-toggle" type="button" data-action="toggle-theme" aria-label="Switch to dark theme" title="Switch theme"></button>
+  </header>
+  <div id="app"></div>
+  <footer class="site-footer">
+    <div class="site-footer-links">
       <button class="link-btn" type="button" data-action="open-fun-fact">🎉 Fun Fact</button>
       <button class="link-btn" type="button" data-action="open-events">📅 Events</button>
       <button class="link-btn" type="button" data-action="open-volunteer">🙌 Volunteer</button>
       <button class="link-btn" type="button" data-action="open-resources">📚 Resources</button>
     </div>
-    <button class="theme-toggle" type="button" data-action="toggle-theme" aria-label="Switch to dark theme" title="Switch theme"></button>
-  </header>
-  <div id="app"></div>
+  </footer>
   <div id="confetti-layer" aria-hidden="true"></div>
 
   <div class="settings-modal" id="fun-fact-modal" hidden>

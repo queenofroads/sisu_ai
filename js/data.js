@@ -746,42 +746,6 @@ const VOLUNTEER_QUESTS = [
 ];
 
 /*
- * The landing hero carousel — a few persona-shaped situations Kaveri covers,
- * so a visitor sees themselves reflected instead of one generic pitch.
- * Deliberately illustrative ("who this is for"), not testimonials — no
- * names or first-person quotes attributed to anyone real.
- */
-const HERO_PERSONAS = [
-  { icon: "🎓", who: "Moving to study in Finland?", benefit: "Your permit, housing, and school timeline — planned before you land." },
-  { icon: "👨‍👩‍👧", who: "Relocating with family?", benefit: "Daycare deadlines, neuvola, and schools — sorted before the paperwork piles up." },
-  { icon: "🔬", who: "Coming as a researcher?", benefit: "Permit routes, integration, and your first payslip — explained clearly." },
-  { icon: "💼", who: "Starting a new job in Finland?", benefit: "Work permits, tax cards, and your first weeks — mapped out for you." },
-];
-
-/*
- * Rotates the big wordmark on the landing hero — the name "Kaveri" itself,
- * transliterated into English, Finnish, and ten major Indian language
- * scripts (it's already a real, well-known word in Indian languages: the
- * name of a major South Indian river). Standard transliterations of the
- * name, not translations — the word stays "Kaveri," only the script
- * changes.
- */
-const FRIEND_WORDS = [
-  { lang: "Finnish", code: "fi", word: "Kaveri" },
-  { lang: "English", code: "en", word: "Kaveri" },
-  { lang: "Hindi", code: "hi", word: "कावेरी" },
-  { lang: "Bengali", code: "bn", word: "কাবেরী" },
-  { lang: "Marathi", code: "mr", word: "कावेरी" },
-  { lang: "Telugu", code: "te", word: "కావేరి" },
-  { lang: "Tamil", code: "ta", word: "காவேரி" },
-  { lang: "Gujarati", code: "gu", word: "કાવેરી" },
-  { lang: "Kannada", code: "kn", word: "ಕಾವೇರಿ" },
-  { lang: "Malayalam", code: "ml", word: "കാവേരി" },
-  { lang: "Punjabi", code: "pa", word: "ਕਾਵੇਰੀ" },
-  { lang: "Urdu", code: "ur", word: "کاویری" },
-];
-
-/*
  * Fun Finland trivia — shown in the "Fun Fact" popup. Sourced from TRIVIA.md
  * (already vetted); this is light-hearted flavor content, not a quest
  * citation, so no SOURCES link is attached.
