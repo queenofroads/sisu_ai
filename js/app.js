@@ -37,6 +37,9 @@ function defaultState() {
     leaderboard: [],
     leaderboardLoading: false,
     leaderboardError: null,
+    communityQuestions: [],
+    communityLoading: false,
+    communityError: null,
     aiChatLog: [],
   };
 }
@@ -155,6 +158,7 @@ async function handleSignedIn(user) {
     wizardIndex: state.roadmap ? state.wizardIndex : 0,
   });
   refreshLeaderboard();
+  refreshCommunity();
 }
 
 function handleSignedOut() {
@@ -172,6 +176,26 @@ async function refreshLeaderboard() {
   } catch (e) {
     setState({ leaderboardLoading: false, leaderboardError: e.message });
   }
+}
+
+async function refreshCommunity() {
+  if (!isSupabaseConfigured()) return;
+  setState({ communityLoading: true, communityError: null });
+  try {
+    const rows = await fetchCommunityQuestions(30);
+    setState({ communityQuestions: rows, communityLoading: false });
+  } catch (e) {
+    setState({ communityLoading: false, communityError: e.message });
+  }
+}
+
+function timeAgo(iso) {
+  const mins = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.round(hours / 24)}d ago`;
 }
 
 // ---------- Views ----------
@@ -501,6 +525,7 @@ function renderRoadmap() {
     </section>
 
     ${renderLeaderboard()}
+    ${renderCommunity()}
   `;
   // AI Buddy is temporarily pulled from the UI (renderAiBuddy() below is
   // still intact) — re-add "${renderAiBuddy()}" here and the settings
@@ -590,6 +615,71 @@ function renderLeaderboard() {
   `;
 }
 
+function renderCommunity() {
+  const rows = state.communityQuestions || [];
+  const canPost = !!state.authUserId;
+  return `
+    <section class="community">
+      <h3>💬 Ask Kaveri Community</h3>
+      <p class="muted">Post a question for other newcomers — and Kaveris further along — to help answer.</p>
+      ${state.communityError ? `<p class="auth-error">Couldn't reach the community board: ${escapeHtml(state.communityError)}</p>` : ""}
+      ${
+        canPost
+          ? `<form data-form="community-question">
+              <textarea name="question" rows="2" placeholder="e.g. Anyone know a pediatrician near Espoo who speaks English?" required></textarea>
+              <button class="btn btn-primary" type="submit">Post question</button>
+            </form>`
+          : `<p class="muted">Log in with a real account (not test mode) to post a question or reply — you can still read what others have asked.</p>`
+      }
+      ${
+        state.communityLoading
+          ? `<p class="muted">Loading…</p>`
+          : rows.length
+          ? `<div class="community-list">${rows.map((q) => renderCommunityQuestion(q, canPost)).join("")}</div>`
+          : `<p class="muted">No questions yet — be the first to ask.</p>`
+      }
+      <button class="link-btn" data-action="refresh-community">Refresh</button>
+    </section>
+  `;
+}
+
+function renderCommunityQuestion(q, canPost) {
+  const replies = (q.community_replies || []).slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  return `
+    <div class="community-question">
+      <div class="community-q-head">
+        <span class="community-name">${escapeHtml(q.name)}</span>
+        <span class="community-time muted">${timeAgo(q.created_at)}</span>
+      </div>
+      <p class="community-q-body">${escapeHtml(q.question)}</p>
+      ${
+        replies.length
+          ? `<div class="community-replies">${replies
+              .map(
+                (r) => `
+                <div class="community-reply">
+                  <div class="community-q-head">
+                    <span class="community-name">${escapeHtml(r.name)}</span>
+                    <span class="community-time muted">${timeAgo(r.created_at)}</span>
+                  </div>
+                  <p>${escapeHtml(r.reply)}</p>
+                </div>`
+              )
+              .join("")}</div>`
+          : ""
+      }
+      ${
+        canPost
+          ? `<form data-form="community-reply" data-question-id="${q.id}">
+              <input type="text" name="reply" placeholder="Write a reply..." required>
+              <button class="btn btn-ghost" type="submit">Reply</button>
+            </form>`
+          : ""
+      }
+    </div>
+  `;
+}
+
 function renderAiBuddy() {
   const key = hasApiKey();
   return `
@@ -647,6 +737,7 @@ document.addEventListener("click", (e) => {
     // view), just won't include this session.
     setState({ view: "wizard", wizardOrder: ["basic", "categories"], wizardIndex: 0, authError: null, authNotice: null });
     refreshLeaderboard();
+    refreshCommunity();
   } else if (action === "wizard-next-basic") {
     const step = document.getElementById("wizard-step");
     const profile = { ...state.profile };
@@ -698,6 +789,8 @@ document.addEventListener("click", (e) => {
     render();
   } else if (action === "refresh-leaderboard") {
     refreshLeaderboard();
+  } else if (action === "refresh-community") {
+    refreshCommunity();
   } else if (action === "log-out") {
     signOutUser()
       .then(() => handleSignedOut())
@@ -792,6 +885,25 @@ document.addEventListener("submit", (e) => {
     askAiBuddy(question, state.profile, summary)
       .then((answer) => setState({ aiChatLog: [...state.aiChatLog, { role: "assistant", text: answer }] }))
       .catch((err) => setState({ aiChatLog: [...state.aiChatLog, { role: "assistant", text: `Couldn't reach AI Buddy: ${err.message}` }] }));
+  } else if (kind === "community-question") {
+    const question = form.question.value.trim();
+    if (!question || !state.authUserId) return;
+    postCommunityQuestion({ userId: state.authUserId, name: state.profile.name || "A Kaveri", question })
+      .then(() => {
+        form.reset();
+        refreshCommunity();
+      })
+      .catch((err) => setState({ communityError: err.message }));
+  } else if (kind === "community-reply") {
+    const reply = form.reply.value.trim();
+    const questionId = form.dataset.questionId;
+    if (!reply || !state.authUserId) return;
+    postCommunityReply({ questionId, userId: state.authUserId, name: state.profile.name || "A Kaveri", reply })
+      .then(() => {
+        form.reset();
+        refreshCommunity();
+      })
+      .catch((err) => setState({ communityError: err.message }));
   }
 });
 
