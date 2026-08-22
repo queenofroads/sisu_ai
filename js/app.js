@@ -360,18 +360,7 @@ function renderLanding() {
         <span class="hero-flag" aria-label="Finland">🇫🇮</span>
       </div>
       <p class="hero-tagline">Your friend for <span class="hero-tagline-word" id="hero-tagline-word">${escapeHtml(HERO_TAGLINES[0])}</span></p>
-      <h1>Moving from India to Finland?<br>Meet <em>Kaveri</em>, your AI friend here.</h1>
-      <p class="hero-sub">
-        Kaveri turns real official Finnish relocation guidance into quests —
-        Administrative Work, Social, Cultural, and Food — worth points. Complete them, climb
-        the leaderboard, and get to "Kaveri" level: the point where you're not
-        a newcomer anymore, you're a friend.
-      </p>
-      <div class="hero-categories">
-        ${Object.values(QUEST_CATEGORIES)
-          .map((qc) => `<span class="hero-cat-chip" style="--chip-color:${qc.color}">${qc.icon} ${qc.label}</span>`)
-          .join("")}
-      </div>
+      <h1>Your <em>AI friend</em> for moving to Finland.</h1>
       <div class="hero-actions">
         <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Sign up & start my quests</button>
         <button class="btn btn-ghost" data-action="go-auth" data-mode="login">Log in</button>

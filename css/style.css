@@ -133,7 +133,7 @@ em { color: var(--primary-dark); font-style: normal; }
 /* ---------- Landing ---------- */
 .hero {
   text-align: center;
-  padding: 44px 24px 28px;
+  padding: 48px 24px 44px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
@@ -168,12 +168,7 @@ em { color: var(--primary-dark); font-style: normal; }
   position: absolute; left: 0; right: 0; bottom: 0; height: 5px;
   background: linear-gradient(90deg, #ff9933 0%, #ff9933 33%, var(--primary) 33%, var(--primary) 66%, #138808 66%, #138808 100%);
 }
-.hero-categories { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 0 26px; }
-.hero-cat-chip {
-  display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;
-  padding: 6px 14px; border-radius: 999px; color: #fff; background: var(--chip-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
+.hero h1 { margin-bottom: 28px; }
 .hero-badge {
   display: inline-block;
   background: var(--surface);
