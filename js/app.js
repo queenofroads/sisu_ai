@@ -465,9 +465,13 @@ function renderRoadmap() {
   const roadmap = state.roadmap || {};
   let total = 0;
   let done = 0;
+  let possiblePoints = 0;
+  const touchedCategories = new Set();
   PHASES.forEach((ph) => {
     (roadmap[ph.id] || []).forEach((s, i) => {
       total++;
+      possiblePoints += s.points || 0;
+      touchedCategories.add(s.questCategory);
       if (state.progress[questKeyFor(ph.id, s, i)]) done++;
     });
   });
@@ -484,6 +488,20 @@ function renderRoadmap() {
     });
   });
   const priorities = priorityPool.slice(0, 3);
+
+  // Only the first phase (in order) that still has unfinished quests starts
+  // expanded — otherwise every phase opens at once and the board reads as
+  // one long undifferentiated wall of cards.
+  let firstOpenPhaseId = null;
+  for (const ph of PHASES) {
+    const steps = roadmap[ph.id] || [];
+    if (!steps.length) continue;
+    const phDone = steps.filter((s, i) => state.progress[questKeyFor(ph.id, s, i)]).length;
+    if (phDone < steps.length) {
+      firstOpenPhaseId = ph.id;
+      break;
+    }
+  }
 
   return `
     <section class="roadmap-header">
@@ -509,10 +527,14 @@ function renderRoadmap() {
       </div>
     </section>
 
+    ${renderAssistantIntro(total, possiblePoints, touchedCategories.size)}
+
+    ${renderAiBuddy()}
+
     ${
       priorities.length
         ? `<section class="priorities">
-        <h3>🎯 Top priorities right now</h3>
+        <h3>🎯 Kaveri's picks: what matters most right now</h3>
         <div class="priority-list">
           ${priorities.map((s) => renderStepCard(s, s.phaseId, s.idx, true)).join("")}
         </div>
@@ -521,26 +543,41 @@ function renderRoadmap() {
     }
 
     <section class="phases">
-      ${PHASES.map((ph) => renderPhaseSection(ph, roadmap[ph.id] || [])).join("")}
+      ${PHASES.map((ph) => renderPhaseSection(ph, roadmap[ph.id] || [], ph.id === firstOpenPhaseId)).join("")}
     </section>
 
     ${renderLeaderboard()}
     ${renderCommunity()}
   `;
-  // AI Buddy is temporarily pulled from the UI (renderAiBuddy() below is
-  // still intact) — re-add "${renderAiBuddy()}" here and the settings
-  // button in the header-actions block above to bring it back.
 }
 
-function renderPhaseSection(phase, steps) {
+function renderAssistantIntro(totalQuests, possiblePoints, categoryCount) {
+  const name = state.profile.name || "there";
+  const origin = state.profile.origin || "India";
+  const destination = state.profile.destination || "Finland";
+  return `
+    <section class="assistant-intro">
+      <div class="assistant-avatar" aria-hidden="true">🤖</div>
+      <div class="assistant-bubble">
+        <p class="assistant-name">Kaveri <span class="assistant-tag">AI relocation assistant</span></p>
+        <p>Hi ${escapeHtml(name)} — I read through what you told me and put together a plan for your move from ${escapeHtml(origin)} to ${escapeHtml(destination)}.</p>
+        <p><strong>${totalQuests} quests</strong> across ${categoryCount} area${categoryCount === 1 ? "" : "s"}, worth up to <strong>${possiblePoints} points</strong>. Every single one links to a real, official source — tap it and check for yourself, don't just trust me.</p>
+        <p class="assistant-hint">Tick a box once you've actually done something, to earn its points. Something specific I haven't covered? Ask me below.</p>
+      </div>
+    </section>
+  `;
+}
+
+function renderPhaseSection(phase, steps, openByDefault) {
   if (!steps.length) return "";
   const doneCount = steps.filter((s, i) => state.progress[questKeyFor(phase.id, s, i)]).length;
   return `
-    <details class="phase-section" open>
+    <details class="phase-section" ${openByDefault ? "open" : ""}>
       <summary>
         <span>${phase.icon} ${escapeHtml(phase.label)}</span>
         <span class="phase-progress-pill ${doneCount === steps.length ? "complete" : ""}">${doneCount === steps.length ? "✓ " : ""}${doneCount}/${steps.length}</span>
       </summary>
+      ${phase.blurb ? `<p class="phase-blurb">${escapeHtml(phase.blurb)}</p>` : ""}
       <div class="step-list">
         ${steps.map((s, i) => renderStepCard(s, phase.id, i, false)).join("")}
       </div>
@@ -572,18 +609,16 @@ function renderStepCard(s, phaseId, idx, compact) {
 
   return `
     <div class="step-card" style="--badge-color:${qc.color}">
-      <div class="step-header">
-        <span class="step-header-cat">${qc.icon} ${qc.label}</span>
-        <span class="step-points">🪙 +${s.points} pts</span>
-      </div>
-      <div class="step-main">
-        <label class="step-check">${checkboxInput}</label>
-        <div class="step-body">
-          <h4>${escapeHtml(s.title)}</h4>
-          <p class="step-why">${escapeHtml(s.why)}</p>
-          <p class="step-action">🎯 <strong>Do this:</strong> ${escapeHtml(s.action)}</p>
-          <a class="step-source" href="${s.source.url}" target="_blank" rel="noopener">📎 ${escapeHtml(s.source.name)}</a>
+      <label class="step-check">${checkboxInput}</label>
+      <div class="step-body">
+        <div class="step-cat">
+          <span class="quest-badge" style="--badge-color:${qc.color}">${qc.icon} ${qc.label}</span>
+          <span class="step-points">🪙 +${s.points} pts</span>
         </div>
+        <h4>${escapeHtml(s.title)}</h4>
+        <p class="step-why">${escapeHtml(s.why)}</p>
+        <p class="step-action">🎯 <strong>Do this:</strong> ${escapeHtml(s.action)}</p>
+        <a class="step-source" href="${s.source.url}" target="_blank" rel="noopener">📎 ${escapeHtml(s.source.name)}</a>
       </div>
     </div>
   `;
@@ -684,26 +719,26 @@ function renderAiBuddy() {
   const key = hasApiKey();
   return `
     <section class="ai-buddy">
-      <h3>💬 Ask AI Buddy</h3>
+      <h3>💬 Ask Kaveri</h3>
       ${
         key
           ? `
         <div class="ai-log">
-          ${state.aiChatLog.map((m) => `<div class="ai-msg ai-${m.role}">${escapeHtml(m.text)}</div>`).join("") || `<p class="muted">Ask anything not covered above — e.g. "we're a family of four moving in November, what changes for us?"</p>`}
+          ${state.aiChatLog.map((m) => `<div class="ai-msg ai-${m.role}">${escapeHtml(m.text)}</div>`).join("") || `<p class="muted">Ask anything the plan above doesn't cover — e.g. "we're a family of four moving in November, what changes for us?"</p>`}
         </div>
         <form data-form="ai-ask">
           <input type="text" name="question" placeholder="Ask a follow-up question..." required>
           <button class="btn btn-primary" type="submit">Ask</button>
         </form>
-        <button class="link-btn" data-action="clear-api-key">Remove API key</button>
+        <button class="link-btn" data-action="clear-api-key">Disconnect</button>
       `
-          : `<p class="muted">The quest board above needs Supabase, but never Claude — add your own Claude API key to unlock live, conversational follow-up questions for anything the quests don't cover.</p>
-        <button class="btn btn-secondary" data-action="open-settings">Connect AI Buddy</button>`
+          : `<p class="muted">The quest board above is generated from a fixed knowledge base — this is the live, conversational part. Add your own Claude API key to ask Kaveri anything the plan didn't anticipate.</p>
+        <button class="btn btn-secondary" data-action="open-settings">💬 Talk to Kaveri</button>`
       }
     </section>
     <div class="settings-modal" id="settings-modal" hidden>
       <div class="settings-box">
-        <h3>Connect AI Buddy</h3>
+        <h3>Talk to Kaveri</h3>
         <p class="muted">Stored only in this browser tab (sessionStorage). Cleared when you close the tab. Never saved to any file or sent anywhere except Anthropic's API, directly from your browser.</p>
         <form data-form="api-key">
           <input type="password" name="apiKey" placeholder="sk-ant-..." value="${escapeHtml(getApiKey())}">

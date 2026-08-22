@@ -121,11 +121,11 @@ const BACKGROUNDS = [
 ];
 
 const PHASES = [
-  { id: "before", label: "Before you leave India", icon: "🧳" },
-  { id: "week2", label: "First 2 weeks in Finland", icon: "🛫" },
-  { id: "month1", label: "First month", icon: "📅" },
-  { id: "month3", label: "First 3 months", icon: "🌱" },
-  { id: "ongoing", label: "Ongoing", icon: "🔁" },
+  { id: "before", label: "Before you leave India", icon: "🧳", blurb: "Sort these while you're still in India and have easy access to Indian paperwork." },
+  { id: "week2", label: "First 2 weeks in Finland", icon: "🛫", blurb: "Mostly about getting yourself registered with the Finnish system — everything else depends on this." },
+  { id: "month1", label: "First month", icon: "📅", blurb: "Once the basics are registered, these round out your setup." },
+  { id: "month3", label: "First 3 months", icon: "🌱", blurb: "Not urgent, but worth knowing about before they sneak up on you." },
+  { id: "ongoing", label: "Ongoing", icon: "🔁", blurb: "No deadline — these are about actually building a life here, whenever you're ready." },
 ];
 
 /*
