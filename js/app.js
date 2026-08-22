@@ -1030,12 +1030,44 @@ document.addEventListener("submit", (e) => {
   }
 });
 
+// Small hand-rolled confetti burst — no library, so it can't add a network
+// dependency or fail silently if a CDN is unreachable on venue wifi.
+const CONFETTI_COLORS = ["#ff9933", "#138808", "#003580", "#4da8da", "#c9971f", "#ffffff"];
+
+function fireConfetti(x, y) {
+  const layer = document.getElementById("confetti-layer");
+  if (!layer || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const count = 26;
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    const angle = Math.random() * Math.PI - Math.PI / 2 - Math.PI / 2; // upward-ish spread
+    const distance = 60 + Math.random() * 90;
+    const dx = Math.cos(angle) * distance;
+    const dy = Math.sin(angle) * distance + 120 + Math.random() * 80; // gravity drift down
+    const spin = 360 + Math.random() * 540 * (Math.random() < 0.5 ? -1 : 1);
+    piece.style.left = `${x}px`;
+    piece.style.top = `${y}px`;
+    piece.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    piece.style.setProperty("--confetti-x", `${dx}px`);
+    piece.style.setProperty("--confetti-y", `${dy}px`);
+    piece.style.setProperty("--confetti-spin", `${spin}deg`);
+    piece.style.setProperty("--confetti-duration", `${700 + Math.random() * 400}ms`);
+    piece.addEventListener("animationend", () => piece.remove());
+    layer.appendChild(piece);
+  }
+}
+
 document.addEventListener("click", (e) => {
   const el = e.target.closest("[data-progress-toggle]");
   if (!el) return;
   const key = el.dataset.progressToggle;
   const wasChecked = !!state.progress[key];
   const nowChecked = !wasChecked;
+  if (nowChecked) {
+    const rect = el.getBoundingClientRect();
+    fireConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
   const progress = { ...state.progress, [key]: nowChecked };
   setState({ progress, syncError: null });
 
