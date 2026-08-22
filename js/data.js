@@ -588,6 +588,83 @@ const FOOD_QUESTS = [
   },
 ];
 
+/*
+ * Fun Finland trivia — shown in the "Fun Fact" popup. Sourced from TRIVIA.md
+ * (already vetted); this is light-hearted flavor content, not a quest
+ * citation, so no SOURCES link is attached.
+ */
+const FUN_FACTS = [
+  "Across Finland as a whole, humans outnumber reindeer by a wide margin (~5.6 million people vs. ~200,000 reindeer) — but in Lapland, reindeer actually outnumber people.",
+  "The sharp, salty kick in salmiakki (Finland's iconic salty liquorice) comes from ammonium chloride, not table salt — an ingredient that started life as a 19th-century cough medicine.",
+  "Finns drink more coffee per capita than any other nation on earth — roughly 12 kilograms of light-roast coffee per person per year, about 4–8 cups a day.",
+  "Finland has roughly 3 million saunas for a population of 5.6 million — enough total sauna space to fit the entire country inside at once.",
+  "Finland hosts some wonderfully eccentric global competitions, including the Wife-Carrying World Championships, Swamp Soccer, and Heavy Metal Knitting.",
+  "Finland has the highest concentration of heavy metal bands per capita in the world — over 53 bands per 100,000 residents.",
+  "Finland's coastline is still rebounding from the weight of Ice Age glaciers (glacial rebound) and grows by roughly 7 square kilometers every year.",
+  "Everyman's Right (Jokamiehenoikeus) gives anyone the legal right to roam freely, pitch a tent, and pick wild berries and mushrooms across almost all forests and wilderness, regardless of who owns the land.",
+  "Traffic fines in Finland are calculated from the offender's income (day-fines) — high earners have occasionally received speeding tickets worth over €100,000.",
+  "Every October 13th, Finland celebrates the National Day of Failure, encouraging risk-taking and destigmatizing setbacks in business and life.",
+];
+
+/*
+ * Curated resource directory — shown in the "Resources" popup. Condensed
+ * from RESOURCES.md (every URL there was used as-is, none invented). Kept
+ * as a browsable reference, separate from the per-quest SOURCES citations
+ * used in generated roadmap steps.
+ */
+const RESOURCES = [
+  {
+    section: "Official government & authority",
+    links: [
+      { name: "InfoFinland", url: "https://infofinland.fi/en", note: "Comprehensive info for people moving to and living in Finland." },
+      { name: "Suomi.fi", url: "https://www.suomi.fi/frontpage", note: "Official Finnish public services portal." },
+      { name: "Migri — Finnish Immigration Service", url: "https://migri.fi/en", note: "Residence permits, work, studies, family reunification." },
+      { name: "DVV — Population Data Services Agency", url: "https://dvv.fi/en/", note: "Registration, personal identity codes, municipality of residence." },
+      { name: "Kela", url: "https://www.kela.fi/moving-to-finland", note: "Social security, benefits, eligibility." },
+      { name: "Vero (Tax Administration)", url: "https://www.vero.fi/en/", note: "Tax cards, income tax, taxation." },
+      { name: "Job Market Finland", url: "https://tyomarkkinatori.fi/en", note: "National job market and employment service." },
+      { name: "Work in Finland", url: "https://www.workinfinland.com/en/", note: "Opportunities for international professionals." },
+      { name: "Finnish National Agency for Education (EDUFI)", url: "https://www.oph.fi/en", note: "The Finnish education system." },
+      { name: "Traficom", url: "https://www.traficom.fi/en", note: "Vehicles, driving, and driving licence regulations." },
+      { name: "112 Finland", url: "https://112.fi/en", note: "Emergency services." },
+      { name: "City of Espoo", url: "https://www.espoo.fi/en", note: "Official information and services for Espoo." },
+      { name: "City of Helsinki", url: "https://www.hel.fi/en", note: "Official information and services for Helsinki." },
+      { name: "Embassy of India in Helsinki", url: "https://www.indembhelsinki.gov.in/", note: "Consular, passport, and other services for Indian citizens." },
+    ],
+  },
+  {
+    section: "Housing",
+    links: [
+      { name: "Oikotie Homes", url: "https://asunnot.oikotie.fi/", note: "Finnish property and housing portal." },
+      { name: "Vuokraovi", url: "https://www.vuokraovi.com/", note: "Finnish rental housing search portal." },
+      { name: "HOAS", url: "https://hoas.fi/en/", note: "Student housing in the Helsinki region." },
+    ],
+  },
+  {
+    section: "Jobs & language",
+    links: [
+      { name: "Duunitori", url: "https://duunitori.fi/", note: "Finnish job search and employment portal." },
+      { name: "Yle Kielikoulu", url: "https://kielikoulu.yle.fi/", note: "Language learning from Finland's public broadcaster." },
+      { name: "Duolingo", url: "https://www.duolingo.com/", note: "Language learning platform." },
+    ],
+  },
+  {
+    section: "Transport",
+    links: [
+      { name: "HSL", url: "https://www.hsl.fi/en", note: "Public transport in the Helsinki region." },
+      { name: "VR", url: "https://www.vr.fi/en", note: "Finnish rail travel and train services." },
+    ],
+  },
+  {
+    section: "Indian community in Finland",
+    links: [
+      { name: "Indian Women in Finland", url: "https://www.iwf.fi/", note: "Networking, mentoring, and events." },
+      { name: "Bharatvaasi in Finland", url: "https://www.bharatvaasi.fi/", note: "Community platform and network for Indians in Finland." },
+      { name: "Finland-India Society", url: "https://suomiintiaseura.fi/", note: "Promotes connections between Finland and India." },
+    ],
+  },
+];
+
 function buildRoadmap(profile, categoryAnswers) {
   const stepsByPhase = {};
   PHASES.forEach((p) => (stepsByPhase[p.id] = []));

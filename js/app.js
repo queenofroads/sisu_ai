@@ -220,7 +220,11 @@ function renderSetupBanner() {
 function renderLanding() {
   return `
     <section class="hero">
-      <div class="hero-badge">🇮🇳 → 🇫🇮 &nbsp;Kaveri</div>
+      <div class="hero-flags">
+        <span class="hero-flag" aria-label="India">🇮🇳</span>
+        <span class="hero-wordmark">Kaveri</span>
+        <span class="hero-flag" aria-label="Finland">🇫🇮</span>
+      </div>
       <h1>Moving from India to Finland?<br>Turn it into a game you can <em>win</em>.</h1>
       <p class="hero-sub">
         Kaveri turns real official Finnish relocation guidance into quests —
@@ -648,8 +652,46 @@ document.addEventListener("click", (e) => {
     signOutUser()
       .then(() => handleSignedOut())
       .catch((err) => setState({ syncError: `Couldn't log out: ${err.message}` }));
+  } else if (action === "open-fun-fact") {
+    showRandomFunFact();
+    document.getElementById("fun-fact-modal").hidden = false;
+  } else if (action === "next-fun-fact") {
+    showRandomFunFact();
+  } else if (action === "close-fun-fact") {
+    document.getElementById("fun-fact-modal").hidden = true;
+  } else if (action === "open-resources") {
+    renderResourcesList();
+    document.getElementById("resources-modal").hidden = false;
+  } else if (action === "close-resources") {
+    document.getElementById("resources-modal").hidden = true;
   }
 });
+
+// ---------- Fun Fact + Resources popups (static overlays, live outside #app
+// so they stay available across every view without being wiped by render()) ----------
+
+function showRandomFunFact() {
+  const fact = FUN_FACTS[Math.floor(Math.random() * FUN_FACTS.length)];
+  document.getElementById("fun-fact-text").textContent = fact;
+}
+
+function renderResourcesList() {
+  document.getElementById("resources-list").innerHTML = RESOURCES.map(
+    (group) => `
+      <div class="resources-group">
+        <h4>${escapeHtml(group.section)}</h4>
+        <ul>
+          ${group.links
+            .map(
+              (l) =>
+                `<li><a href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.name)}</a> — <span class="muted">${escapeHtml(l.note)}</span></li>`
+            )
+            .join("")}
+        </ul>
+      </div>
+    `
+  ).join("");
+}
 
 document.addEventListener("change", (e) => {
   const el = e.target;
