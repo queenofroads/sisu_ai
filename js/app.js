@@ -143,7 +143,14 @@ async function handleSignedIn(user) {
     /* leaderboard/points sync can retry later; don't block sign-in on it */
   }
   const profilePatch = profile
-    ? { ...state.profile, name: state.profile.name || profile.name, origin: state.profile.origin || profile.origin || "", destination: state.profile.destination || profile.destination || "" }
+    ? {
+        ...state.profile,
+        name: state.profile.name || profile.name,
+        origin: state.profile.origin || profile.origin || "",
+        destination: state.profile.destination || profile.destination || "",
+        publicNameChoice: state.profile.publicNameChoice || (profile.public_name ? "nickname" : "real"),
+        publicName: state.profile.publicName || profile.public_name || "",
+      }
     : state.profile;
   const progress = state.roadmap ? progressFromCompletions(state.roadmap, completions) : {};
   setState({
@@ -379,6 +386,13 @@ function renderBasicStep() {
       <label>Adults travelling (incl. you)<input type="number" min="1" data-field="adults" value="${escapeHtml(p.adults || 1)}"></label>
       <label>Children travelling<input type="number" min="0" data-field="childrenCount" value="${escapeHtml(p.childrenCount || 0)}"></label>
       <label>Children's ages (if any)<input type="text" data-field="childrenAges" value="${escapeHtml(p.childrenAges || "")}" placeholder="e.g. 4 and 9"></label>
+      <label>On the public leaderboard, show<select data-field="publicNameChoice">
+        <option value="real" ${p.publicNameChoice !== "nickname" ? "selected" : ""}>My real name</option>
+        <option value="nickname" ${p.publicNameChoice === "nickname" ? "selected" : ""}>A nickname instead</option>
+      </select></label>
+      <div class="question" data-question-wrapper data-show-if='{"field":"publicNameChoice","oneOf":["nickname"]}'>
+        <label>Nickname to show instead<input type="text" data-field="publicName" value="${escapeHtml(p.publicName || "")}" placeholder="e.g. A.K. or Newcomer42"></label>
+      </div>
     </div>
     <div class="wizard-nav">
       <span></span>
@@ -814,7 +828,8 @@ document.addEventListener("click", (e) => {
     step.querySelectorAll("[data-field]").forEach((input) => (profile[input.dataset.field] = input.value));
     setState({ profile, view: "wizard", wizardOrder: ["basic", "categories"], wizardIndex: 1, syncError: null });
     if (state.authUserId) {
-      upsertMyProfile({ id: state.authUserId, name: profile.name, origin: profile.origin, destination: profile.destination }).catch((err) => setState({ syncError: `Couldn't save your profile: ${err.message}` }));
+      const publicName = profile.publicNameChoice === "nickname" && profile.publicName ? profile.publicName : null;
+      upsertMyProfile({ id: state.authUserId, name: profile.name, origin: profile.origin, destination: profile.destination, publicName }).catch((err) => setState({ syncError: `Couldn't save your profile: ${err.message}` }));
     }
   } else if (action === "wizard-next-categories") {
     const order = ["basic", "categories", ...state.categorySelection.map((id) => `cat:${id}`), "review"];

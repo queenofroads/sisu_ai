@@ -14,7 +14,8 @@
 --     leaderboard and nothing more. Views in Supabase run with the definer's
 --     privileges by default, so this view can read every row of `profiles`
 --     while `profiles` itself stays locked down — that's intentional, not a
---     hole.
+--     hole. A user can opt to show a nickname (`public_name`) instead of
+--     their real name on that view — see below.
 --   - `total_points` is kept in sync automatically by a trigger, so the
 --     client never has to (and can't) write its own score.
 
@@ -26,6 +27,14 @@ create table if not exists public.profiles (
   total_points integer not null default 0,
   created_at timestamptz not null default now()
 );
+
+-- Lets a user show a nickname on the public leaderboard instead of their
+-- real name (name stays required for personalization inside the app; this
+-- is purely about what's shown to other people). Null/empty means "use my
+-- real name" — see the leaderboard view below. `add column if not exists`
+-- so re-running this file on a project that already ran an earlier version
+-- of this schema is safe.
+alter table public.profiles add column if not exists public_name text;
 
 alter table public.profiles enable row level security;
 
@@ -96,10 +105,12 @@ create trigger quest_completions_points_sync
   after insert or delete on public.quest_completions
   for each row execute function public.recalc_total_points();
 
--- Public leaderboard: name + score only, nothing private.
+-- Public leaderboard: name + score only, nothing private. Shows the user's
+-- chosen public_name (nickname) when they've set one, falling back to their
+-- real name otherwise.
 drop view if exists public.leaderboard;
 create view public.leaderboard as
-  select id, name, total_points
+  select id, coalesce(nullif(public_name, ''), name) as name, total_points
   from public.profiles
   order by total_points desc, name asc;
 

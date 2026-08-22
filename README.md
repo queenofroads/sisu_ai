@@ -139,8 +139,9 @@ server-side job has no quest title to name.
 ## Responsible AI
 
 - **Privacy:** quest-completion history (*which* quests you've done) is private to your account
-  — only your name and total points are ever public, via the leaderboard view. Nothing about
-  your profile, origin, or destination is shared with other users.
+  — only your name and total points are ever public, via the leaderboard view. You can choose to
+  show a nickname instead of your real name on the leaderboard. Nothing about your profile,
+  origin, or destination is shared with other users.
 - **Reliability / transparency:** every quest cites its real source with a link, so you can
   verify it yourself rather than trusting an AI-generated claim blind. Where we couldn't verify
   a specific deep link (e.g. private housing portals), we link to the verified homepage and say

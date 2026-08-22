@@ -81,14 +81,14 @@ function onAuthChange(callback) {
 
 async function fetchMyProfile(userId) {
   const client = getSupabaseClient();
-  const { data, error } = await client.from("profiles").select("id, name, origin, destination, total_points").eq("id", userId).maybeSingle();
+  const { data, error } = await client.from("profiles").select("id, name, public_name, origin, destination, total_points").eq("id", userId).maybeSingle();
   if (error) throw new Error(friendlyAuthError(error));
   return data;
 }
 
-async function upsertMyProfile({ id, name, origin, destination }) {
+async function upsertMyProfile({ id, name, origin, destination, publicName }) {
   const client = getSupabaseClient();
-  const { error } = await client.from("profiles").upsert({ id, name, origin: origin || null, destination: destination || null });
+  const { error } = await client.from("profiles").upsert({ id, name, origin: origin || null, destination: destination || null, public_name: publicName || null });
   if (error) throw new Error(friendlyAuthError(error));
 }
 
