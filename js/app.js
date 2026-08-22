@@ -411,6 +411,7 @@ function renderRoadmap() {
   const totalPoints = computeTotalPoints();
   const level = levelFor(totalPoints);
   const nextLevel = LEVELS.find((l) => l.min > totalPoints);
+  const levelPct = nextLevel ? Math.min(100, Math.round(((totalPoints - level.min) / (nextLevel.min - level.min)) * 100)) : 100;
 
   const priorityPool = [];
   ["before", "week2"].forEach((phId) => {
@@ -428,8 +429,15 @@ function renderRoadmap() {
         <span class="muted">${done} of ${total} quests done</span>
       </div>
       <div class="score-panel">
-        <div class="score-points">${totalPoints} pts</div>
-        <div class="score-level">${level.icon} ${level.label}${nextLevel ? ` <span class="muted">· ${nextLevel.min - totalPoints} pts to ${nextLevel.icon} ${nextLevel.label}</span>` : ""}</div>
+        <div class="score-top">
+          <span class="score-level-badge">${level.icon}</span>
+          <div>
+            <div class="score-points">🪙 ${totalPoints} pts</div>
+            <div class="score-level">${level.label}</div>
+          </div>
+        </div>
+        <div class="level-progress"><div class="level-progress-fill" style="width:${levelPct}%"></div></div>
+        <div class="level-next muted">${nextLevel ? `${nextLevel.min - totalPoints} pts to ${nextLevel.icon} ${nextLevel.label}` : "Max level reached! 🎉"}</div>
       </div>
       <div class="header-actions">
         <button class="btn btn-ghost" data-action="edit-profile">Edit my details</button>
@@ -499,16 +507,18 @@ function renderStepCard(s, phaseId, idx, compact) {
 
   return `
     <div class="step-card" style="--badge-color:${qc.color}">
-      <label class="step-check">${checkboxInput}</label>
-      <div class="step-body">
-        <div class="step-cat">
-          <span class="quest-badge" style="--badge-color:${qc.color}">${qc.icon} ${qc.label}</span>
-          <span class="step-points">🪙 +${s.points} pts</span>
+      <div class="step-header">
+        <span class="step-header-cat">${qc.icon} ${qc.label}</span>
+        <span class="step-points">🪙 +${s.points} pts</span>
+      </div>
+      <div class="step-main">
+        <label class="step-check">${checkboxInput}</label>
+        <div class="step-body">
+          <h4>${escapeHtml(s.title)}</h4>
+          <p class="step-why">${escapeHtml(s.why)}</p>
+          <p class="step-action">🎯 <strong>Do this:</strong> ${escapeHtml(s.action)}</p>
+          <a class="step-source" href="${s.source.url}" target="_blank" rel="noopener">📎 ${escapeHtml(s.source.name)}</a>
         </div>
-        <h4>${escapeHtml(s.title)}</h4>
-        <p class="step-why">${escapeHtml(s.why)}</p>
-        <p class="step-action">🎯 <strong>Do this:</strong> ${escapeHtml(s.action)}</p>
-        <a class="step-source" href="${s.source.url}" target="_blank" rel="noopener">📎 ${escapeHtml(s.source.name)}</a>
       </div>
     </div>
   `;
