@@ -1,4 +1,4 @@
-# IndiaToFinland — AI Talent & Relocation Companion
+# Kaveri — Gamified Finland Relocation Quests
 
 Built at the IWF Hackathon (Vikki campus, Helsinki), sponsored in part by the City of Espoo.
 
@@ -23,96 +23,115 @@ Built at the IWF Hackathon (Vikki campus, Helsinki), sponsored in part by the Ci
 Finland's official relocation information is genuinely excellent — Migri, DVV, Kela, Vero,
 InfoFinland and the individual cities all publish accurate, detailed guidance. But it's
 scattered across a dozen separate institutions, written for a generic "foreigner," and gives
-no sense of *order*: what matters this week versus what can wait three months. A person moving
-from, say, Bengaluru to Espoo with a spouse and a six-year-old has to manually cross-reference
-all of it against their own specific situation.
+no sense of *order* or *motivation* to actually get through it. A person moving from, say,
+Bengaluru to Espoo with a spouse and a six-year-old has to manually cross-reference all of it
+against their own specific situation — and a wall of admin tasks is easy to put off.
 
 ## Target user
 
 Indian students, researchers, and working professionals relocating to Finland — often with
-family — who want the *real* official rules, not a generic global relocation checklist, and
-who don't have weeks to spend reading every agency's website before they even know what
-applies to them.
+family — who want the *real* official rules turned into something they'll actually finish,
+not a checklist that gets abandoned in week two.
 
 ## Our solution
 
 A short guided intake (where you're moving from/to, who's coming with you, your background,
-languages spoken, interests, and which areas you need help with) drives a **personalised,
-phase-ordered roadmap** — Before you leave India → First 2 weeks → First month → First 3
-months → Ongoing — built entirely from real, verified official sources (Migri, DVV, Kela,
-Vero, InfoFinland, the destination city, TE-palvelut). Every step shows *why it applies to
-you specifically* and links to the exact official page it came from. Progress is tracked
-per step, and an optional "AI Buddy" chat layer answers open-ended follow-up questions the
-structured roadmap can't anticipate.
+languages spoken, interests, and which areas you need help with) turns Finland's real official
+guidance into a **personalised quest board**. Every quest belongs to one of four categories —
+
+- ⚖️ **Legal** — residence permits, DVV registration, personal ID, tax card, bank account, housing paperwork
+- 👥 **Social** — job market/employment services, community and language groups, making connections
+- 🎭 **Cultural** — Finnish customs, sauna, public holidays, outdoor life, what's on locally
+- 🍴 **Food** — Finnish dishes and food culture worth trying
+
+— and is worth points. Complete quests, earn points, and climb a level: 🌱 Newcomer → 🏠 Settler
+→ 🧭 Local → 🤝 **Kaveri** (Finnish for "friend/buddy" — the whole app is trying to get you
+there). A public leaderboard (name + points only) shows how you're doing against everyone else
+using the app. An optional "AI Buddy" chat layer answers open-ended follow-ups the quest board
+can't anticipate.
 
 ## How AI is used
 
 Two layers, deliberately separated:
 
-1. **Grounded personalization engine** (always on, works fully offline). Your profile and
-   category answers are matched against a curated knowledge base of real official Finnish
-   sources to generate a prioritised, phase-ordered roadmap personalised to your family
-   situation, timeline, and background — this is the part that must never fail on stage, so it
-   has zero network dependency.
+1. **Grounded quest-generation engine** (works fully offline, zero network dependency). Your
+   profile and category answers are matched against a curated knowledge base of real official
+   Finnish sources to generate a prioritised, phase-ordered set of quests personalised to your
+   family situation, timeline, and background.
 2. **AI Buddy** (optional, bring-your-own Claude API key). A conversational layer for
-   open-ended questions the structured roadmap can't cover — "we're a family of four moving in
+   open-ended questions the quest board can't cover — "we're a family of four moving in
    November, what changes for us?" — calling the Claude API directly from the browser with a
    persona tuned to be warm, practical, and explicit about uncertainty rather than guessing.
-   This is where genuine LLM reasoning over messy, unstructured input earns its place, on top
-   of (not instead of) the grounded roadmap.
 
 We chose this split deliberately: a chatbot bolted onto a static FAQ page isn't a meaningful
 use of AI, and a pure LLM answering "what visa do I need" from memory risks confidently
 inventing a rule that doesn't exist. Grounding first, generation second.
 
-## Responsible AI
+## Tech stack
 
-- **Privacy:** all profile data stays in this browser's `localStorage`. Nothing is uploaded
-  anywhere unless you explicitly use AI Buddy.
-- **Reliability / transparency:** every roadmap step cites its real source with a link, so you
-  can verify it yourself rather than trusting an AI-generated claim blind. Where we couldn't
-  verify a specific deep link (e.g. private housing portals), we link to the verified
-  homepage and say so, rather than guessing a URL.
-- **Bias/fairness:** we don't assume every Indian user speaks Hindi, follows the same
-  traditions, or has the same family structure — languages and interests are asked, not
-  assumed.
-- **Security:** the optional Claude API key lives only in `sessionStorage` (cleared when the
-  tab closes), never written to a file, never committed, and never sent anywhere except
-  Anthropic's API directly from your browser.
-
-## Potential impact
-
-Extended further, this becomes the connective layer between Finland's already-excellent (but
-scattered) public services and the people trying to navigate them — reducing the real cost of
-relocation friction for the students, researchers and professionals Finland is actively trying
-to attract.
+Vanilla HTML/CSS/JS, no build step, no framework — plus **Supabase** (Postgres + Auth) for
+accounts, quest-completion sync, and the leaderboard. Unlike AI Buddy, Supabase is a
+**required** dependency: the quest board, accounts, and leaderboard don't work without it. The
+quest-*generation* logic itself (matching your profile against the knowledge base) still has
+zero network dependency and never fails on stage even if Supabase or wifi does.
 
 ## Running the prototype
 
-No build step, no dependencies, no server required.
+### 1. Create a Supabase project
+
+- Sign up / log in at [supabase.com](https://supabase.com) and create a new project.
+- In **Authentication → Providers → Email**, turn **off** "Confirm email" for the demo — this
+  lets signup log people in immediately without needing a live inbox on stage. (Leave it on for
+  a real deployment.)
+- Open the SQL editor and run the contents of [`supabase/schema.sql`](supabase/schema.sql). This
+  creates `profiles` and `quest_completions` (both locked down with row-level security to the
+  owning user) and a public `leaderboard` view that only exposes name + points.
+- In **Project Settings → API**, copy the **Project URL** and **anon public** key.
+
+### 2. Configure the app
+
+Paste those two values into `js/config.js`:
+
+```js
+const SUPABASE_URL = "https://your-project.supabase.co";
+const SUPABASE_ANON_KEY = "your-anon-public-key";
+```
+
+The anon key is designed to be public client-side — it only grants what the schema's RLS
+policies allow. Never put a `service_role` key here or anywhere in this repo.
+
+### 3. Run it
+
+No build step required.
 
 ```bash
-# from the repo root
 python3 -m http.server 8080
 # then open http://localhost:8080 in a browser
 ```
 
-Or just open `index.html` directly in a browser.
+Or just open `index.html` directly in a browser (Supabase auth needs `http(s)://`, not `file://`,
+so use the server for anything beyond viewing the setup banner).
 
-**Optional live AI Buddy:** click "⚙️ AI Buddy settings" on the roadmap page and paste a
-Claude API key (get one at [console.anthropic.com](https://console.anthropic.com)). Without a
-key, the full roadmap still works — AI Buddy just isn't available for open-ended follow-ups.
+## Responsible AI
 
-## Repository structure
+- **Privacy:** quest-completion history (*which* quests you've done) is private to your account
+  — only your name and total points are ever public, via the leaderboard view. Nothing about
+  your profile, origin, or destination is shared with other users.
+- **Reliability / transparency:** every quest cites its real source with a link, so you can
+  verify it yourself rather than trusting an AI-generated claim blind. Where we couldn't verify
+  a specific deep link (e.g. private housing portals), we link to the verified homepage and say
+  so, rather than guessing a URL. If Supabase isn't configured, the app says so clearly instead
+  of failing silently or half-working.
+- **Bias/fairness:** we don't assume every Indian user speaks Hindi, follows the same
+  traditions, or has the same family structure — languages and interests are asked, not assumed.
+- **Security:** the optional Claude API key lives only in `sessionStorage` (cleared when the tab
+  closes), never written to a file, never committed, and never sent anywhere except Anthropic's
+  API directly from your browser. The Supabase anon key is safe to expose client-side by design;
+  actual access control is enforced server-side by Postgres row-level security.
 
-```
-index.html       — app shell
-css/style.css     — styling (light + dark mode, no external fonts/CDN)
-js/data.js        — grounded knowledge base + roadmap generation logic
-js/ai.js          — optional AI Buddy (Claude API, bring-your-own-key)
-js/app.js         — state, views, wizard flow, event wiring
-```
+## Potential impact
 
----
-*No API keys, tokens, or personal data are committed to this repository. The optional AI
-Buddy key is entered at runtime and stored only in the browser's `sessionStorage`.*
+Extended further, this becomes the connective layer between Finland's already-excellent (but
+scattered) public services and the people trying to navigate them — using game mechanics to
+turn a genuinely stressful admin slog into something with visible momentum, community, and an
+actual finish line.
