@@ -289,7 +289,7 @@ function renderLanding() {
         <span class="hero-flag" aria-label="Finland">🇫🇮</span>
       </div>
       <p class="hero-tagline">Your friend for <span class="hero-tagline-word" id="hero-tagline-word">${escapeHtml(HERO_TAGLINES[0])}</span></p>
-      <h1>Moving from India to Finland?<br>Turn it into a game you can <em>win</em>.</h1>
+      <h1>Moving from India to Finland?<br>Meet <em>Kaveri</em>, your first friend here.</h1>
       <p class="hero-sub">
         Kaveri turns real official Finnish relocation guidance into quests —
         Administrative Work, Social, Cultural, and Food — worth points. Complete them, climb
@@ -524,6 +524,7 @@ function renderRoadmap() {
         <div class="level-next muted">${nextLevel ? `${nextLevel.min - totalPoints} pts to ${nextLevel.icon} ${nextLevel.label}` : "Max level reached! 🎉"}</div>
       </div>
       <div class="header-actions">
+        <button class="btn btn-ghost" data-action="download-roadmap">⬇️ Download my quests</button>
         <button class="btn btn-ghost" data-action="edit-profile">Edit my details</button>
         <button class="btn btn-ghost" data-action="log-out">Log out</button>
       </div>
@@ -630,10 +631,51 @@ function renderStepCard(s, phaseId, idx, compact) {
         <h4>${escapeHtml(s.title)}</h4>
         <p class="step-why">${escapeHtml(s.why)}</p>
         <p class="step-action">🎯 <strong>Do this:</strong> ${escapeHtml(s.action)}</p>
-        <a class="step-source" href="${s.source.url}" target="_blank" rel="noopener">📎 ${escapeHtml(s.source.name)}</a>
+        <div class="step-sources">
+          ${(s.sources || [s.source])
+            .map((src) => `<a class="step-source" href="${src.url}" target="_blank" rel="noopener">📎 ${escapeHtml(src.name)}</a>`)
+            .join("")}
+        </div>
       </div>
     </div>
   `;
+}
+
+// Builds a plain-text copy of the current quest board and triggers a browser
+// download — a client-side-only export (no server, no PDF library) so it
+// works the same whether or not Supabase/wifi is cooperating on stage.
+function downloadRoadmap() {
+  const roadmap = state.roadmap || {};
+  const lines = [];
+  lines.push(`Kaveri quest board: ${state.profile.origin || "India"} → ${state.profile.destination || "Finland"}`);
+  lines.push(`For: ${state.profile.name || "you"}`);
+  lines.push(`Points so far: ${computeTotalPoints()}`);
+  lines.push("");
+
+  PHASES.forEach((ph) => {
+    const steps = roadmap[ph.id] || [];
+    if (!steps.length) return;
+    lines.push(`=== ${ph.label} ===`);
+    steps.forEach((s, i) => {
+      const done = state.progress[questKeyFor(ph.id, s, i)];
+      const qc = QUEST_CATEGORIES[s.questCategory] || QUEST_CATEGORIES.legal;
+      lines.push(`[${done ? "x" : " "}] ${s.title} (${qc.label}, +${s.points} pts)`);
+      lines.push(`    Why: ${s.why}`);
+      lines.push(`    Do this: ${s.action}`);
+      (s.sources || [s.source]).forEach((src) => lines.push(`    Source: ${src.name} — ${src.url}`));
+      lines.push("");
+    });
+  });
+
+  const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kaveri-quests.txt";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function initialsFor(name) {
@@ -843,6 +885,8 @@ document.addEventListener("click", (e) => {
         .then((completions) => setState({ progress: progressFromCompletions(roadmap, completions) }))
         .catch(() => {});
     }
+  } else if (action === "download-roadmap") {
+    downloadRoadmap();
   } else if (action === "edit-profile") {
     setState({ view: "wizard", wizardOrder: ["basic", "categories"], wizardIndex: 0 });
   } else if (action === "open-settings") {

@@ -62,6 +62,10 @@ const SOURCES = {
   infoFinlandVolunteering: { name: "InfoFinland — voluntary work in Finland", url: "https://infofinland.fi/en/leisure/voluntary-work" },
   vapaaehtoistyoFi: { name: "Vapaaehtoistyö.fi — Finland's national volunteering database", url: "https://vapaaehtoistyo.fi/en/" },
   redCrossVolunteer: { name: "Finnish Red Cross — volunteer to support immigrants and refugees", url: "https://www.redcross.fi/become-a-volunteer/support-immigrants/" },
+  forenomApartments: { name: "Forenom — serviced apartments in Finland, built for relocations", url: "https://www.forenom.com/furnished-apartments/" },
+  airbnb: { name: "Airbnb — short-term rentals", url: "https://www.airbnb.com/" },
+  bookingCom: { name: "Booking.com — hotels & short stays", url: "https://www.booking.com/" },
+  meetup: { name: "Meetup — find local groups and events", url: "https://www.meetup.com/" },
 };
 
 /*
@@ -388,8 +392,8 @@ const ROADMAP_GENERATORS = {
         phase: "before",
         title: "Book temporary accommodation for your first few weeks",
         why: "Long-term rentals in Finland often expect a Finnish personal identity code or local references you won't have yet — a short-term base gives you somewhere to land while you search properly.",
-        action: "Book a hotel, serviced apartment, or short-term rental for your first 2–4 weeks. Specific listings and prices change too fast to cite one directly, so start from InfoFinland's housing overview.",
-        source: SOURCES.infoFinlandHome,
+        action: "Book 2–4 weeks somewhere flexible while you search for a long-term place. Forenom's serviced apartments are Finland-specific and built for exactly this (relocations, month-to-month terms, no local references needed) — or compare against general short-stay listings on Airbnb or Booking.com.",
+        sources: [SOURCES.forenomApartments, SOURCES.airbnb, SOURCES.bookingCom],
       });
 
       if (a.housingType === "Student housing") {
@@ -586,7 +590,7 @@ const ROADMAP_GENERATORS = {
       title: langs.length ? `Find ${langs.join(" / ")}-speaking community groups` : "Find community groups in your languages",
       why: "Community and language groups aren't centrally listed anywhere official — they mostly live on Facebook and Meetup, organised by the community itself.",
       action: "Search Facebook Groups and Meetup for your city name plus 'Indian community' or your specific language, once you've arrived and can verify a group is currently active.",
-      source: SOURCES.infoFinlandHome,
+      sources: [SOURCES.meetup, SOURCES.infoFinlandHome],
     });
     steps.push({
       phase: "ongoing",
@@ -601,7 +605,7 @@ const ROADMAP_GENERATORS = {
         title: "Find clubs matching your interests",
         why: `You mentioned: ${a.interests}. We can't promise a specific named club exists without checking live — that's exactly the kind of question worth asking your city's leisure services directly.`,
         action: `Check your destination city's official site for hobby/leisure listings ("harrastukset"), and search Meetup for ${a.interests}.`,
-        source: profile.destination === "Helsinki" ? SOURCES.helsinkiHome : SOURCES.espooHome,
+        sources: [profile.destination === "Helsinki" ? SOURCES.helsinkiHome : SOURCES.espooHome, SOURCES.meetup],
       });
     }
     return steps;
