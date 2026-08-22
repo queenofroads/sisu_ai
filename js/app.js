@@ -261,6 +261,7 @@ function renderAuth() {
         <button class="btn btn-primary" type="submit" ${state.authLoading ? "disabled" : ""}>${state.authLoading ? "Please wait…" : isSignup ? "Sign up & start" : "Log in"}</button>
       </form>
       <button class="link-btn" data-action="toggle-auth-mode">${isSignup ? "Already have an account? Log in" : "New here? Sign up"}</button>
+      <button class="link-btn" data-action="skip-login">Skip login — try it without an account (test mode, no leaderboard sync)</button>
     </section>
   `;
 }
@@ -567,6 +568,13 @@ document.addEventListener("click", (e) => {
     setState({ view: "auth", authMode: el.dataset.mode, authError: null, authNotice: null });
   } else if (action === "toggle-auth-mode") {
     setState({ authMode: state.authMode === "signup" ? "login" : "signup", authError: null, authNotice: null });
+  } else if (action === "skip-login") {
+    // Test mode: no Supabase user, so quest completions stay local-only —
+    // see the guard on state.authUserId in the progress-toggle handler and
+    // in "wizard-next-basic" below. Leaderboard is still readable (public
+    // view), just won't include this session.
+    setState({ view: "wizard", wizardOrder: ["basic", "categories"], wizardIndex: 0, authError: null, authNotice: null });
+    refreshLeaderboard();
   } else if (action === "wizard-next-basic") {
     const step = document.getElementById("wizard-step");
     const profile = { ...state.profile };

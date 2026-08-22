@@ -97,7 +97,8 @@ em { color: var(--primary-dark); font-style: normal; }
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
 .btn-secondary { background: var(--accent); color: #241505; }
-.link-btn { background: none; border: none; color: var(--primary); text-decoration: underline; cursor: pointer; font-size: 14px; padding: 8px 0; }
+.link-btn { display: block; width: 100%; background: none; border: none; color: var(--primary); text-decoration: underline; cursor: pointer; font-size: 14px; padding: 8px 0; }
+.auth-card .link-btn:last-child { color: var(--muted); margin-top: 6px; }
 
 /* ---------- Auth ---------- */
 .auth-card {
