@@ -612,7 +612,7 @@ function renderStepCard(s, phaseId, idx, compact) {
     // height with struck-through paragraphs — keeps the board readable as
     // progress builds up instead of getting messier.
     return `
-      <div class="step-card done" style="--badge-color:${qc.color}">
+      <div class="step-card done" style="--badge-color:${qc.color}; --stack-i:${idx}">
         <label class="step-check">${checkboxInput}</label>
         <div class="step-body">
           <span class="quest-badge" style="--badge-color:${qc.color}">${qc.icon} ${qc.label}</span>
@@ -624,7 +624,7 @@ function renderStepCard(s, phaseId, idx, compact) {
   }
 
   return `
-    <div class="step-card" style="--badge-color:${qc.color}">
+    <div class="step-card" style="--badge-color:${qc.color}; --stack-i:${idx}">
       <label class="step-check">${checkboxInput}</label>
       <div class="step-body">
         <div class="step-cat">

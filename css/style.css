@@ -318,6 +318,17 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
   box-shadow: var(--shadow); transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 .step-card:hover { box-shadow: 0 6px 18px rgba(0, 40, 90, 0.12); transform: translateY(-1px); }
+
+/* Scroll-stack effect: cards inside a phase's step list stick near the top
+   as you scroll, each one landing a little lower than the last so later
+   cards visually slide over/cover earlier ones instead of just scrolling
+   past — a vanilla CSS port of the "stacked cards" pattern (no framework,
+   no scroll-math JS). */
+.step-list .step-card {
+  position: sticky;
+  top: calc(10px + var(--stack-i, 0) * 8px);
+  z-index: calc(var(--stack-i, 0) + 1);
+}
 .step-card.done {
   align-items: center; padding: 10px 16px; background: var(--bg);
   border-left-color: var(--border); box-shadow: none; transform: none;
