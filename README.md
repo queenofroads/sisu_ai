@@ -146,3 +146,8 @@ A lighter, non-load-bearing addition for anyone reading this before their move �
 A curated directory of real websites for relocating from India to Finland — official
 government/authority sites kept clearly separate from community and commercial ones — see
 [RESOURCES.md](RESOURCES.md).
+
+## Indian community in Finland
+
+A reference list of Indian community organisations in Finland — pan-Indian groups, regional/
+language associations, and events — see [INDIAN_COMMUNITY.md](INDIAN_COMMUNITY.md).
