@@ -285,6 +285,18 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
 
 .phase-blurb { color: var(--muted); font-size: 13px; margin: -6px 0 12px; }
 
+/* Leaderboard + Community live in a sticky sidebar on wide screens so they
+   stay visible while scrolling the quest list, instead of getting buried at
+   the bottom of a long page. Single column (normal flow) below that width. */
+.roadmap-layout { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; }
+.roadmap-main { min-width: 0; }
+.roadmap-sidebar { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.roadmap-sidebar > .leaderboard, .roadmap-sidebar > .community { margin-top: 0; }
+@media (min-width: 860px) {
+  .roadmap-layout { grid-template-columns: minmax(0, 1fr) 300px; }
+  .roadmap-sidebar { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; padding-right: 2px; }
+}
+
 .priorities { background: rgba(217, 142, 57, 0.12); border: 1px solid var(--accent); border-radius: var(--radius); padding: 18px; margin-bottom: 28px; }
 .priority-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
 

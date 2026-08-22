@@ -529,32 +529,37 @@ function renderRoadmap() {
       </div>
     </section>
 
-    ${renderLeaderboard()}
+    <div class="roadmap-layout">
+      <div class="roadmap-main">
+        ${renderAssistantIntro(total, possiblePoints, touchedCategories.size)}
 
-    ${renderAssistantIntro(total, possiblePoints, touchedCategories.size)}
+        ${
+          /* AI Buddy (Claude API key entry) pulled from the UI on purpose —
+           * not meant for every visitor to see. renderAiBuddy() is still
+           * intact; re-add "${renderAiBuddy()}" here to bring it back. */ ""
+        }
 
-    ${
-      /* AI Buddy (Claude API key entry) pulled from the UI on purpose — not
-       * meant for every visitor to see. renderAiBuddy() is still intact;
-       * re-add "${renderAiBuddy()}" here to bring it back. */ ""
-    }
+        ${
+          priorities.length
+            ? `<section class="priorities">
+            <h3>🎯 Kaveri's picks: what matters most right now</h3>
+            <div class="priority-list">
+              ${priorities.map((s) => renderStepCard(s, s.phaseId, s.idx, true)).join("")}
+            </div>
+          </section>`
+            : ""
+        }
 
-    ${
-      priorities.length
-        ? `<section class="priorities">
-        <h3>🎯 Kaveri's picks: what matters most right now</h3>
-        <div class="priority-list">
-          ${priorities.map((s) => renderStepCard(s, s.phaseId, s.idx, true)).join("")}
-        </div>
-      </section>`
-        : ""
-    }
+        <section class="phases">
+          ${PHASES.map((ph) => renderPhaseSection(ph, roadmap[ph.id] || [], ph.id === firstOpenPhaseId)).join("")}
+        </section>
+      </div>
 
-    <section class="phases">
-      ${PHASES.map((ph) => renderPhaseSection(ph, roadmap[ph.id] || [], ph.id === firstOpenPhaseId)).join("")}
-    </section>
-
-    ${renderCommunity()}
+      <aside class="roadmap-sidebar">
+        ${renderLeaderboard()}
+        ${renderCommunity()}
+      </aside>
+    </div>
   `;
 }
 
