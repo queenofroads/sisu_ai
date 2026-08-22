@@ -353,6 +353,7 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
   font-size: 14px; background: rgba(0, 53, 128, 0.06);
   border-radius: 8px; padding: 8px 12px; margin: 10px 0;
 }
+.step-sources { display: flex; flex-direction: column; gap: 4px; }
 .step-source { font-size: 13px; color: var(--primary); text-decoration: none; word-break: break-word; }
 .step-source:hover { text-decoration: underline; }
 
