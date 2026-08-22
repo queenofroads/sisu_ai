@@ -289,7 +289,7 @@ function renderLanding() {
         <span class="hero-flag" aria-label="Finland">🇫🇮</span>
       </div>
       <p class="hero-tagline">Your friend for <span class="hero-tagline-word" id="hero-tagline-word">${escapeHtml(HERO_TAGLINES[0])}</span></p>
-      <h1>Moving from India to Finland?<br>Turn it into a game you can <em>win</em>.</h1>
+      <h1>Moving from India to Finland?<br>Meet <em>Kaveri</em>, your first friend here.</h1>
       <p class="hero-sub">
         Kaveri turns real official Finnish relocation guidance into quests —
         Administrative Work, Social, Cultural, and Food — worth points. Complete them, climb
