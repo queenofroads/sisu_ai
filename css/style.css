@@ -76,12 +76,27 @@ em { color: var(--primary-dark); font-style: normal; }
 /* ---------- Landing ---------- */
 .hero {
   text-align: center;
-  padding: 44px 24px 24px;
+  padding: 44px 24px 28px;
   border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
   background:
     radial-gradient(circle at 15% 20%, rgba(255, 153, 51, 0.20), transparent 55%),
     radial-gradient(circle at 85% 20%, rgba(0, 53, 128, 0.16), transparent 55%),
     radial-gradient(circle at 50% 90%, rgba(19, 136, 8, 0.14), transparent 60%);
+}
+.hero::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0; height: 5px;
+  background: linear-gradient(90deg, #ff9933 0%, #ff9933 33%, var(--primary) 33%, var(--primary) 66%, #138808 66%, #138808 100%);
+}
+.hero-categories { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 0 26px; }
+.hero-cat-chip {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;
+  padding: 6px 14px; border-radius: 999px; color: #fff; background: var(--chip-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 .hero-badge {
   display: inline-block;
