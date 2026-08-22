@@ -41,7 +41,53 @@ const SOURCES = {
   infoFinlandHome: { name: "InfoFinland — settling in Finland (start here for housing)", url: "https://infofinland.fi/en" },
   espooHome: { name: "City of Espoo — official site", url: "https://www.espoo.fi/en" },
   helsinkiHome: { name: "City of Helsinki — official site", url: "https://www.hel.fi/en" },
+  infoFinlandEverydayLife: { name: "InfoFinland — everyday life in Finland (incl. opening a bank account)", url: "https://infofinland.fi/en/settling-in-finland/everyday-life-in-finland" },
+  infoFinlandCustoms: { name: "InfoFinland — Finnish culture and social norms", url: "https://infofinland.fi/en/information-about-finland/finnish-customs" },
+  infoFinlandHolidays: { name: "InfoFinland — Finnish public holidays", url: "https://infofinland.fi/en/information-about-finland/finnish-holidays" },
+  infoFinlandThingsToDo: { name: "InfoFinland — things to do in Finland", url: "https://infofinland.fi/en/leisure/things-to-do-in-finland" },
+  infoFinlandOutdoor: { name: "InfoFinland — outdoor activities", url: "https://infofinland.fi/en/leisure/outdoor-activities" },
+  infoFinlandAssociations: { name: "InfoFinland — associations (incl. immigrant associations & the Moniheli network)", url: "https://infofinland.fi/leisure/associations" },
+  visitFinlandSauna: { name: "Visit Finland — your guide to Finnish sauna", url: "https://www.visitfinland.com/en/things-to-do/sauna/" },
+  visitFinlandFood: { name: "Visit Finland — what to eat in Finland, iconic Finnish foods", url: "https://www.visitfinland.com/en/articles/finlands-traditional-and-iconic-foods/" },
+  visitFinlandFoodCulture: { name: "Visit Finland — Finnish food culture and must-try local ingredients", url: "https://www.visitfinland.com/en/articles/finnish-food-culture/" },
 };
+
+/*
+ * Kaveri's four quest categories. Every roadmap step (whether generated from
+ * the wizard or one of the fixed Cultural/Food quest lists below) belongs to
+ * exactly one of these, which drives the points total, the level, and the
+ * category badge shown on each quest card.
+ */
+const QUEST_CATEGORIES = {
+  legal: { id: "legal", label: "Legal", icon: "⚖️", color: "#003580", points: 20, blurb: "Permits, registration, bank accounts — the must-do admin." },
+  social: { id: "social", label: "Social", icon: "👥", color: "#0072CE", points: 15, blurb: "Meetups, communities, making connections." },
+  cultural: { id: "cultural", label: "Cultural", icon: "🎭", color: "#4DA8DA", points: 10, blurb: "Finnish traditions and everyday lifestyle." },
+  food: { id: "food", label: "Food", icon: "🍴", color: "#8FCBEC", points: 5, blurb: "Finnish cuisine worth trying." },
+};
+
+// Points a completed quest in a given questCategory is worth.
+function pointsFor(questCategoryId) {
+  const qc = QUEST_CATEGORIES[questCategoryId];
+  return qc ? qc.points : 10;
+}
+
+// Total points -> a friendly progression level. "Kaveri" (Finnish for
+// "friend/buddy") is deliberately the top tier — the whole app is trying to
+// get you there.
+const LEVELS = [
+  { min: 0, label: "Newcomer", icon: "🌱" },
+  { min: 50, label: "Settler", icon: "🏠" },
+  { min: 120, label: "Local", icon: "🧭" },
+  { min: 220, label: "Kaveri", icon: "🤝" },
+];
+
+function levelFor(totalPoints) {
+  let current = LEVELS[0];
+  for (const l of LEVELS) {
+    if (totalPoints >= l.min) current = l;
+  }
+  return current;
+}
 
 // Indian languages offered as options — deliberately not defaulting to Hindi.
 const INDIAN_LANGUAGES = [
@@ -80,6 +126,7 @@ const CATEGORIES = [
     id: "immigration",
     label: "Visa & Residence Permit",
     icon: "🛂",
+    questCategory: "legal",
     blurb: "Migri applications, timelines, and what happens after you land.",
     questions: [
       {
@@ -106,6 +153,7 @@ const CATEGORIES = [
     id: "registration",
     label: "Registration & Personal ID",
     icon: "🪪",
+    questCategory: "legal",
     blurb: "DVV, the personal identity code (henkilötunnus), and your municipality of residence.",
     questions: [
       {
@@ -120,6 +168,7 @@ const CATEGORIES = [
     id: "housing",
     label: "Housing",
     icon: "🏠",
+    questCategory: "legal",
     blurb: "Where families and students typically look, and what to check before signing.",
     questions: [
       {
@@ -140,6 +189,7 @@ const CATEGORIES = [
     id: "education",
     label: "Education",
     icon: "🎓",
+    questCategory: "legal",
     blurb: "Daycare and school for your children, or further studies for yourself.",
     questions: [
       {
@@ -175,6 +225,7 @@ const CATEGORIES = [
     id: "career",
     label: "Career & Job Market",
     icon: "💼",
+    questCategory: "social",
     blurb: "Finding work, understanding the local market, and using employment services.",
     questions: [
       {
@@ -195,6 +246,7 @@ const CATEGORIES = [
     id: "language",
     label: "Language & Integration",
     icon: "🗣️",
+    questCategory: "cultural",
     blurb: "Learning Finnish or Swedish, and free integration training you may be entitled to.",
     questions: [
       {
@@ -215,6 +267,7 @@ const CATEGORIES = [
     id: "healthcare",
     label: "Healthcare & Social Security",
     icon: "🩺",
+    questCategory: "legal",
     blurb: "Kela, public healthcare access, and what changes once you're registered.",
     questions: [
       {
@@ -229,6 +282,7 @@ const CATEGORIES = [
     id: "community",
     label: "Language spoken at home & Community",
     icon: "🤝",
+    questCategory: "social",
     blurb: "Who's with you, what languages you speak, and finding people with shared interests.",
     questions: [
       {
@@ -298,6 +352,7 @@ const ROADMAP_GENERATORS = {
       steps.push({ phase: "week2", title: "Get your tax card (verokortti)", why: "Without a Finnish tax card, employers withhold tax at a default high rate — this is one of the most commonly missed early steps.", action: "Apply for your personal identity code and tax card together where possible.", source: SOURCES.veroPersonalId });
     }
     steps.push({ phase: "week2", title: "If DVV's queue is long, try International House Helsinki", why: "In the Helsinki region, International House Helsinki runs a combined registration service that's often faster for newcomers.", action: "Check whether International House Helsinki can process your registration.", source: SOURCES.ihHelsinki });
+    steps.push({ phase: "month1", title: "Open a Finnish bank account", why: "Once you have your personal identity code, a local bank account is what actually unlocks salary payments, Kela benefits, and paying rent — most Finnish landlords and employers won't work around it.", action: "Compare a couple of Finnish banks' requirements and fees, then open an account using your ID and personal identity code.", source: SOURCES.infoFinlandEverydayLife });
     return steps;
   },
 
@@ -422,6 +477,72 @@ const ROADMAP_GENERATORS = {
   },
 };
 
+/*
+ * Fixed Cultural and Food quests — not personalized by the wizard, offered
+ * to every user in "ongoing" once their roadmap is generated. Every quest
+ * still cites a real, verified source (InfoFinland or Visit Finland); these
+ * are the same grounding rules as the wizard-generated Legal/Social quests.
+ */
+const CULTURAL_QUESTS = [
+  {
+    title: "Learn the everyday social norms",
+    why: "A handful of small habits — handshakes, eye contact, personal space — cover most of what surprises newcomers in daily interactions.",
+    action: "Read InfoFinland's overview of Finnish culture and social norms.",
+    source: SOURCES.infoFinlandCustoms,
+  },
+  {
+    title: "Try a Finnish sauna",
+    why: "With roughly one sauna per two people nationwide, this isn't a spa treat here — it's the default way Finns unwind, and often where real conversations happen.",
+    action: "Visit a public sauna or ask a Finnish colleague/neighbour about joining theirs.",
+    source: SOURCES.visitFinlandSauna,
+  },
+  {
+    title: "Mark a Finnish public holiday on your calendar",
+    why: "Vappu (May Day), Juhannus (Midsummer) and the winter holidays all come with their own traditions — knowing the dates ahead of time means you don't miss them.",
+    action: "Check InfoFinland's list of Finnish public holidays and pick the next one coming up.",
+    source: SOURCES.infoFinlandHolidays,
+  },
+  {
+    title: "Try an outdoor activity, whatever the season",
+    why: "Nature is central to Finnish life in every season — this isn't just a summer thing.",
+    action: "Pick one seasonal outdoor activity (hiking, ice-skating, berry picking, cross-country skiing) and try it.",
+    source: SOURCES.infoFinlandOutdoor,
+  },
+  {
+    title: "Explore what's on in your city",
+    why: "Most local events (markets, festivals, exhibitions) aren't centrally advertised — city listing pages are the most reliable way to find what's actually happening near you.",
+    action: "Browse InfoFinland's things-to-do guide, then check your destination city's own events listing.",
+    source: SOURCES.infoFinlandThingsToDo,
+  },
+];
+
+const FOOD_QUESTS = [
+  {
+    title: "Try karjalanpiirakka (Karelian pie)",
+    why: "One of the most iconic everyday Finnish foods — a thin rye crust with rice porridge filling, usually topped with egg butter — and sold in nearly every grocery store.",
+    action: "Pick one up from a supermarket or bakery and try it with egg butter.",
+    source: SOURCES.visitFinlandFood,
+  },
+  {
+    title: "Try a Finnish rye bread (ruisleipä)",
+    why: "Rye bread is a genuine staple of the Finnish diet, not a novelty item — worth understanding early since it shows up everywhere.",
+    action: "Buy a loaf of dark Finnish rye bread and compare it to what you're used to.",
+    source: SOURCES.visitFinlandFoodCulture,
+  },
+  {
+    title: "Visit a local market hall or outdoor market",
+    why: "Market halls (kauppahalli) and seasonal outdoor markets are where a lot of Finnish food culture — smoked fish, berries, local produce — is easiest to encounter in one place.",
+    action: "Find your city's market hall or weekly market and browse what's in season.",
+    source: SOURCES.visitFinlandFoodCulture,
+  },
+  {
+    title: "Try a Finnish sweet you haven't heard of",
+    why: "Vappu brings tippaleipä and munkki, Shrove Tuesday brings laskiaispulla — the seasonal-treat calendar is a fun, low-stakes way into local culture.",
+    action: "Pick one seasonal Finnish treat and try it when its season comes around.",
+    source: SOURCES.visitFinlandFood,
+  },
+];
+
 function buildRoadmap(profile, categoryAnswers) {
   const stepsByPhase = {};
   PHASES.forEach((p) => (stepsByPhase[p.id] = []));
@@ -431,11 +552,50 @@ function buildRoadmap(profile, categoryAnswers) {
     if (!gen) return;
     const answers = categoryAnswers[catId] || {};
     const steps = gen(profile, answers) || [];
+    const category = CATEGORIES.find((c) => c.id === catId);
+    const questCategory = category ? category.questCategory : "legal";
     steps.forEach((s) => {
-      const category = CATEGORIES.find((c) => c.id === catId);
-      stepsByPhase[s.phase].push({ ...s, categoryId: catId, categoryLabel: category ? category.label : catId, categoryIcon: category ? category.icon : "•" });
+      stepsByPhase[s.phase].push({
+        ...s,
+        categoryId: catId,
+        categoryLabel: category ? category.label : catId,
+        categoryIcon: category ? category.icon : "•",
+        questCategory,
+        points: pointsFor(questCategory),
+      });
+    });
+  });
+
+  // Cultural and Food quests are universal — every user gets them, always in
+  // "ongoing", regardless of what they picked in the wizard.
+  CULTURAL_QUESTS.forEach((s) => {
+    stepsByPhase.ongoing.push({
+      ...s,
+      phase: "ongoing",
+      categoryId: "cultural",
+      categoryLabel: QUEST_CATEGORIES.cultural.label,
+      categoryIcon: QUEST_CATEGORIES.cultural.icon,
+      questCategory: "cultural",
+      points: pointsFor("cultural"),
+    });
+  });
+  FOOD_QUESTS.forEach((s) => {
+    stepsByPhase.ongoing.push({
+      ...s,
+      phase: "ongoing",
+      categoryId: "food",
+      categoryLabel: QUEST_CATEGORIES.food.label,
+      categoryIcon: QUEST_CATEGORIES.food.icon,
+      questCategory: "food",
+      points: pointsFor("food"),
     });
   });
 
   return stepsByPhase;
+}
+
+// Stable per-step key used for Supabase quest_completions rows and for
+// localStorage progress — must not change once a quest is shown to a user.
+function questKeyFor(phaseId, step, idx) {
+  return `${phaseId}|${step.categoryId}|${idx}`;
 }
