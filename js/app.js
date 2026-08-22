@@ -176,13 +176,49 @@ async function refreshLeaderboard() {
 
 // ---------- Views ----------
 
+// Rotates the "Your friend for ___" word on the landing hero — Kaveri means
+// something different depending on who's asking, so this cycles through a
+// few of the things it actually helps with instead of picking just one.
+let heroTaglineTimer = null;
+let heroTaglineIndex = 0;
+
+function stopHeroTaglineRotation() {
+  if (heroTaglineTimer) {
+    clearInterval(heroTaglineTimer);
+    heroTaglineTimer = null;
+  }
+}
+
+function startHeroTaglineRotation() {
+  stopHeroTaglineRotation();
+  heroTaglineIndex = 0;
+  heroTaglineTimer = setInterval(() => {
+    const el = document.getElementById("hero-tagline-word");
+    if (!el) {
+      stopHeroTaglineRotation();
+      return;
+    }
+    el.classList.add("fading");
+    setTimeout(() => {
+      const liveEl = document.getElementById("hero-tagline-word");
+      if (!liveEl) return;
+      heroTaglineIndex = (heroTaglineIndex + 1) % HERO_TAGLINES.length;
+      liveEl.textContent = HERO_TAGLINES[heroTaglineIndex];
+      liveEl.classList.remove("fading");
+    }, 280);
+  }, 2600);
+}
+
 function render() {
+  stopHeroTaglineRotation();
   if (!isSupabaseConfigured()) {
     $app.innerHTML = renderSetupBanner();
     return;
   }
-  if (state.view === "landing") $app.innerHTML = renderLanding();
-  else if (state.view === "auth") $app.innerHTML = renderAuth();
+  if (state.view === "landing") {
+    $app.innerHTML = renderLanding();
+    startHeroTaglineRotation();
+  } else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
   else if (state.view === "roadmap") $app.innerHTML = renderRoadmap();
   if (state.view === "wizard") applyConditionalVisibility();
@@ -228,6 +264,7 @@ function renderLanding() {
         <span class="hero-wordmark">Kaveri</span>
         <span class="hero-flag" aria-label="Finland">🇫🇮</span>
       </div>
+      <p class="hero-tagline">Your friend for <span class="hero-tagline-word" id="hero-tagline-word">${escapeHtml(HERO_TAGLINES[0])}</span></p>
       <h1>Moving from India to Finland?<br>Turn it into a game you can <em>win</em>.</h1>
       <p class="hero-sub">
         Kaveri turns real official Finnish relocation guidance into quests —

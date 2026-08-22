@@ -112,6 +112,18 @@ em { color: var(--primary-dark); font-style: normal; }
   background-clip: text;
   color: transparent;
 }
+.hero-tagline {
+  font-size: 15px; font-weight: 600; color: var(--muted);
+  margin: 0 0 14px; min-height: 22px;
+}
+.hero-tagline-word {
+  display: inline-block; color: var(--primary);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+.hero-tagline-word.fading { opacity: 0; transform: translateY(4px); }
+@media (prefers-reduced-motion: reduce) {
+  .hero-tagline-word { transition: none; }
+}
 .hero-sub { max-width: 620px; margin: 0 auto 24px; color: var(--muted); }
 .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .hero-note { margin-top: 20px; font-size: 13px; color: var(--muted); }
