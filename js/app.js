@@ -564,7 +564,9 @@ document.addEventListener("click", (e) => {
   if (!el) return;
   const action = el.dataset.action;
 
-  if (action === "go-auth") {
+  if (action === "go-home") {
+    setState({ view: "landing", authError: null, authNotice: null });
+  } else if (action === "go-auth") {
     setState({ view: "auth", authMode: el.dataset.mode, authError: null, authNotice: null });
   } else if (action === "toggle-auth-mode") {
     setState({ authMode: state.authMode === "signup" ? "login" : "signup", authError: null, authNotice: null });

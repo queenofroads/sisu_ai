@@ -44,7 +44,13 @@ body {
   display: flex; align-items: center; padding: 14px 20px;
   border-bottom: 1px solid var(--border); background: var(--surface);
 }
-.brand { font-weight: 800; font-size: 17px; color: var(--primary); }
+.brand {
+  font-weight: 800; font-size: 17px; color: var(--primary);
+  background: none; border: none; padding: 4px 2px; margin: -4px -2px;
+  cursor: pointer; border-radius: 6px; font-family: inherit;
+}
+.brand:hover { opacity: 0.8; }
+.brand:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 #app {
   max-width: 880px;
@@ -111,8 +117,9 @@ em { color: var(--primary-dark); font-style: normal; }
 .auth-notice { background: rgba(0, 53, 128, 0.08); border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; padding: 10px 14px; font-size: 14px; text-align: left; }
 label { font-size: 14px; font-weight: 600; display: flex; flex-direction: column; gap: 6px; }
 input, select {
-  font-family: inherit; font-size: 15px; padding: 10px 12px;
+  font-family: inherit; font-size: 16px; padding: 10px 12px;
   border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text);
+  width: 100%; max-width: 100%;
 }
 input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
 
@@ -132,7 +139,7 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
   cursor: pointer; background: var(--bg);
 }
 .category-card.selected { border-color: var(--primary); background: rgba(28, 110, 92, 0.08); }
-.category-card input { position: absolute; top: 14px; right: 14px; }
+.category-card input { position: absolute; top: 14px; right: 14px; width: auto; }
 .cat-icon { font-size: 22px; }
 .cat-label { font-weight: 700; }
 .cat-blurb { font-size: 13px; color: var(--muted); }
@@ -210,6 +217,41 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
 .settings-box { background: var(--surface); border-radius: var(--radius); padding: 24px; max-width: 420px; width: 100%; box-shadow: var(--shadow); }
 .settings-box form { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
 
-@media (max-width: 600px) {
-  .roadmap-header { flex-direction: column; }
+@media (max-width: 640px) {
+  #app { padding: 20px 14px 60px; }
+  .topbar { padding: 12px 14px; }
+
+  .hero { padding: 24px 0 12px; }
+  .hero-actions .btn { flex: 1 1 auto; }
+
+  .auth-card { margin: 20px auto; padding: 22px 18px; }
+
+  .wizard { padding: 20px 16px; }
+  .wizard-nav { flex-wrap: wrap; gap: 10px; }
+  .wizard-nav .btn { flex: 1 1 auto; }
+
+  .roadmap-header { flex-direction: column; align-items: stretch; }
+  .score-panel { text-align: left; }
+  .header-actions { width: 100%; }
+  .header-actions .btn { flex: 1 1 auto; }
+
+  .step-card { padding: 12px; gap: 10px; }
+  .step-cat { flex-wrap: wrap; row-gap: 4px; }
+
+  .phase-section { padding: 4px 14px 14px; }
+  .phase-section summary { font-size: 15px; }
+
+  .leaderboard, .ai-buddy { padding: 16px; }
+  .leaderboard-list li { flex-wrap: wrap; }
+  .lb-name { min-width: 0; overflow-wrap: anywhere; }
+
+  .ai-buddy form { flex-direction: column; }
+
+  .settings-box { padding: 20px 18px; }
+}
+
+@media (max-width: 380px) {
+  h1 { font-size: 26px; }
+  h2 { font-size: 22px; }
+  .score-points { font-size: 24px; }
 }
