@@ -343,8 +343,66 @@ function renderLanding() {
         <div class="how-card"><span class="how-num">3</span><h3>🏆 Complete quests, earn points</h3><p>Every quest is grounded in real Migri, DVV, Kela and InfoFinland guidance — and worth real points on the leaderboard.</p></div>
       </div>
     </section>
+    <section class="stories">
+      <h2>What a first year with Kaveri could look like</h2>
+      <p class="stories-note muted">Illustrative journeys, not real submitted testimonials — the kinds of stories Kaveri is built to help write.</p>
+      <div class="stories-grid">
+        ${STORY_CARDS.map((s) => `
+          <article class="story-card" style="--story-color:${s.color}">
+            <h3>${escapeHtml(s.title)}</h3>
+            ${s.paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join("")}
+            <div class="story-byline">
+              <span class="story-avatars">${s.initials.map((i) => `<span class="story-avatar">${escapeHtml(i)}</span>`).join("")}</span>
+              <span>
+                <strong>${escapeHtml(s.names)}</strong>
+                <span class="story-meta">${escapeHtml(s.meta)}</span>
+              </span>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
   `;
 }
+
+const STORY_CARDS = [
+  {
+    color: "#003580",
+    title: "Arjun found his footing before his daughter's first day of school.",
+    paragraphs: [
+      "Arjun moved from Bengaluru to Espoo for a software role, with his wife Meera and their 6-year-old, Diya. He had an offer letter. He didn't have a residence permit timeline, a place to register, or a school for Diya.",
+      "Kaveri turned that into an order: residence permit, temporary housing, DVV registration, a Kela card, then English-language schools nearby. Diya started school six weeks after landing.",
+      "What stuck with Arjun wasn't the paperwork — it was seeing why each step applied to his family, instead of guessing which of ten government sites actually mattered.",
+    ],
+    initials: ["AR", "MR"],
+    names: "Arjun & Meera",
+    meta: "Bengaluru → Espoo, 3 months in",
+  },
+  {
+    color: "#0072CE",
+    title: "Priya stopped feeling like she was guessing.",
+    paragraphs: [
+      "Priya arrived in Helsinki for a research position with a stack of Migri and DVV instructions that all assumed she already knew what order to do things in.",
+      "Kaveri put \"register your address\" before \"open a bank account\" before \"get a tax card\" — the sequence that actually works — and pointed her to local Meetup groups for evenings that weren't just her laptop and takeout.",
+      "Six months in, she has a personal identity code, a favourite lunch spot near Kumpula, and a running joke with her advisor about explaining Finnish bureaucracy better than he can.",
+    ],
+    initials: ["PR"],
+    names: "Priya",
+    meta: "Chennai → Helsinki, researcher, 6 months in",
+  },
+  {
+    color: "#4DA8DA",
+    title: "Karthik and Sana stopped researching and started living.",
+    paragraphs: [
+      "Karthik and Sana moved to Tampere together — one relocating for work, the other job-hunting from scratch. Two very different sets of admin, at the same time.",
+      "Kaveri split their quest boards without splitting their plan: his residence permit and tax card, her job-seeker registration and TE-services setup, both pointing at the same shared housing and DVV quests underneath.",
+      "They've since been to a sauna they didn't expect to like, and joined a badminton group through a local Indian association — Kela doesn't feel like a scary word anymore.",
+    ],
+    initials: ["KA", "SA"],
+    names: "Karthik & Sana",
+    meta: "Pune → Tampere, 4 months in",
+  },
+];
 
 function renderAuth() {
   const isSignup = state.authMode === "signup";
