@@ -228,7 +228,7 @@ function renderLanding() {
       <h1>Moving from India to Finland?<br>Turn it into a game you can <em>win</em>.</h1>
       <p class="hero-sub">
         Kaveri turns real official Finnish relocation guidance into quests —
-        Legal, Social, Cultural, and Food — worth points. Complete them, climb
+        Administrative Work, Social, Cultural, and Food — worth points. Complete them, climb
         the leaderboard, and get to "Kaveri" level: the point where you're not
         a newcomer anymore, you're a friend.
       </p>
@@ -244,7 +244,7 @@ function renderLanding() {
       <h2>How it works</h2>
       <div class="how-grid">
         <div class="how-card"><span class="how-num">1</span><h3>Tell us about your move</h3><p>Where you're from, where you're headed, who's with you, and what matters to you.</p></div>
-        <div class="how-card"><span class="how-num">2</span><h3>Pick your quest areas</h3><p>Legal, Social, Cultural, Food — choose what applies, we handle the rest.</p></div>
+        <div class="how-card"><span class="how-num">2</span><h3>Pick your quest areas</h3><p>Administrative Work, Social, Cultural, Food — choose what applies, we handle the rest.</p></div>
         <div class="how-card"><span class="how-num">3</span><h3>Complete quests, earn points</h3><p>Every quest is grounded in real Migri, DVV, Kela and InfoFinland guidance — and worth real points on the leaderboard.</p></div>
       </div>
     </section>

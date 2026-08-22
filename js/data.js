@@ -68,7 +68,7 @@ const SOURCES = {
  * category badge shown on each quest card.
  */
 const QUEST_CATEGORIES = {
-  legal: { id: "legal", label: "Legal", icon: "⚖️", color: "#003580", points: 20, blurb: "Permits, registration, bank accounts — the must-do admin." },
+  legal: { id: "legal", label: "Administrative Work", icon: "⚖️", color: "#003580", points: 20, blurb: "Permits, registration, bank accounts — the must-do admin." },
   social: { id: "social", label: "Social", icon: "👥", color: "#0072CE", points: 15, blurb: "Meetups, communities, making connections." },
   cultural: { id: "cultural", label: "Cultural", icon: "🎭", color: "#4DA8DA", points: 10, blurb: "Finnish traditions and everyday lifestyle." },
   food: { id: "food", label: "Food", icon: "🍴", color: "#8FCBEC", points: 5, blurb: "Finnish cuisine worth trying." },
@@ -609,7 +609,7 @@ const ROADMAP_GENERATORS = {
  * Fixed Cultural and Food quests — not personalized by the wizard, offered
  * to every user in "ongoing" once their roadmap is generated. Every quest
  * still cites a real, verified source (InfoFinland or Visit Finland); these
- * are the same grounding rules as the wizard-generated Legal/Social quests.
+ * are the same grounding rules as the wizard-generated Administrative Work/Social quests.
  */
 const CULTURAL_QUESTS = [
   {

@@ -41,7 +41,7 @@ personalised plan — not a generic global relocation checklist.
 **Product name: Kaveri** (Finnish for "friend/buddy"). A guided intake (origin/destination,
 family, background, languages, interests, and which categories the user needs help with) drives
 a personalised **quest board**, generated from a curated knowledge base of real official Finnish
-sources. Every quest belongs to one of four quest categories (⚖️ Legal, 👥 Social, 🎭 Cultural,
+sources. Every quest belongs to one of four quest categories (⚖️ Administrative Work, 👥 Social, 🎭 Cultural,
 🍴 Food — see `QUEST_CATEGORIES` in `js/data.js`), is worth points, and explains *why it applies
 to this person* with a link to its real source. Completing quests earns points toward a level
 (Newcomer → Settler → Local → Kaveri) and a spot on a public leaderboard. An optional "AI Buddy"

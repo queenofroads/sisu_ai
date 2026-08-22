@@ -39,7 +39,7 @@ A short guided intake (where you're moving from/to, who's coming with you, your 
 languages spoken, interests, and which areas you need help with) turns Finland's real official
 guidance into a **personalised quest board**. Every quest belongs to one of four categories —
 
-- ⚖️ **Legal** — residence permits, DVV registration, personal ID, tax card, bank account, housing paperwork
+- ⚖️ **Administrative Work** — residence permits, DVV registration, personal ID, tax card, bank account, housing paperwork
 - 👥 **Social** — job market/employment services, community and language groups, making connections
 - 🎭 **Cultural** — Finnish customs, sauna, public holidays, outdoor life, what's on locally
 - 🍴 **Food** — Finnish dishes and food culture worth trying
