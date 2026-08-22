@@ -59,6 +59,9 @@ const SOURCES = {
   infoFinlandFinancialProblems: { name: "InfoFinland — financial problems", url: "https://infofinland.fi/settling-in-finland/cost-of-living-in-finland/financial-problems" },
   infoFinlandStartingBusiness: { name: "InfoFinland — starting a business in Finland", url: "https://infofinland.fi/en/work-and-enterprise/starting-a-business-in-finland" },
   infoFinlandEntrepreneurNonEU: { name: "InfoFinland — entrepreneur in Finland (non-EU citizens)", url: "https://infofinland.fi/en/moving-to-finland/non-eu-citizens/entrepreneur-in-finland" },
+  infoFinlandVolunteering: { name: "InfoFinland — voluntary work in Finland", url: "https://infofinland.fi/en/leisure/voluntary-work" },
+  vapaaehtoistyoFi: { name: "Vapaaehtoistyö.fi — Finland's national volunteering database", url: "https://vapaaehtoistyo.fi/en/" },
+  redCrossVolunteer: { name: "Finnish Red Cross — volunteer to support immigrants and refugees", url: "https://www.redcross.fi/become-a-volunteer/support-immigrants/" },
 };
 
 /*
@@ -693,6 +696,27 @@ const FOOD_QUESTS = [
   },
 ];
 
+const VOLUNTEER_QUESTS = [
+  {
+    title: "Browse Finland's national volunteering database",
+    why: "Vapaaehtoistyö.fi aggregates volunteer opportunities from organisations all over the country in one place — a fast way to find something matching your interests and city.",
+    action: "Search Vapaaehtoistyö.fi for opportunities near your destination city.",
+    source: SOURCES.vapaaehtoistyoFi,
+  },
+  {
+    title: "Look into volunteering to support fellow newcomers",
+    why: "Volunteering in immigrant/refugee support work is one of the fastest ways to build a local network and doesn't require advanced Finnish to get started.",
+    action: "Check the Finnish Red Cross's volunteer opportunities supporting immigrants and refugees in your area.",
+    source: SOURCES.redCrossVolunteer,
+  },
+  {
+    title: "Read up on how voluntary work fits into life in Finland",
+    why: "Volunteering can also help build local work experience and improve your Finnish — worth understanding as an option even before you have a job.",
+    action: "Read InfoFinland's overview of voluntary work in Finland.",
+    source: SOURCES.infoFinlandVolunteering,
+  },
+];
+
 /*
  * Fun Finland trivia — shown in the "Fun Fact" popup. Sourced from TRIVIA.md
  * (already vetted); this is light-hearted flavor content, not a quest
@@ -815,6 +839,17 @@ function buildRoadmap(profile, categoryAnswers) {
       categoryIcon: QUEST_CATEGORIES.food.icon,
       questCategory: "food",
       points: pointsFor("food"),
+    });
+  });
+  VOLUNTEER_QUESTS.forEach((s) => {
+    stepsByPhase.ongoing.push({
+      ...s,
+      phase: "ongoing",
+      categoryId: "volunteering",
+      categoryLabel: "Volunteering",
+      categoryIcon: "🙋",
+      questCategory: "social",
+      points: pointsFor("social"),
     });
   });
 
