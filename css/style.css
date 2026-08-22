@@ -171,13 +171,19 @@ em { color: var(--primary-dark); font-style: normal; }
 .btn {
   border: none; border-radius: 8px; padding: 12px 22px;
   font-size: 15px; font-weight: 600; cursor: pointer;
-  transition: transform 0.05s ease;
+  transition: transform 0.05s ease, box-shadow 0.15s ease;
 }
 .btn:active { transform: scale(0.98); }
 .btn-primary { background: var(--primary); color: white; }
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
 .btn-secondary { background: var(--accent); color: #241505; }
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover, .btn-secondary:hover { box-shadow: 0 4px 12px rgba(0, 40, 90, 0.2); transform: translateY(-1px); }
+}
+.btn:focus-visible, .link-btn:focus-visible {
+  outline: 2px solid var(--primary); outline-offset: 2px;
+}
 .link-btn { display: block; width: 100%; background: none; border: none; color: var(--primary); text-decoration: underline; cursor: pointer; font-size: 14px; padding: 8px 0; }
 .auth-card .link-btn:last-child { color: var(--muted); margin-top: 6px; }
 
@@ -196,7 +202,7 @@ input, select {
   border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text);
   width: 100%; max-width: 100%;
 }
-input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
 
 /* ---------- Wizard ---------- */
 .progress-bar { height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
@@ -212,9 +218,15 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
   position: relative; display: flex; flex-direction: column; gap: 4px;
   border: 2px solid var(--border); border-radius: var(--radius); padding: 16px;
   cursor: pointer; background: var(--bg);
+  transition: border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
 }
 .category-card.selected { border-color: var(--primary); background: rgba(28, 110, 92, 0.08); }
 .category-card input { position: absolute; top: 14px; right: 14px; width: auto; }
+.category-card input:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.category-card:active { transform: scale(0.98); }
+@media (hover: hover) and (pointer: fine) {
+  .category-card:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+}
 .cat-icon { font-size: 22px; }
 .cat-label { font-weight: 700; }
 .cat-blurb { font-size: 13px; color: var(--muted); }
@@ -233,8 +245,14 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
   display: inline-flex; align-items: center; gap: 6px;
   border: 1px solid var(--border); border-radius: 999px; padding: 6px 12px;
   font-size: 13px; font-weight: 500; background: var(--bg); cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 .chip input { width: auto; }
+.chip input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.chip:has(input:checked) { border-color: var(--primary); background: rgba(0, 53, 128, 0.08); }
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover { border-color: var(--accent); }
+}
 
 .review-summary { background: var(--bg); border-radius: var(--radius); padding: 16px; }
 
@@ -302,8 +320,12 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
 
 .phases { display: flex; flex-direction: column; gap: 12px; }
 .phase-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 18px 18px; box-shadow: var(--shadow); }
-.phase-section summary { cursor: pointer; padding: 14px 0; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; list-style: none; }
+.phase-section summary { cursor: pointer; padding: 14px 0; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; list-style: none; border-radius: 6px; transition: color 0.15s ease; }
 .phase-section summary::-webkit-details-marker { display: none; }
+.phase-section summary:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .phase-section summary:hover { color: var(--primary); }
+}
 .phase-progress-pill {
   font-size: 12px; font-weight: 700; color: var(--muted);
   background: var(--bg); border: 1px solid var(--border);
@@ -317,7 +339,9 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
   border-radius: 10px; padding: 16px; background: var(--surface);
   box-shadow: var(--shadow); transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
-.step-card:hover { box-shadow: 0 6px 18px rgba(0, 40, 90, 0.12); transform: translateY(-1px); }
+@media (hover: hover) and (pointer: fine) {
+  .step-card:hover { box-shadow: 0 6px 18px rgba(0, 40, 90, 0.12); transform: translateY(-1px); }
+}
 
 /* Scroll-stack effect: cards inside a phase's step list stick near the top
    as you scroll, each one landing a little lower than the last so later
@@ -332,8 +356,17 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
 .step-card.done {
   align-items: center; padding: 10px 16px; background: var(--bg);
   border-left-color: var(--border); box-shadow: none; transform: none;
+  animation: quest-complete-pop 0.35s ease;
 }
 .step-card.done:hover { box-shadow: none; transform: none; }
+@keyframes quest-complete-pop {
+  0% { transform: scale(0.97); opacity: 0.6; }
+  60% { transform: scale(1.01); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .step-card.done { animation: none; }
+}
 .step-card.done .step-body { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .step-card.done h4 { margin: 0; font-size: 15px; color: var(--muted); }
 
@@ -347,6 +380,7 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
 }
 .step-check input:hover { border-color: var(--badge-color, var(--primary)); box-shadow: 0 0 0 4px rgba(0, 53, 128, 0.12); }
 .step-check input:active { transform: scale(0.9); }
+.step-check input:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 .step-check input:checked { background: var(--badge-color, var(--primary)); border-color: var(--badge-color, var(--primary)); }
 .step-check input:checked::after { content: "✓"; color: #fff; font-size: 15px; font-weight: 800; }
 .step-card.done .step-check input { width: 22px; height: 22px; min-width: 22px; margin-top: 0; }

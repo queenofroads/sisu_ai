@@ -803,6 +803,16 @@ function renderAiBuddy() {
 
 // ---------- Event wiring (delegated — survives re-renders) ----------
 
+// Click on the dimmed backdrop (not the box itself) or press Escape to close
+// whichever settings-modal is currently open.
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("settings-modal")) e.target.hidden = true;
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  document.querySelectorAll(".settings-modal:not([hidden])").forEach((m) => (m.hidden = true));
+});
+
 document.addEventListener("click", (e) => {
   const el = e.target.closest("[data-action]");
   if (!el) return;
