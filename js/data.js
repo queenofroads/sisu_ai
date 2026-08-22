@@ -718,6 +718,27 @@ const VOLUNTEER_QUESTS = [
 ];
 
 /*
+ * Rotates on the landing hero ("Your friend for ___") — Kaveri means
+ * something different depending on who's asking, so this deliberately
+ * cycles through the breadth of what it actually helps with (admin, work,
+ * family, culture, food, community) instead of picking one framing.
+ */
+const HERO_TAGLINES = [
+  "finding your first apartment",
+  "your residence permit paperwork",
+  "getting your kid into daycare",
+  "understanding your first payslip",
+  "figuring out Suomi.fi",
+  "starting your own business",
+  "learning your first Finnish words",
+  "trying sauna for the first time",
+  "finding your people",
+  "knowing you're not alone",
+  "volunteering in your new city",
+  "your first karjalanpiirakka",
+];
+
+/*
  * Fun Finland trivia — shown in the "Fun Fact" popup. Sourced from TRIVIA.md
  * (already vetted); this is light-hearted flavor content, not a quest
  * citation, so no SOURCES link is attached.
