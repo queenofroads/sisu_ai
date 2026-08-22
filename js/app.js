@@ -429,7 +429,6 @@ function renderRoadmap() {
       </div>
       <div class="header-actions">
         <button class="btn btn-ghost" data-action="edit-profile">Edit my details</button>
-        <button class="btn btn-ghost" data-action="open-settings">⚙️ AI Buddy settings</button>
         <button class="btn btn-ghost" data-action="log-out">Log out</button>
       </div>
     </section>
@@ -450,9 +449,10 @@ function renderRoadmap() {
     </section>
 
     ${renderLeaderboard()}
-
-    ${renderAiBuddy()}
   `;
+  // AI Buddy is temporarily pulled from the UI (renderAiBuddy() below is
+  // still intact) — re-add "${renderAiBuddy()}" here and the settings
+  // button in the header-actions block above to bring it back.
 }
 
 function renderPhaseSection(phase, steps) {
