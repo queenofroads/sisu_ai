@@ -369,23 +369,63 @@ function renderSetupBanner() {
 
 function renderLanding() {
   return `
-    <section class="hero">
-      <div class="hero-flags">
-        <span class="hero-flag" aria-label="India">🇮🇳</span>
-        <span class="hero-wordmark" id="hero-wordmark" lang="${FRIEND_WORDS[0].code}">${escapeHtml(FRIEND_WORDS[0].word)}</span>
-        <span class="hero-flag" aria-label="Finland">🇫🇮</span>
-      </div>
-      <div class="hero-carousel" id="hero-carousel">
-        <span class="carousel-icon" id="carousel-icon" aria-hidden="true">${HERO_PERSONAS[0].icon}</span>
-        <h1 id="carousel-who">${escapeHtml(HERO_PERSONAS[0].who)}</h1>
-        <p class="carousel-benefit" id="carousel-benefit">${escapeHtml(HERO_PERSONAS[0].benefit)}</p>
-        <div class="carousel-dots">
-          ${HERO_PERSONAS.map((_, i) => `<button type="button" class="carousel-dot${i === 0 ? " active" : ""}" data-action="carousel-goto" data-slide="${i}" aria-label="Show persona ${i + 1} of ${HERO_PERSONAS.length}"></button>`).join("")}
+    <section class="hero hero-split">
+      <div class="hero-content">
+        <div class="hero-flags">
+          <span class="hero-flag" aria-label="India">🇮🇳</span>
+          <span class="hero-wordmark" id="hero-wordmark" lang="${FRIEND_WORDS[0].code}">${escapeHtml(FRIEND_WORDS[0].word)}</span>
+          <span class="hero-flag" aria-label="Finland">🇫🇮</span>
+        </div>
+        <div class="hero-carousel" id="hero-carousel">
+          <span class="carousel-icon" id="carousel-icon" aria-hidden="true">${HERO_PERSONAS[0].icon}</span>
+          <h1 id="carousel-who">${escapeHtml(HERO_PERSONAS[0].who)}</h1>
+          <p class="carousel-benefit" id="carousel-benefit">${escapeHtml(HERO_PERSONAS[0].benefit)}</p>
+          <div class="carousel-dots">
+            ${HERO_PERSONAS.map((_, i) => `<button type="button" class="carousel-dot${i === 0 ? " active" : ""}" data-action="carousel-goto" data-slide="${i}" aria-label="Show persona ${i + 1} of ${HERO_PERSONAS.length}"></button>`).join("")}
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Sign up & start my quests</button>
+          <button class="btn btn-ghost" data-action="go-auth" data-mode="login">Log in</button>
+        </div>
+        <div class="hero-trust">
+          <span class="trust-item">🛡️ Real official sources</span>
+          <span class="trust-item">🎯 Personalized to your move</span>
+          <span class="trust-item">🏆 Earn points as you go</span>
         </div>
       </div>
-      <div class="hero-actions">
-        <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Sign up & start my quests</button>
-        <button class="btn btn-ghost" data-action="go-auth" data-mode="login">Log in</button>
+      <div class="hero-illustration" aria-hidden="true">
+        <svg viewBox="0 0 480 480" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#bcd9f0" />
+              <stop offset="100%" stop-color="#eaf3fb" />
+            </linearGradient>
+            <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#8fb8d6" />
+              <stop offset="100%" stop-color="#5f93b8" />
+            </linearGradient>
+          </defs>
+          <rect width="480" height="480" fill="url(#skyGrad)" />
+          <circle cx="90" cy="330" r="34" fill="#3d7a4f" />
+          <circle cx="120" cy="345" r="26" fill="#4a8f5e" />
+          <circle cx="410" cy="320" r="30" fill="#3d7a4f" />
+          <rect x="240" y="230" width="60" height="130" fill="#e7ddcf" />
+          <polygon points="240,230 270,170 300,230" fill="#5a7a63" />
+          <rect x="262" y="190" width="16" height="40" fill="#5a7a63" />
+          <rect x="150" y="270" width="70" height="90" fill="#d9c9b8" />
+          <rect x="310" y="255" width="80" height="105" fill="#cbb9a5" />
+          <rect x="255" y="270" width="12" height="18" fill="#8fa9c4" />
+          <rect x="165" y="290" width="14" height="18" fill="#8fa9c4" />
+          <rect x="330" y="280" width="14" height="18" fill="#8fa9c4" />
+          <rect y="360" width="480" height="120" fill="url(#waterGrad)" />
+          <path d="M0,372 Q60,364 120,372 T240,372 T360,372 T480,372" fill="none" stroke="#eaf3fb" stroke-width="3" opacity="0.5" />
+        </svg>
+        <div class="illustration-badges">
+          <span class="illustration-badge" style="--badge-bg:#e5f0ea;">🏠</span>
+          <span class="illustration-badge" style="--badge-bg:#e6ecf9;">📄</span>
+          <span class="illustration-badge" style="--badge-bg:#fbeae1;">👥</span>
+        </div>
       </div>
     </section>
     <section class="how">
