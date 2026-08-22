@@ -118,9 +118,12 @@ async function initAuth() {
 }
 
 async function handleSignedIn(user) {
-  if (state.authUserId && state.authUserId !== user.id) {
-    // A different account just signed in on this browser — don't leak the
-    // previous account's roadmap/progress into their view.
+  if (state.authUserId !== user.id) {
+    // Either a different account just signed in, or the previous state came
+    // from "Skip login" test mode (authUserId null) — either way it isn't
+    // this account's data, so don't leak it into their view. A same-account
+    // reload keeps authUserId === user.id and skips this, so resuming a
+    // real session still works.
     state = defaultState();
   }
   let profile = null;
