@@ -50,6 +50,12 @@ const SOURCES = {
   visitFinlandSauna: { name: "Visit Finland — your guide to Finnish sauna", url: "https://www.visitfinland.com/en/things-to-do/sauna/" },
   visitFinlandFood: { name: "Visit Finland — what to eat in Finland, iconic Finnish foods", url: "https://www.visitfinland.com/en/articles/finlands-traditional-and-iconic-foods/" },
   visitFinlandFoodCulture: { name: "Visit Finland — Finnish food culture and must-try local ingredients", url: "https://www.visitfinland.com/en/articles/finnish-food-culture/" },
+  suomiFiFrontpage: { name: "Suomi.fi — official public e-services portal", url: "https://www.suomi.fi/frontpage" },
+  suomiFiDigitalSupport: { name: "Suomi.fi — digital support for using web services and devices", url: "https://www.suomi.fi/citizen/rights-and-obligations/digital-support-and-administrative-services/guide/digital-support-in-using-web-services-and-devices1/digital-support/services" },
+  infoFinlandMentalHealth: { name: "InfoFinland — mental health", url: "https://infofinland.fi/en/health/mental-health" },
+  infoFinlandFinancialProblems: { name: "InfoFinland — financial problems", url: "https://infofinland.fi/settling-in-finland/cost-of-living-in-finland/financial-problems" },
+  infoFinlandStartingBusiness: { name: "InfoFinland — starting a business in Finland", url: "https://infofinland.fi/en/work-and-enterprise/starting-a-business-in-finland" },
+  infoFinlandEntrepreneurNonEU: { name: "InfoFinland — entrepreneur in Finland (non-EU citizens)", url: "https://infofinland.fi/en/moving-to-finland/non-eu-citizens/entrepreneur-in-finland" },
 };
 
 /*
@@ -117,17 +123,21 @@ const PHASES = [
 ];
 
 /*
- * Categories the user can pick as "of interest to them" (per the team's own
- * Miro plan: pick categories -> AI asks a short conditional questionnaire ->
+ * Categories the user can pick as "of interest to them" — matches the seven
+ * areas Kaveri is meant to help with (local culture & traditions; work,
+ * entrepreneurship & studying; language; public services; digital skills;
+ * family life & building social connections; self-help). Each still rolls
+ * up into one of the four quest badges via questCategory (per the team's
+ * own Miro plan: pick categories -> a short conditional questionnaire ->
  * answers feed the roadmap generator below).
  */
 const CATEGORIES = [
   {
-    id: "immigration",
-    label: "Visa & Residence Permit",
-    icon: "🛂",
+    id: "publicServices",
+    label: "Public Services",
+    icon: "🏛️",
     questCategory: "legal",
-    blurb: "Migri applications, timelines, and what happens after you land.",
+    blurb: "Residence permits, DVV registration, personal ID, tax card, and healthcare — the core admin unlock.",
     questions: [
       {
         id: "status",
@@ -147,91 +157,52 @@ const CATEGORIES = [
         label: "When are you hoping to move?",
         options: ["Within 1 month", "1–3 months", "3–6 months", "Still deciding"],
       },
-    ],
-  },
-  {
-    id: "registration",
-    label: "Registration & Personal ID",
-    icon: "🪪",
-    questCategory: "legal",
-    blurb: "DVV, the personal identity code (henkilötunnus), and your municipality of residence.",
-    questions: [
       {
         id: "arrivedYet",
         type: "select",
         label: "Have you arrived in Finland yet?",
         options: ["Not yet", "Yes, within the last month", "Yes, more than a month ago"],
       },
+      {
+        id: "ongoingNeeds",
+        type: "select",
+        label: "Any ongoing medical needs, medication, or family members needing regular care?",
+        options: ["No", "Yes"],
+      },
     ],
   },
   {
-    id: "housing",
-    label: "Housing",
-    icon: "🏠",
+    id: "digitalSkills",
+    label: "Digital Skills",
+    icon: "💻",
     questCategory: "legal",
-    blurb: "Where families and students typically look, and what to check before signing.",
+    blurb: "Suomi.fi and the digital identity almost every Finnish public service assumes you already have.",
     questions: [
       {
-        id: "purpose",
+        id: "comfort",
         type: "select",
-        label: "Are you renting for work, study, or family relocation?",
-        options: ["Work", "Study", "Family relocation"],
-      },
-      {
-        id: "areaPreference",
-        type: "text",
-        label: "Any preferred area or neighbourhood? (optional)",
-        placeholder: "e.g. near Otaniemi / Leppävaara / Tapiola",
+        label: "How comfortable are you using government websites/apps in a new country?",
+        options: ["Very comfortable", "Somewhat", "Not really — I'll need a guide"],
       },
     ],
   },
   {
-    id: "education",
-    label: "Education",
-    icon: "🎓",
-    questCategory: "legal",
-    blurb: "Daycare and school for your children, or further studies for yourself.",
-    questions: [
-      {
-        id: "who",
-        type: "select",
-        label: "Is this mainly for yourself or for your children?",
-        options: ["My children", "Myself", "Both"],
-      },
-      {
-        id: "childAges",
-        type: "text",
-        label: "If for your children — how many, and what ages?",
-        placeholder: "e.g. two kids, ages 4 and 9",
-        showIf: { field: "who", oneOf: ["My children", "Both"] },
-      },
-      {
-        id: "instructionLanguage",
-        type: "select",
-        label: "Preferred language of instruction for your children?",
-        options: ["Finnish", "Swedish", "English / international / bilingual", "Not sure yet"],
-        showIf: { field: "who", oneOf: ["My children", "Both"] },
-      },
-      {
-        id: "ownQualification",
-        type: "select",
-        label: "If for yourself — what are you aiming for?",
-        options: ["Bachelor's degree", "Master's degree", "Doctoral studies", "Not applicable"],
-        showIf: { field: "who", oneOf: ["Myself", "Both"] },
-      },
-    ],
-  },
-  {
-    id: "career",
-    label: "Career & Job Market",
+    id: "workStudy",
+    label: "Work, Entrepreneurship & Studying",
     icon: "💼",
     questCategory: "social",
-    blurb: "Finding work, understanding the local market, and using employment services.",
+    blurb: "Finding work, starting a business, or continuing your studies.",
     questions: [
+      {
+        id: "goal",
+        type: "select",
+        label: "What's your main goal here?",
+        options: ["Find employment", "Start a business or freelance", "Further studies (Bachelor's/Master's/PhD)", "Not sure yet"],
+      },
       {
         id: "field",
         type: "text",
-        label: "What field do you work in?",
+        label: "What field do you work in / plan to study? (optional)",
         placeholder: "e.g. software engineering, nursing, academia",
       },
       {
@@ -239,12 +210,20 @@ const CATEGORIES = [
         type: "select",
         label: "Job search status?",
         options: ["Already have a Finnish job offer", "Actively searching", "Just researching options"],
+        showIf: { field: "goal", oneOf: ["Find employment"] },
+      },
+      {
+        id: "qualification",
+        type: "select",
+        label: "What are you aiming for?",
+        options: ["Bachelor's degree", "Master's degree", "Doctoral studies"],
+        showIf: { field: "goal", oneOf: ["Further studies (Bachelor's/Master's/PhD)"] },
       },
     ],
   },
   {
     id: "language",
-    label: "Language & Integration",
+    label: "Language",
     icon: "🗣️",
     questCategory: "cultural",
     blurb: "Learning Finnish or Swedish, and free integration training you may be entitled to.",
@@ -264,26 +243,26 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "healthcare",
-    label: "Healthcare & Social Security",
-    icon: "🩺",
-    questCategory: "legal",
-    blurb: "Kela, public healthcare access, and what changes once you're registered.",
+    id: "culture",
+    label: "Local Culture & Traditions",
+    icon: "🎭",
+    questCategory: "cultural",
+    blurb: "Finnish customs, traditions, and everyday lifestyle — on top of the quests everyone gets.",
     questions: [
       {
-        id: "ongoingNeeds",
-        type: "select",
-        label: "Any ongoing medical needs, medication, or family members needing regular care?",
-        options: ["No", "Yes"],
+        id: "curiosity",
+        type: "text",
+        label: "What aspects of Finnish culture are you most curious about? (optional)",
+        placeholder: "e.g. sauna etiquette, Midsummer, work-life balance",
       },
     ],
   },
   {
-    id: "community",
-    label: "Language spoken at home & Community",
-    icon: "🤝",
+    id: "familyLife",
+    label: "Family Life & Building Social Connections",
+    icon: "👨‍👩‍👧",
     questCategory: "social",
-    blurb: "Who's with you, what languages you speak, and finding people with shared interests.",
+    blurb: "Who's with you, what languages you speak, your children's schooling, and finding people with shared interests.",
     questions: [
       {
         id: "familyLanguages",
@@ -297,6 +276,27 @@ const CATEGORIES = [
         label: "What are you and your family interested in? (hobbies, sports, culture)",
         placeholder: "e.g. cricket, classical music, hiking, coding meetups",
       },
+      {
+        id: "instructionLanguage",
+        type: "select",
+        label: "If you have children — preferred language of instruction for daycare/school?",
+        options: ["Finnish", "Swedish", "English / international / bilingual", "Not sure yet"],
+      },
+    ],
+  },
+  {
+    id: "selfHelp",
+    label: "Self-help",
+    icon: "🧘",
+    questCategory: "social",
+    blurb: "Where to turn for mental health or financial support, if and when you need it — no shame in bookmarking this early.",
+    questions: [
+      {
+        id: "wantsSupport",
+        type: "select",
+        label: "Would it help to know where to turn if things ever feel overwhelming (stress, loneliness, financial strain)?",
+        options: ["Yes, show me", "Not needed right now"],
+      },
     ],
   },
 ];
@@ -307,7 +307,7 @@ const CATEGORIES = [
  * "why" is where personalization happens: it reads the profile + answers.
  */
 const ROADMAP_GENERATORS = {
-  immigration(profile, a) {
+  publicServices(profile, a) {
     const steps = [];
     if (a.status === "Not started yet") {
       steps.push({
@@ -329,13 +329,9 @@ const ROADMAP_GENERATORS = {
       steps.push({ phase: "before", title: "Double-check processing time won't slip your move date", why: "You're planning to move within a month — permit processing can take longer than that, so this is your most time-sensitive item.", action: "Check current processing times on Enter Finland and consider whether your timeline needs adjusting.", source: SOURCES.enterFinland });
     }
     steps.push({ phase: "month3", title: "Plan for permanent residence, eventually", why: "Most routes allow you to apply for permanent residence after a few continuous years — worth knowing early, not urgent now.", action: "Bookmark Migri's permanent residence permit page for later.", source: SOURCES.migriPermanent });
-    return steps;
-  },
 
-  registration(profile, a) {
-    const steps = [];
     steps.push({
-      phase: a.arrivedYet === "Not yet" ? "week2" : "week2",
+      phase: "week2",
       title: "Register with DVV and get your personal identity code",
       why: "This one unlocks almost everything else — banking, healthcare, tax card, even a phone contract usually need it.",
       action: "Book an appointment with the Digital and Population Data Services Agency (DVV) to register and receive your henkilötunnus.",
@@ -353,78 +349,84 @@ const ROADMAP_GENERATORS = {
     }
     steps.push({ phase: "week2", title: "If DVV's queue is long, try International House Helsinki", why: "In the Helsinki region, International House Helsinki runs a combined registration service that's often faster for newcomers.", action: "Check whether International House Helsinki can process your registration.", source: SOURCES.ihHelsinki });
     steps.push({ phase: "month1", title: "Open a Finnish bank account", why: "Once you have your personal identity code, a local bank account is what actually unlocks salary payments, Kela benefits, and paying rent — most Finnish landlords and employers won't work around it.", action: "Compare a couple of Finnish banks' requirements and fees, then open an account using your ID and personal identity code.", source: SOURCES.infoFinlandEverydayLife });
+
+    steps.push({
+      phase: "week2",
+      title: "Understand your Kela / public healthcare eligibility",
+      why: "Eligibility for Kela benefits and public healthcare depends on your permit type and length of stay — it is not automatic on arrival.",
+      action: "Read Kela's guide on getting benefits when you move to Finland.",
+      source: SOURCES.kelaWhenMoveIn,
+    });
+    if (a.ongoingNeeds === "Yes") {
+      steps.push({ phase: "week2", title: "Plan continuity of care for ongoing medical needs", why: "You told us there are ongoing medical needs in your family — sort out prescriptions and medical records transfer before routine care access kicks in.", action: "Read Kela's plain-language guide on moving to Finland, and bring existing medical records/prescriptions translated if possible.", source: SOURCES.kelaGuide });
+    }
     return steps;
   },
 
-  housing(profile, a) {
-    return [
-      {
-        phase: "before",
-        title: "Start housing research before you land",
-        why: `${a.purpose ? `Renting for ${a.purpose.toLowerCase()} ` : "Housing "}in the Espoo/Helsinki region moves fast, especially near universities and tech employers — starting from India saves your first two weeks.`,
-        action: "Start with InfoFinland's settling-in guidance, then use the destination city's own site to search for municipal and student housing options.",
-        source: SOURCES.infoFinlandHome,
-      },
-      {
-        phase: "before",
-        title: `Check ${profile.destination || "your destination city"}'s own housing services`,
-        why: a.areaPreference ? `You mentioned wanting to be near ${a.areaPreference} — city sites let you filter by area.` : "Municipal sites list both city-owned rentals and general housing guidance for newcomers.",
-        action: "Search the official city site for 'housing' or 'asuminen' — city-run rentals are often more newcomer-friendly than the open market.",
-        source: profile.destination === "Helsinki" ? SOURCES.helsinkiHome : SOURCES.espooHome,
-      },
+  digitalSkills(profile, a) {
+    const steps = [
       {
         phase: "week2",
-        title: "Register your new address once you sign a lease",
-        why: "Your address on file with DVV needs to match where you actually live — this affects mail, healthcare centre assignment, and school catchment.",
-        action: "Update your address with DVV as soon as your lease starts.",
-        source: SOURCES.dvvInternationalMove,
+        title: "Get comfortable with Suomi.fi",
+        why: "Almost every Finnish public service — Kela, Vero, DVV, even your future employer's HR system — assumes you can authenticate and act through Suomi.fi. It's worth understanding before you need it under pressure.",
+        action: "Create your Suomi.fi identity once you have a personal identity code, and browse what it lets you do (messages, e-authorizations, viewing your own data).",
+        source: SOURCES.suomiFiFrontpage,
       },
     ];
+    if (a.comfort === "Not really — I'll need a guide") {
+      steps.push({
+        phase: "week2",
+        title: "Use Suomi.fi's digital support guide",
+        why: "You told us government sites/apps in a new country feel daunting — Suomi.fi has a dedicated guide for exactly this, not just a FAQ page.",
+        action: "Work through Suomi.fi's digital support guide for using web services and devices.",
+        source: SOURCES.suomiFiDigitalSupport,
+      });
+    }
+    return steps;
   },
 
-  education(profile, a) {
+  workStudy(profile, a) {
     const steps = [];
-    if (a.who === "My children" || a.who === "Both") {
-      const city = profile.destination === "Helsinki" ? "helsinki" : "espoo";
-      steps.push({
-        phase: "before",
-        title: "Apply for early childhood education / daycare early",
-        why: a.childAges ? `You told us: ${a.childAges}. Daycare and pre-primary places in the capital region fill up, and non-resident applications can usually start before you've even registered your address.` : "Daycare places in the capital region fill up — start the application before you arrive if you can.",
-        action: city === "helsinki" ? "Apply through Helsinki's Edlevo e-service." : "Apply through Espoo's eVaka e-service.",
-        source: city === "helsinki" ? SOURCES.helsinkiEce : SOURCES.espooEce,
-      });
-      if (a.instructionLanguage) {
-        steps.push({ phase: "month1", title: `Confirm ${a.instructionLanguage} availability at nearby schools`, why: `You told us you're aiming for ${a.instructionLanguage} instruction — availability varies a lot by area, so confirming early avoids a surprise catchment assignment.`, action: "Cross-check InfoFinland's early childhood education overview against your city's own school/daycare finder.", source: SOURCES.infoFinlandEce });
+    if (a.goal === "Find employment") {
+      if (a.jobStatus === "Already have a Finnish job offer") {
+        steps.push({ phase: "before", title: "Confirm your work-based permit route matches your offer", why: "Your permit basis needs to match the actual employment terms in your offer letter.", action: "Cross-check your offer against Migri's residence permit requirements before applying.", source: SOURCES.migriWork });
+      } else {
+        steps.push({
+          phase: "week2",
+          title: "Register with employment services",
+          why: a.field ? `You work in ${a.field} — Finland actively recruits international talent in many technical and specialist fields, and TE-palvelut / ITES exist specifically to help match you.` : "Even while researching, registering early means you show up for relevant opportunities sooner.",
+          action: "Register with TE-palvelut's work permit and employment services, and — if you're in the Helsinki region — the International Talent Employment Service (ITES).",
+          source: SOURCES.teWorkPermit,
+        });
+        steps.push({ phase: "month1", title: "Explore the local job market directly", why: "Work in Finland's own job board and labour-market overview is a good gauge of realistic demand in your field before you commit to a city.", action: "Browse current openings and the labour market overview for your sector.", source: SOURCES.workInFinlandJobs });
       }
-      steps.push({ phase: "month3", title: "Know about free pre-primary education for 5-year-olds", why: "If you have a child turning 5, Espoo (and most Finnish municipalities) offer free pre-primary education — easy to miss if you're not looking for it.", action: "Check eligibility and enrolment windows.", source: SOURCES.espooEceFree5 });
-    }
-    if (a.who === "Myself" || a.who === "Both") {
+      steps.push({ phase: "week2", title: "Check the Helsinki region's international talent service", why: "The Espoo–Helsinki–Vantaa region runs a dedicated service to help international talent integrate into the local job market.", action: "See if ITES has relevant employer connections in your field.", source: SOURCES.ites });
+    } else if (a.goal === "Start a business or freelance") {
       steps.push({
         phase: "month1",
-        title: `Plan your ${a.ownQualification || "further studies"} pathway`,
+        title: "Learn how to start a business in Finland",
+        why: a.field ? `You told us you're in ${a.field} — the business form you pick (light entrepreneurship, proprietorship, limited company) changes your obligations, so it's worth understanding the options before registering anything.` : "The business form you pick changes your tax and reporting obligations, so it's worth understanding the options before registering anything.",
+        action: "Read InfoFinland's overview of starting a business, including the Trade Register notification every form requires.",
+        source: SOURCES.infoFinlandStartingBusiness,
+      });
+      if (profile.background !== "employed") {
+        steps.push({
+          phase: "before",
+          title: "Check whether you need a start-up residence permit",
+          why: "As a non-EU citizen, entrepreneurship usually needs its own permit route, applied for before you arrive — different from an employment-based permit.",
+          action: "Confirm the entrepreneur/start-up permit requirements before you finalise your move date.",
+          source: SOURCES.infoFinlandEntrepreneurNonEU,
+        });
+      }
+    } else if (a.goal === "Further studies (Bachelor's/Master's/PhD)") {
+      steps.push({
+        phase: "month1",
+        title: `Plan your ${a.qualification || "further studies"} pathway`,
         why: "Finnish universities have specific application windows and language requirements that differ from Indian ones — worth mapping before you commit time to one institution.",
         action: "Confirm your target programme's language of instruction, intake dates, and whether your existing qualification is recognised.",
         source: SOURCES.infoFinlandHome,
       });
     }
-    return steps;
-  },
-
-  career(profile, a) {
-    const steps = [];
-    if (a.jobStatus === "Already have a Finnish job offer") {
-      steps.push({ phase: "before", title: "Confirm your work-based permit route matches your offer", why: "Your permit basis needs to match the actual employment terms in your offer letter.", action: "Cross-check your offer against Migri's residence permit requirements before applying.", source: SOURCES.migriWork });
-    } else {
-      steps.push({
-        phase: "week2",
-        title: "Register with employment services",
-        why: a.field ? `You work in ${a.field} — Finland actively recruits international talent in many technical and specialist fields, and TE-palvelut / ITES exist specifically to help match you.` : "Even while researching, registering early means you show up for relevant opportunities sooner.",
-        action: "Register with TE-palvelut's work permit and employment services, and — if you're in the Helsinki region — the International Talent Employment Service (ITES).",
-        source: SOURCES.teWorkPermit,
-      });
-      steps.push({ phase: "month1", title: "Explore the local job market directly", why: "Work in Finland's own job board and labour-market overview is a good gauge of realistic demand in your field before you commit to a city.", action: "Browse current openings and the labour market overview for your sector.", source: SOURCES.workInFinlandJobs });
-    }
-    steps.push({ phase: "week2", title: "Check the Helsinki region's international talent service", why: "The Espoo–Helsinki–Vantaa region runs a dedicated service to help international talent integrate into the local job market.", action: "See if ITES has relevant employer connections in your field.", source: SOURCES.ites });
     return steps;
   },
 
@@ -440,21 +442,21 @@ const ROADMAP_GENERATORS = {
     return steps;
   },
 
-  healthcare(profile, a) {
-    const steps = [{
-      phase: "week2",
-      title: "Understand your Kela / public healthcare eligibility",
-      why: "Eligibility for Kela benefits and public healthcare depends on your permit type and length of stay — it is not automatic on arrival.",
-      action: "Read Kela's guide on getting benefits when you move to Finland.",
-      source: SOURCES.kelaWhenMoveIn,
-    }];
-    if (a.ongoingNeeds === "Yes") {
-      steps.push({ phase: "week2", title: "Plan continuity of care for ongoing medical needs", why: "You told us there are ongoing medical needs in your family — sort out prescriptions and medical records transfer before routine care access kicks in.", action: "Read Kela's plain-language guide on moving to Finland, and bring existing medical records/prescriptions translated if possible.", source: SOURCES.kelaGuide });
+  culture(profile, a) {
+    const steps = [];
+    if (a.curiosity) {
+      steps.push({
+        phase: "ongoing",
+        title: "Follow up on what you're curious about",
+        why: `You told us you're curious about: ${a.curiosity}. Finnish culture and social norms are covered well in one place, worth reading before you guess at etiquette.`,
+        action: "Read InfoFinland's overview of Finnish culture and social norms, then look up your specific interest by name once you're settled.",
+        source: SOURCES.infoFinlandCustoms,
+      });
     }
     return steps;
   },
 
-  community(profile, a) {
+  familyLife(profile, a) {
     const steps = [];
     const langs = (a.familyLanguages || []).filter((l) => l !== "Other");
     steps.push({
@@ -464,6 +466,13 @@ const ROADMAP_GENERATORS = {
       action: "Search Facebook Groups and Meetup for your city name plus 'Indian community' or your specific language, once you've arrived and can verify a group is currently active.",
       source: SOURCES.infoFinlandHome,
     });
+    steps.push({
+      phase: "ongoing",
+      title: "Look into immigrant associations",
+      why: "Beyond informal Facebook groups, Finland has a formal network of registered immigrant associations that run activities and support — worth knowing this exists as an official option.",
+      action: "Search the Finnish Patent and Registration Office's AssociationNet, and check the Moniheli network of immigrant organisations.",
+      source: SOURCES.infoFinlandAssociations,
+    });
     if (a.interests) {
       steps.push({
         phase: "ongoing",
@@ -471,6 +480,42 @@ const ROADMAP_GENERATORS = {
         why: `You mentioned: ${a.interests}. We can't promise a specific named club exists without checking live — that's exactly the kind of question worth asking your city's leisure services directly.`,
         action: `Check your destination city's official site for hobby/leisure listings ("harrastukset"), and search Meetup for ${a.interests}.`,
         source: profile.destination === "Helsinki" ? SOURCES.helsinkiHome : SOURCES.espooHome,
+      });
+    }
+    if (profile.childrenCount > 0) {
+      const city = profile.destination === "Helsinki" ? "helsinki" : "espoo";
+      steps.push({
+        phase: "before",
+        title: "Apply for early childhood education / daycare early",
+        why: profile.childrenAges ? `You told us: ${profile.childrenAges}. Daycare and pre-primary places in the capital region fill up, and non-resident applications can usually start before you've even registered your address.` : "Daycare places in the capital region fill up — start the application before you arrive if you can.",
+        action: city === "helsinki" ? "Apply through Helsinki's Edlevo e-service." : "Apply through Espoo's eVaka e-service.",
+        source: city === "helsinki" ? SOURCES.helsinkiEce : SOURCES.espooEce,
+      });
+      if (a.instructionLanguage) {
+        steps.push({ phase: "month1", title: `Confirm ${a.instructionLanguage} availability at nearby schools`, why: `You told us you're aiming for ${a.instructionLanguage} instruction — availability varies a lot by area, so confirming early avoids a surprise catchment assignment.`, action: "Cross-check InfoFinland's early childhood education overview against your city's own school/daycare finder.", source: SOURCES.infoFinlandEce });
+      }
+      steps.push({ phase: "month3", title: "Know about free pre-primary education for 5-year-olds", why: "If you have a child turning 5, Espoo (and most Finnish municipalities) offer free pre-primary education — easy to miss if you're not looking for it.", action: "Check eligibility and enrolment windows.", source: SOURCES.espooEceFree5 });
+    }
+    return steps;
+  },
+
+  selfHelp(profile, a) {
+    const steps = [
+      {
+        phase: "ongoing",
+        title: "Know where to get mental health support if you need it",
+        why: "Relocation is genuinely stressful, and knowing this exists before you need it means one less thing to figure out in a crisis. MIELI's crisis helpline is anonymous — you don't have to give your name.",
+        action: "Bookmark InfoFinland's mental health page, including how to contact your local health centre and the MIELI crisis helpline.",
+        source: SOURCES.infoFinlandMentalHealth,
+      },
+    ];
+    if (a.wantsSupport === "Yes, show me") {
+      steps.push({
+        phase: "ongoing",
+        title: "Know what to do about financial difficulties",
+        why: "You told us this would help — a new cost of living, delayed first paycheck, or unexpected expense is common early on, and there's a real, structured path for support if it happens.",
+        action: "Read InfoFinland's overview of financial problems and who to contact.",
+        source: SOURCES.infoFinlandFinancialProblems,
       });
     }
     return steps;
