@@ -1,25 +1,42 @@
 /*
- * IndiaToFinland — app state, views, and wiring.
- * Vanilla JS, no framework, no build step, no CDN — works fully offline.
- * All personal data stays in this browser's localStorage; nothing is sent
- * anywhere unless you explicitly use the optional AI Buddy chat.
+ * Kaveri — app state, views, and wiring.
+ * Vanilla JS, no framework, no build step.
+ *
+ * Two network dependencies, deliberately different in how required they are:
+ *  - Supabase (auth, quest-completion sync, leaderboard) is REQUIRED. The
+ *    quest board itself won't work without it — see the setup banner below.
+ *  - AI Buddy (ai.js) stays fully OPTIONAL and gated behind a user-supplied
+ *    API key, same as before.
+ *
+ * The roadmap *generation* logic (data.js) still has zero network
+ * dependency — profile + category answers are matched against the local
+ * knowledge base entirely offline. Only points/completions/leaderboard live
+ * in Supabase.
  */
 
-const STORAGE_KEY = "itf_state_v1";
+const STORAGE_KEY = "kaveri_state_v1";
 const $app = document.getElementById("app");
 
 function defaultState() {
   return {
     view: "landing", // landing | auth | wizard | roadmap
     authMode: "signup", // signup | login
-    user: null, // { email, name } — prototype only, NOT real authentication
+    authUserId: null,
+    authEmail: null,
+    authLoading: false,
+    authError: null,
+    authNotice: null, // e.g. "check your email to confirm"
     profile: {},
     categorySelection: ["immigration", "registration", "community"],
     categoryAnswers: {},
     wizardOrder: [],
     wizardIndex: 0,
     roadmap: null, // stepsByPhase, generated once
-    progress: {}, // "phaseId|index": true
+    progress: {}, // questKey -> true, mirrors Supabase quest_completions
+    syncError: null,
+    leaderboard: [],
+    leaderboardLoading: false,
+    leaderboardError: null,
     aiChatLog: [],
   };
 }
@@ -52,9 +69,115 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+// ---------- Derived helpers ----------
+
+function computeTotalPoints() {
+  const roadmap = state.roadmap || {};
+  let total = 0;
+  PHASES.forEach((ph) => {
+    (roadmap[ph.id] || []).forEach((s, i) => {
+      const key = questKeyFor(ph.id, s, i);
+      if (state.progress[key]) total += s.points || 0;
+    });
+  });
+  return total;
+}
+
+function progressFromCompletions(roadmap, completionKeys) {
+  const known = new Set(completionKeys);
+  const progress = {};
+  PHASES.forEach((ph) => {
+    (roadmap[ph.id] || []).forEach((s, i) => {
+      const key = questKeyFor(ph.id, s, i);
+      if (known.has(key)) progress[key] = true;
+    });
+  });
+  return progress;
+}
+
+// ---------- Supabase-backed auth/session flow ----------
+
+async function initAuth() {
+  if (!isSupabaseConfigured()) {
+    render();
+    return;
+  }
+  try {
+    const session = await getCurrentSession();
+    if (session && session.user) {
+      await handleSignedIn(session.user);
+    } else {
+      render();
+    }
+    onAuthChange((session) => {
+      if (!session && state.authUserId) handleSignedOut();
+    });
+  } catch (e) {
+    setState({ authError: e.message });
+  }
+}
+
+async function handleSignedIn(user) {
+  if (state.authUserId && state.authUserId !== user.id) {
+    // A different account just signed in on this browser — don't leak the
+    // previous account's roadmap/progress into their view.
+    state = defaultState();
+  }
+  let profile = null;
+  let profileError = null;
+  try {
+    profile = await fetchMyProfile(user.id);
+  } catch (e) {
+    profileError = e.message;
+  }
+  let completions = [];
+  try {
+    completions = await fetchMyCompletions(user.id);
+  } catch (e) {
+    /* leaderboard/points sync can retry later; don't block sign-in on it */
+  }
+  const profilePatch = profile
+    ? { ...state.profile, name: state.profile.name || profile.name, origin: state.profile.origin || profile.origin || "", destination: state.profile.destination || profile.destination || "" }
+    : state.profile;
+  const progress = state.roadmap ? progressFromCompletions(state.roadmap, completions) : {};
+  setState({
+    authUserId: user.id,
+    authEmail: user.email,
+    authError: profileError,
+    authNotice: null,
+    profile: profilePatch,
+    progress,
+    view: state.roadmap ? "roadmap" : "wizard",
+    wizardOrder: state.wizardOrder.length ? state.wizardOrder : ["basic", "categories"],
+    wizardIndex: state.roadmap ? state.wizardIndex : 0,
+  });
+  refreshLeaderboard();
+}
+
+function handleSignedOut() {
+  state = defaultState();
+  save();
+  render();
+}
+
+async function refreshLeaderboard() {
+  if (!isSupabaseConfigured()) return;
+  setState({ leaderboardLoading: true, leaderboardError: null });
+  try {
+    const rows = await fetchLeaderboard(20);
+    setState({ leaderboard: rows, leaderboardLoading: false });
+  } catch (e) {
+    setState({ leaderboardLoading: false, leaderboardError: e.message });
+  }
+}
+
 // ---------- Views ----------
 
 function render() {
+  if (!isSupabaseConfigured()) {
+    $app.innerHTML = renderSetupBanner();
+    return;
+  }
   if (state.view === "landing") $app.innerHTML = renderLanding();
   else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
@@ -79,30 +202,46 @@ function applyConditionalVisibility() {
   });
 }
 
+function renderSetupBanner() {
+  return `
+    <section class="hero">
+      <div class="hero-badge">🇫🇮 Kaveri — setup needed</div>
+      <h1>Almost there — connect Supabase</h1>
+      <p class="hero-sub">
+        Kaveri's quest board, accounts, and leaderboard run on a Supabase project.
+        Create one, run <code>supabase/schema.sql</code> in its SQL editor, then
+        paste the project URL and anon key into <code>js/config.js</code>.
+      </p>
+      <div class="hero-note">See README.md for the full setup walkthrough.</div>
+    </section>
+  `;
+}
+
 function renderLanding() {
   return `
     <section class="hero">
-      <div class="hero-badge">🇮🇳 → 🇫🇮 &nbsp;AI Talent &amp; Relocation Companion</div>
-      <h1>Moving from India to Finland?<br>Get a roadmap made for <em>you</em>.</h1>
+      <div class="hero-badge">🇮🇳 → 🇫🇮 &nbsp;Kaveri</div>
+      <h1>Moving from India to Finland?<br>Turn it into a game you can <em>win</em>.</h1>
       <p class="hero-sub">
-        Not a generic checklist. Tell us where you're coming from, who's coming with you,
-        and what you care about — we'll turn Finland's real official guidance into a
-        personalised, step-by-step plan you can actually follow.
+        Kaveri turns real official Finnish relocation guidance into quests —
+        Legal, Social, Cultural, and Food — worth points. Complete them, climb
+        the leaderboard, and get to "Kaveri" level: the point where you're not
+        a newcomer anymore, you're a friend.
       </p>
       <div class="hero-actions">
-        <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Get my roadmap</button>
+        <button class="btn btn-primary" data-action="go-auth" data-mode="signup">Start my quests</button>
         <button class="btn btn-ghost" data-action="go-auth" data-mode="login">Log in</button>
       </div>
       <div class="hero-note">
-        🔒 Your details stay in this browser. Nothing is uploaded — this is a hackathon prototype, not a production account system.
+        🔒 Your account is real (Supabase auth). Only your name and points are ever public, on the leaderboard.
       </div>
     </section>
     <section class="how">
       <h2>How it works</h2>
       <div class="how-grid">
         <div class="how-card"><span class="how-num">1</span><h3>Tell us about your move</h3><p>Where you're from, where you're headed, who's with you, and what matters to you.</p></div>
-        <div class="how-card"><span class="how-num">2</span><h3>Pick what you need help with</h3><p>Visa, housing, schools, career, language, healthcare, community — choose what applies.</p></div>
-        <div class="how-card"><span class="how-num">3</span><h3>Get your personalised roadmap</h3><p>Grounded in real Migri, DVV, Kela and InfoFinland guidance — organised by when you'll need it.</p></div>
+        <div class="how-card"><span class="how-num">2</span><h3>Pick your quest areas</h3><p>Legal, Social, Cultural, Food — choose what applies, we handle the rest.</p></div>
+        <div class="how-card"><span class="how-num">3</span><h3>Complete quests, earn points</h3><p>Every quest is grounded in real Migri, DVV, Kela and InfoFinland guidance — and worth real points on the leaderboard.</p></div>
       </div>
     </section>
   `;
@@ -112,12 +251,14 @@ function renderAuth() {
   const isSignup = state.authMode === "signup";
   return `
     <section class="auth-card">
-      <h2>${isSignup ? "Create your account" : "Log in"}</h2>
-      <p class="muted">Prototype login — stored only in this browser, not a real authentication system.</p>
+      <h2>${isSignup ? "Create your Kaveri account" : "Log in"}</h2>
+      <p class="muted">Real account via Supabase — your email/password, your progress, synced.</p>
+      ${state.authNotice ? `<p class="auth-notice">${escapeHtml(state.authNotice)}</p>` : ""}
+      ${state.authError ? `<p class="auth-error">${escapeHtml(state.authError)}</p>` : ""}
       <form data-form="auth">
-        <label>Name<input type="text" name="name" required placeholder="Your first name" ${!isSignup ? "" : ""}></label>
         <label>Email<input type="email" name="email" required placeholder="you@example.com"></label>
-        <button class="btn btn-primary" type="submit">${isSignup ? "Sign up & start" : "Log in"}</button>
+        <label>Password<input type="password" name="password" required minlength="6" placeholder="At least 6 characters"></label>
+        <button class="btn btn-primary" type="submit" ${state.authLoading ? "disabled" : ""}>${state.authLoading ? "Please wait…" : isSignup ? "Sign up & start" : "Log in"}</button>
       </form>
       <button class="link-btn" data-action="toggle-auth-mode">${isSignup ? "Already have an account? Log in" : "New here? Sign up"}</button>
     </section>
@@ -149,8 +290,9 @@ function renderBasicStep() {
   const p = state.profile;
   return `
     <h2>Tell us about your move</h2>
+    ${state.syncError ? `<p class="auth-error">${escapeHtml(state.syncError)}</p>` : ""}
     <div class="field-grid">
-      <label>Your name<input type="text" data-field="name" value="${escapeHtml(p.name || (state.user && state.user.name) || "")}" placeholder="e.g. Ananya"></label>
+      <label>Your name<input type="text" data-field="name" value="${escapeHtml(p.name || "")}" placeholder="e.g. Ananya"></label>
       <label>Moving from (city/state in India)<input type="text" data-field="origin" value="${escapeHtml(p.origin || "")}" placeholder="e.g. Bengaluru, Karnataka"></label>
       <label>Moving to<select data-field="destination">
         ${FINLAND_DESTINATIONS.map((d) => `<option value="${d}" ${p.destination === d ? "selected" : ""}>${d}</option>`).join("")}
@@ -177,18 +319,20 @@ function renderBasicStep() {
 function renderCategoriesStep() {
   const sel = new Set(state.categorySelection);
   return `
-    <h2>What do you want help with?</h2>
-    <p class="muted">Pick as many as apply — each adds a short set of questions so your roadmap reflects your real situation.</p>
+    <h2>What do you want quests for?</h2>
+    <p class="muted">Pick as many as apply — each adds a short set of questions so your quests reflect your real situation. Cultural and Food quests are always included.</p>
     <div class="category-grid">
-      ${CATEGORIES.map(
-        (c) => `
+      ${CATEGORIES.map((c) => {
+        const qc = QUEST_CATEGORIES[c.questCategory];
+        return `
         <label class="category-card ${sel.has(c.id) ? "selected" : ""}">
           <input type="checkbox" data-category-toggle="${c.id}" ${sel.has(c.id) ? "checked" : ""}>
           <span class="cat-icon">${c.icon}</span>
           <span class="cat-label">${escapeHtml(c.label)}</span>
+          <span class="quest-badge" style="--badge-color:${qc.color}">${qc.icon} ${qc.label}</span>
           <span class="cat-blurb">${escapeHtml(c.blurb)}</span>
-        </label>`
-      ).join("")}
+        </label>`;
+      }).join("")}
     </div>
     <div class="wizard-nav">
       <button class="btn btn-ghost" data-action="wizard-back">Back</button>
@@ -235,15 +379,15 @@ function renderCategoryQuestionStep(catId) {
 function renderReviewStep() {
   const p = state.profile;
   return `
-    <h2>Ready to build your roadmap</h2>
+    <h2>Ready to build your quest board</h2>
     <div class="review-summary">
       <p><strong>${escapeHtml(p.name || "You")}</strong>, moving from <strong>${escapeHtml(p.origin || "India")}</strong> to <strong>${escapeHtml(p.destination || "Finland")}</strong>.</p>
       <p>${escapeHtml(p.adults || 1)} adult(s)${p.childrenCount > 0 ? ` and ${escapeHtml(p.childrenCount)} child(ren)${p.childrenAges ? ` (${escapeHtml(p.childrenAges)})` : ""}` : ""} travelling.</p>
-      <p>Areas selected: ${state.categorySelection.map((id) => CATEGORIES.find((c) => c.id === id)?.label).join(", ")}</p>
+      <p>Quest areas selected: ${state.categorySelection.map((id) => CATEGORIES.find((c) => c.id === id)?.label).join(", ")}, plus Cultural &amp; Food.</p>
     </div>
     <div class="wizard-nav">
       <button class="btn btn-ghost" data-action="wizard-back">Back</button>
-      <button class="btn btn-primary" data-action="generate-roadmap">Generate my roadmap →</button>
+      <button class="btn btn-primary" data-action="generate-roadmap">Generate my quest board →</button>
     </div>
   `;
 }
@@ -253,17 +397,20 @@ function renderRoadmap() {
   let total = 0;
   let done = 0;
   PHASES.forEach((ph) => {
-    (roadmap[ph.id] || []).forEach((_, i) => {
+    (roadmap[ph.id] || []).forEach((s, i) => {
       total++;
-      if (state.progress[`${ph.id}|${i}`]) done++;
+      if (state.progress[questKeyFor(ph.id, s, i)]) done++;
     });
   });
   const overallPct = total ? Math.round((done / total) * 100) : 0;
+  const totalPoints = computeTotalPoints();
+  const level = levelFor(totalPoints);
+  const nextLevel = LEVELS.find((l) => l.min > totalPoints);
 
   const priorityPool = [];
   ["before", "week2"].forEach((phId) => {
     (roadmap[phId] || []).forEach((s, i) => {
-      if (!state.progress[`${phId}|${i}`]) priorityPool.push({ ...s, phaseId: phId, idx: i });
+      if (!state.progress[questKeyFor(phId, s, i)]) priorityPool.push({ ...s, phaseId: phId, idx: i });
     });
   });
   const priorities = priorityPool.slice(0, 3);
@@ -271,13 +418,18 @@ function renderRoadmap() {
   return `
     <section class="roadmap-header">
       <div>
-        <h2>${escapeHtml(state.profile.name || "Your")} roadmap: ${escapeHtml(state.profile.origin || "India")} → ${escapeHtml(state.profile.destination || "Finland")}</h2>
+        <h2>${escapeHtml(state.profile.name || "Your")} quest board: ${escapeHtml(state.profile.origin || "India")} → ${escapeHtml(state.profile.destination || "Finland")}</h2>
         <div class="progress-bar wide"><div class="progress-fill" style="width:${overallPct}%"></div></div>
-        <span class="muted">${done} of ${total} steps done</span>
+        <span class="muted">${done} of ${total} quests done</span>
+      </div>
+      <div class="score-panel">
+        <div class="score-points">${totalPoints} pts</div>
+        <div class="score-level">${level.icon} ${level.label}${nextLevel ? ` <span class="muted">· ${nextLevel.min - totalPoints} pts to ${nextLevel.icon} ${nextLevel.label}</span>` : ""}</div>
       </div>
       <div class="header-actions">
         <button class="btn btn-ghost" data-action="edit-profile">Edit my details</button>
         <button class="btn btn-ghost" data-action="open-settings">⚙️ AI Buddy settings</button>
+        <button class="btn btn-ghost" data-action="log-out">Log out</button>
       </div>
     </section>
 
@@ -296,13 +448,15 @@ function renderRoadmap() {
       ${PHASES.map((ph) => renderPhaseSection(ph, roadmap[ph.id] || [])).join("")}
     </section>
 
+    ${renderLeaderboard()}
+
     ${renderAiBuddy()}
   `;
 }
 
 function renderPhaseSection(phase, steps) {
   if (!steps.length) return "";
-  const doneCount = steps.filter((_, i) => state.progress[`${phase.id}|${i}`]).length;
+  const doneCount = steps.filter((s, i) => state.progress[questKeyFor(phase.id, s, i)]).length;
   return `
     <details class="phase-section" open>
       <summary>
@@ -317,21 +471,51 @@ function renderPhaseSection(phase, steps) {
 }
 
 function renderStepCard(s, phaseId, idx, compact) {
-  const key = `${phaseId}|${idx}`;
+  const key = questKeyFor(phaseId, s, idx);
   const checked = !!state.progress[key];
+  const qc = QUEST_CATEGORIES[s.questCategory] || QUEST_CATEGORIES.legal;
   return `
     <div class="step-card ${checked ? "done" : ""}">
       <label class="step-check">
-        <input type="checkbox" data-progress-toggle="${key}" ${checked ? "checked" : ""}>
+        <input type="checkbox" data-progress-toggle="${key}" data-quest-category="${s.questCategory}" data-quest-points="${s.points}" ${checked ? "checked" : ""}>
       </label>
       <div class="step-body">
-        <div class="step-cat">${s.categoryIcon} ${escapeHtml(s.categoryLabel)}</div>
+        <div class="step-cat">
+          <span class="quest-badge" style="--badge-color:${qc.color}">${qc.icon} ${qc.label}</span>
+          <span class="step-points">+${s.points} pts</span>
+        </div>
         <h4>${escapeHtml(s.title)}</h4>
         <p class="step-why">${escapeHtml(s.why)}</p>
         <p class="step-action"><strong>Do this:</strong> ${escapeHtml(s.action)}</p>
         <a class="step-source" href="${s.source.url}" target="_blank" rel="noopener">📎 ${escapeHtml(s.source.name)}</a>
       </div>
     </div>
+  `;
+}
+
+function renderLeaderboard() {
+  const rows = state.leaderboard || [];
+  return `
+    <section class="leaderboard">
+      <h3>🏆 Leaderboard</h3>
+      ${state.leaderboardError ? `<p class="auth-error">Couldn't load the leaderboard: ${escapeHtml(state.leaderboardError)}</p>` : ""}
+      ${
+        state.leaderboardLoading
+          ? `<p class="muted">Loading…</p>`
+          : rows.length
+          ? `<ol class="leaderboard-list">
+              ${rows
+                .map((r, i) => {
+                  const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`;
+                  const isMe = r.id === state.authUserId;
+                  return `<li class="${isMe ? "me" : ""}"><span class="lb-rank">${medal}</span><span class="lb-name">${escapeHtml(r.name)}${isMe ? " (you)" : ""}</span><span class="lb-points">${r.total_points} pts</span></li>`;
+                })
+                .join("")}
+            </ol>`
+          : `<p class="muted">No one's completed a quest yet — be the first.</p>`
+      }
+      <button class="link-btn" data-action="refresh-leaderboard">Refresh</button>
+    </section>
   `;
 }
 
@@ -352,7 +536,7 @@ function renderAiBuddy() {
         </form>
         <button class="link-btn" data-action="clear-api-key">Remove API key</button>
       `
-          : `<p class="muted">The roadmap above works fully offline, no key needed. Add your own Claude API key to unlock live, conversational follow-up questions for anything the roadmap doesn't cover.</p>
+          : `<p class="muted">The quest board above needs Supabase, but never Claude — add your own Claude API key to unlock live, conversational follow-up questions for anything the quests don't cover.</p>
         <button class="btn btn-secondary" data-action="open-settings">Connect AI Buddy</button>`
       }
     </section>
@@ -380,14 +564,17 @@ document.addEventListener("click", (e) => {
   const action = el.dataset.action;
 
   if (action === "go-auth") {
-    setState({ view: "auth", authMode: el.dataset.mode });
+    setState({ view: "auth", authMode: el.dataset.mode, authError: null, authNotice: null });
   } else if (action === "toggle-auth-mode") {
-    setState({ authMode: state.authMode === "signup" ? "login" : "signup" });
+    setState({ authMode: state.authMode === "signup" ? "login" : "signup", authError: null, authNotice: null });
   } else if (action === "wizard-next-basic") {
     const step = document.getElementById("wizard-step");
     const profile = { ...state.profile };
     step.querySelectorAll("[data-field]").forEach((input) => (profile[input.dataset.field] = input.value));
-    setState({ profile, view: "wizard", wizardOrder: ["basic", "categories"], wizardIndex: 1 });
+    setState({ profile, view: "wizard", wizardOrder: ["basic", "categories"], wizardIndex: 1, syncError: null });
+    if (state.authUserId) {
+      upsertMyProfile({ id: state.authUserId, name: profile.name, origin: profile.origin, destination: profile.destination }).catch((err) => setState({ syncError: `Couldn't save your profile: ${err.message}` }));
+    }
   } else if (action === "wizard-next-categories") {
     const order = ["basic", "categories", ...state.categorySelection.map((id) => `cat:${id}`), "review"];
     setState({ wizardOrder: order, wizardIndex: 2 });
@@ -415,6 +602,11 @@ document.addEventListener("click", (e) => {
     });
     const roadmap = buildRoadmap(state.profile, relevantAnswers);
     setState({ roadmap, progress: {}, view: "roadmap" });
+    if (state.authUserId) {
+      fetchMyCompletions(state.authUserId)
+        .then((completions) => setState({ progress: progressFromCompletions(roadmap, completions) }))
+        .catch(() => {});
+    }
   } else if (action === "edit-profile") {
     setState({ view: "wizard", wizardOrder: ["basic", "categories"], wizardIndex: 0 });
   } else if (action === "open-settings") {
@@ -424,6 +616,12 @@ document.addEventListener("click", (e) => {
   } else if (action === "clear-api-key") {
     setApiKey("");
     render();
+  } else if (action === "refresh-leaderboard") {
+    refreshLeaderboard();
+  } else if (action === "log-out") {
+    signOutUser()
+      .then(() => handleSignedOut())
+      .catch((err) => setState({ syncError: `Couldn't log out: ${err.message}` }));
   }
 });
 
@@ -447,16 +645,21 @@ document.addEventListener("submit", (e) => {
   const kind = form.dataset.form;
 
   if (kind === "auth") {
-    const name = form.name.value.trim();
     const email = form.email.value.trim();
-    const profile = { ...state.profile, name: state.profile.name || name };
-    setState({
-      user: { name, email },
-      profile,
-      view: "wizard",
-      wizardOrder: ["basic", "categories"],
-      wizardIndex: 0,
-    });
+    const password = form.password.value;
+    setState({ authLoading: true, authError: null, authNotice: null });
+    const isSignup = state.authMode === "signup";
+    const authCall = isSignup ? signUpWithEmail({ email, password }) : signInWithEmail({ email, password });
+    authCall
+      .then((data) => {
+        if (data.session && data.user) {
+          setState({ authLoading: false });
+          return handleSignedIn(data.user);
+        }
+        // Signup succeeded but email confirmation is required — no session yet.
+        setState({ authLoading: false, authMode: "login", authNotice: "Account created — check your email to confirm it, then log in." });
+      })
+      .catch((err) => setState({ authLoading: false, authError: err.message }));
   } else if (kind === "api-key") {
     const key = form.apiKey.value.trim();
     setApiKey(key);
@@ -478,8 +681,23 @@ document.addEventListener("click", (e) => {
   const el = e.target.closest("[data-progress-toggle]");
   if (!el) return;
   const key = el.dataset.progressToggle;
-  const progress = { ...state.progress, [key]: !state.progress[key] };
-  setState({ progress });
+  const wasChecked = !!state.progress[key];
+  const nowChecked = !wasChecked;
+  const progress = { ...state.progress, [key]: nowChecked };
+  setState({ progress, syncError: null });
+
+  if (!state.authUserId) return;
+  const questCategory = el.dataset.questCategory;
+  const points = Number(el.dataset.questPoints) || 0;
+  const sync = nowChecked
+    ? completeQuest({ userId: state.authUserId, questKey: key, questCategory, points })
+    : uncompleteQuest({ userId: state.authUserId, questKey: key });
+  sync
+    .then(() => refreshLeaderboard())
+    .catch((err) => {
+      // Revert the optimistic toggle so local state matches what's actually saved.
+      setState({ progress: { ...state.progress, [key]: wasChecked }, syncError: `Couldn't save that quest: ${err.message}` });
+    });
 });
 
 function summarizeRoadmapForAi() {
@@ -491,4 +709,4 @@ function summarizeRoadmapForAi() {
   return lines.join("\n");
 }
 
-render();
+initAuth();
