@@ -43,8 +43,9 @@ body {
 .topbar {
   display: flex; align-items: center; justify-content: space-between; padding: 14px 20px;
   border-bottom: 1px solid var(--border); background: var(--surface);
+  flex-wrap: wrap; row-gap: 8px;
 }
-.topbar-actions { display: flex; gap: 8px; }
+.topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .topbar-actions .link-btn {
   display: inline-block; width: auto; text-decoration: none; color: var(--text);
   border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 13px;

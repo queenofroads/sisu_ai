@@ -749,6 +749,16 @@ document.addEventListener("click", (e) => {
     document.getElementById("resources-modal").hidden = false;
   } else if (action === "close-resources") {
     document.getElementById("resources-modal").hidden = true;
+  } else if (action === "open-events") {
+    renderEventsList();
+    document.getElementById("events-modal").hidden = false;
+  } else if (action === "close-events") {
+    document.getElementById("events-modal").hidden = true;
+  } else if (action === "open-volunteer") {
+    renderVolunteerList();
+    document.getElementById("volunteer-modal").hidden = false;
+  } else if (action === "close-volunteer") {
+    document.getElementById("volunteer-modal").hidden = true;
   }
 });
 
@@ -760,8 +770,8 @@ function showRandomFunFact() {
   document.getElementById("fun-fact-text").textContent = fact;
 }
 
-function renderResourcesList() {
-  document.getElementById("resources-list").innerHTML = RESOURCES.map(
+function renderLinkGroups(groups, targetElId) {
+  document.getElementById(targetElId).innerHTML = groups.map(
     (group) => `
       <div class="resources-group">
         <h4>${escapeHtml(group.section)}</h4>
@@ -776,6 +786,18 @@ function renderResourcesList() {
       </div>
     `
   ).join("");
+}
+
+function renderResourcesList() {
+  renderLinkGroups(RESOURCES, "resources-list");
+}
+
+function renderEventsList() {
+  renderLinkGroups(COMMUNITY_EVENTS, "events-list");
+}
+
+function renderVolunteerList() {
+  renderLinkGroups(VOLUNTEER_OPPORTUNITIES, "volunteer-list");
 }
 
 document.addEventListener("change", (e) => {
