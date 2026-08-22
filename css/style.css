@@ -477,3 +477,17 @@ input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1
   h2 { font-size: 22px; }
   .score-points { font-size: 24px; }
 }
+
+/* ---------- Print / "Download PDF" (roadmap view only) ---------- */
+@media print {
+  .topbar, .header-actions, .roadmap-sidebar, .settings-modal { display: none !important; }
+  body { background: #fff; }
+  #app { max-width: 100%; padding: 0; }
+  .roadmap-layout { display: block; }
+  .step-card:hover { box-shadow: none; transform: none; border-color: var(--border); }
+  .step-card, .how-card, .phase-section, .roadmap-header, .priorities {
+    box-shadow: none !important; border: 1px solid #ccc; break-inside: avoid;
+  }
+  .phase-section summary { cursor: default; }
+  .phase-section summary::-webkit-details-marker { display: none; }
+}
