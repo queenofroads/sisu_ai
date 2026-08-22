@@ -624,28 +624,42 @@ function renderStepCard(s, phaseId, idx, compact) {
   `;
 }
 
+function initialsFor(name) {
+  const parts = (name || "?").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "?";
+  return (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
+}
+
 function renderLeaderboard() {
   const rows = state.leaderboard || [];
   return `
     <section class="leaderboard">
-      <h3>🏆 Leaderboard</h3>
-      ${state.leaderboardError ? `<p class="auth-error">Couldn't load the leaderboard: ${escapeHtml(state.leaderboardError)}</p>` : ""}
-      ${
-        state.leaderboardLoading
-          ? `<p class="muted">Loading…</p>`
-          : rows.length
-          ? `<ol class="leaderboard-list">
-              ${rows
-                .map((r, i) => {
-                  const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`;
-                  const isMe = r.id === state.authUserId;
-                  return `<li class="${isMe ? "me" : ""}"><span class="lb-rank">${medal}</span><span class="lb-name">${escapeHtml(r.name)}${isMe ? " (you)" : ""}</span><span class="lb-points">${r.total_points} pts</span></li>`;
-                })
-                .join("")}
-            </ol>`
-          : `<p class="muted">No one's completed a quest yet — be the first.</p>`
-      }
-      <button class="link-btn" data-action="refresh-leaderboard">Refresh</button>
+      <div class="section-header section-header-gold"><span class="section-header-title">🏆 Leaderboard</span></div>
+      <div class="section-body">
+        ${state.leaderboardError ? `<p class="auth-error">Couldn't load the leaderboard: ${escapeHtml(state.leaderboardError)}</p>` : ""}
+        ${
+          state.leaderboardLoading
+            ? `<p class="muted">Loading…</p>`
+            : rows.length
+            ? `<ol class="leaderboard-list">
+                ${rows
+                  .map((r, i) => {
+                    const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`;
+                    const rankClass = i === 0 ? "gold" : i === 1 ? "silver" : i === 2 ? "bronze" : "";
+                    const isMe = r.id === state.authUserId;
+                    return `<li class="${isMe ? "me" : ""}">
+                      <span class="avatar-circle ${rankClass}">${initialsFor(r.name)}</span>
+                      <span class="lb-rank">${medal}</span>
+                      <span class="lb-name">${escapeHtml(r.name)}${isMe ? " (you)" : ""}</span>
+                      <span class="lb-points">🪙 ${r.total_points} pts</span>
+                    </li>`;
+                  })
+                  .join("")}
+              </ol>`
+            : `<p class="muted">No one's completed a quest yet — be the first.</p>`
+        }
+        <button class="link-btn" data-action="refresh-leaderboard">Refresh</button>
+      </div>
     </section>
   `;
 }
@@ -655,25 +669,27 @@ function renderCommunity() {
   const canPost = !!state.authUserId;
   return `
     <section class="community">
-      <h3>💬 Ask Kaveri Community</h3>
-      <p class="muted">Post a question for other newcomers — and Kaveris further along — to help answer.</p>
-      ${state.communityError ? `<p class="auth-error">Couldn't reach the community board: ${escapeHtml(state.communityError)}</p>` : ""}
-      ${
-        canPost
-          ? `<form data-form="community-question">
-              <textarea name="question" rows="2" placeholder="e.g. Anyone know a pediatrician near Espoo who speaks English?" required></textarea>
-              <button class="btn btn-primary" type="submit">Post question</button>
-            </form>`
-          : `<p class="muted">Log in with a real account (not test mode) to post a question or reply — you can still read what others have asked.</p>`
-      }
-      ${
-        state.communityLoading
-          ? `<p class="muted">Loading…</p>`
-          : rows.length
-          ? `<div class="community-list">${rows.map((q) => renderCommunityQuestion(q, canPost)).join("")}</div>`
-          : `<p class="muted">No questions yet — be the first to ask.</p>`
-      }
-      <button class="link-btn" data-action="refresh-community">Refresh</button>
+      <div class="section-header section-header-social"><span class="section-header-title">💬 Ask Kaveri Community</span></div>
+      <div class="section-body">
+        <p class="muted">Post a question for other newcomers — and Kaveris further along — to help answer.</p>
+        ${state.communityError ? `<p class="auth-error">Couldn't reach the community board: ${escapeHtml(state.communityError)}</p>` : ""}
+        ${
+          canPost
+            ? `<form data-form="community-question">
+                <textarea name="question" rows="2" placeholder="e.g. Anyone know a pediatrician near Espoo who speaks English?" required></textarea>
+                <button class="btn btn-primary" type="submit">Post question</button>
+              </form>`
+            : `<p class="muted">Log in with a real account (not test mode) to post a question or reply — you can still read what others have asked.</p>`
+        }
+        ${
+          state.communityLoading
+            ? `<p class="muted">Loading…</p>`
+            : rows.length
+            ? `<div class="community-list">${rows.map((q) => renderCommunityQuestion(q, canPost)).join("")}</div>`
+            : `<p class="muted">No questions yet — be the first to ask.</p>`
+        }
+        <button class="link-btn" data-action="refresh-community">Refresh</button>
+      </div>
     </section>
   `;
 }
@@ -683,6 +699,7 @@ function renderCommunityQuestion(q, canPost) {
   return `
     <div class="community-question">
       <div class="community-q-head">
+        <span class="avatar-circle">${initialsFor(q.name)}</span>
         <span class="community-name">${escapeHtml(q.name)}</span>
         <span class="community-time muted">${timeAgo(q.created_at)}</span>
       </div>
@@ -694,6 +711,7 @@ function renderCommunityQuestion(q, canPost) {
                 (r) => `
                 <div class="community-reply">
                   <div class="community-q-head">
+                    <span class="avatar-circle small">${initialsFor(r.name)}</span>
                     <span class="community-name">${escapeHtml(r.name)}</span>
                     <span class="community-time muted">${timeAgo(r.created_at)}</span>
                   </div>
