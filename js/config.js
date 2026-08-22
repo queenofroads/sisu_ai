@@ -10,5 +10,5 @@
  * here or anywhere in this repo.
  */
 
-const SUPABASE_URL = "";
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_URL = "https://ekmkztfjtuazkslkryrf.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrbWt6dGZqdHVhemtzbGtyeXJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODczNzQ0MjYsImV4cCI6MjEwMjk1MDQyNn0.OTC4Le2zUTTa7MNcpHJVDBq31ppovhuy_ZOJBEt5EIA";
