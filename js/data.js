@@ -66,6 +66,9 @@ const SOURCES = {
   airbnb: { name: "Airbnb — short-term rentals", url: "https://www.airbnb.com/" },
   bookingCom: { name: "Booking.com — hotels & short stays", url: "https://www.booking.com/" },
   meetup: { name: "Meetup — find local groups and events", url: "https://www.meetup.com/" },
+  infoFinlandChildrensHealth: { name: "InfoFinland — children's health (neuvola / child health clinics)", url: "https://infofinland.fi/en/health/childrens-health" },
+  espooEnglishSchools: { name: "City of Espoo — English-language basic education (Espoo & Kivimies International Schools)", url: "https://www.espoo.fi/en/childcare-and-education/basic-education/school-admissions/weighted-curriculum-education/english-language-education" },
+  helsinkiEnglishSchools: { name: "City of Helsinki — English-language basic education", url: "https://www.hel.fi/en/childhood-and-education/basic-education/enrolling-and-applying-to-school/weighted-curriculum-and-basic-education-in-different-languages/english-language-basic-education" },
 };
 
 /*
@@ -359,6 +362,27 @@ const ROADMAP_GENERATORS = {
     const steps = [];
     if ((a.who === "My children" || a.who === "Both") && profile.childrenCount > 0) {
       const city = profile.destination === "Helsinki" ? "helsinki" : "espoo";
+      steps.push({
+        phase: "week2",
+        title: "Start learning Finnish as a family, early",
+        why: "Kids pick up a new language fastest through daily exposure, and it also makes settling into daycare/school far less disorienting for them — worth starting the moment you're settled, not waiting for a formal course.",
+        action: "Look at InfoFinland's overview of how and where to study Finnish, and build a few basic words into daily routines at home from week one.",
+        source: SOURCES.infoFinlandStudyingFinnish,
+      });
+      steps.push({
+        phase: "week2",
+        title: `Browse English-medium school options in ${profile.destination || city}`,
+        why: "Finnish comprehensive schools are mostly Finnish/Swedish-medium — a small number of named schools specifically offer English-language instruction, and knowing which ones exist before you apply saves a lot of guessing.",
+        action: city === "helsinki" ? "Check the City of Helsinki's list of English-language basic education options, including the International School of Helsinki, The English School, and Ressu Comprehensive School." : "Check the City of Espoo's English-language basic education page, which names Espoo International School and Kivimies International School.",
+        source: city === "helsinki" ? SOURCES.helsinkiEnglishSchools : SOURCES.espooEnglishSchools,
+      });
+      steps.push({
+        phase: "week2",
+        title: "Register with your neuvola (maternity/child health clinic)",
+        why: "Neuvola is Finland's free public health clinic system for pregnant parents and children up to age 6 — it covers growth checkups, vaccinations, and parenting support, and almost every Finnish family uses it, so it's worth knowing it exists rather than defaulting to private care.",
+        action: "Contact the child health clinic (neuvola) in your new municipality of residence once you've registered your address — see InfoFinland's overview of children's health.",
+        source: SOURCES.infoFinlandChildrensHealth,
+      });
       steps.push({
         phase: "before",
         title: "Apply for early childhood education / daycare early",
