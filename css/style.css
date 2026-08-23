@@ -524,7 +524,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 }
 .assistant-hint { font-size: 13px; color: var(--muted); }
 
-.phase-blurb { color: var(--muted); font-size: 13px; margin: -6px 0 12px; }
+.phase-blurb { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
 
 /* Leaderboard + Community live in a sticky sidebar on wide screens so they
    stay visible while scrolling the quest list, instead of getting buried at
@@ -541,20 +541,37 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 .priorities { background: rgba(239, 161, 38, 0.12); border: 1px solid var(--accent); border-radius: var(--radius); padding: 18px; margin-bottom: 28px; }
 .priority-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
 
-.phases { display: flex; flex-direction: column; gap: 12px; }
-.phase-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 18px 18px; box-shadow: var(--shadow); }
-.phase-section summary { cursor: pointer; padding: 14px 0; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; list-style: none; border-radius: 6px; transition: color 0.15s ease; }
-.phase-section summary::-webkit-details-marker { display: none; }
-.phase-section summary:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-@media (hover: hover) and (pointer: fine) {
-  .phase-section summary:hover { color: var(--primary); }
+.phases { display: flex; flex-direction: column; gap: 14px; }
+/* Each foldable phase block gets its own color from the brand palette (set
+   via --phase-color/--phase-text, see PHASES in data.js) — a full-bleed
+   colored header, not just a tinted accent, so each block reads as its own
+   distinct card at a glance, folded or open. */
+.phase-section {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden;
 }
+.phase-section summary {
+  cursor: pointer; padding: 16px 18px; font-weight: 700; font-size: 16px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  list-style: none; background: var(--phase-color, var(--primary)); color: var(--phase-text, #fff);
+  transition: filter 0.15s ease;
+}
+.phase-section summary::-webkit-details-marker { display: none; }
+.phase-section summary:focus-visible { outline: 2px solid var(--phase-text, #fff); outline-offset: -3px; }
+@media (hover: hover) and (pointer: fine) {
+  .phase-section summary:hover { filter: brightness(1.08); }
+}
+.phase-summary-label { display: flex; align-items: center; gap: 8px; }
+.phase-summary-right { display: flex; align-items: center; gap: 10px; }
+.phase-chevron { display: inline-block; font-size: 13px; transition: transform 0.2s ease; }
+.phase-section[open] .phase-chevron { transform: rotate(180deg); }
 .phase-progress-pill {
-  font-size: 12px; font-weight: 700; color: var(--muted);
-  background: var(--bg); border: 1px solid var(--border);
+  font-size: 12px; font-weight: 700; color: inherit;
+  background: rgba(255, 255, 255, 0.28); border: 1px solid rgba(255, 255, 255, 0.4);
   padding: 3px 10px; border-radius: 999px;
 }
-.phase-progress-pill.complete { color: #fff; background: var(--primary); border-color: var(--primary); }
+.phase-progress-pill.complete { color: var(--phase-color, var(--primary)); background: #fff; border-color: #fff; }
+.phase-body { padding: 14px 18px 18px; }
 .step-list { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
 
 .step-card {
@@ -730,8 +747,8 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
   .step-card { padding: 12px; gap: 10px; }
   .step-cat { flex-wrap: wrap; row-gap: 4px; }
 
-  .phase-section { padding: 4px 14px 14px; }
-  .phase-section summary { font-size: 15px; }
+  .phase-section summary { padding: 14px; font-size: 15px; }
+  .phase-body { padding: 12px 14px 14px; }
 
   .ai-buddy { padding: 16px; }
   .section-body { padding: 16px; }
@@ -759,6 +776,8 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
   .step-card, .how-card, .phase-section, .roadmap-header, .priorities {
     box-shadow: none !important; border: 1px solid #ccc; break-inside: avoid;
   }
-  .phase-section summary { cursor: default; }
+  .phase-section summary { cursor: default; background: none !important; color: var(--text) !important; border-bottom: 1px solid #ccc; }
   .phase-section summary::-webkit-details-marker { display: none; }
+  .phase-progress-pill { background: none !important; border-color: #ccc !important; }
+  .phase-chevron { display: none; }
 }

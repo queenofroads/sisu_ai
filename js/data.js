@@ -151,12 +151,15 @@ const BACKGROUNDS = [
   { id: "accompanying", label: "Accompanying family member (spouse/parent/child)" },
 ];
 
+// color/text pairs are from the brand palette (see QUEST_CATEGORIES above) —
+// each foldable phase block gets its own color, checked for contrast against
+// its text color the same way the quest badges are.
 const PHASES = [
-  { id: "before", label: "Before you leave India", icon: "🧳", blurb: "Paperwork that's easiest to sort while you're still in India, plus a bit of cultural homework so nothing feels like a surprise on day one." },
-  { id: "week2", label: "First 2 weeks in Finland", icon: "🛫", blurb: "Mostly about getting yourself registered with the Finnish system — everything else depends on this." },
-  { id: "month1", label: "First month", icon: "📅", blurb: "Once the basics are registered, these round out your setup." },
-  { id: "month3", label: "First 3 months", icon: "🌱", blurb: "Not urgent, but worth knowing about before they sneak up on you." },
-  { id: "ongoing", label: "Ongoing", icon: "🔁", blurb: "No deadline — these are about actually building a life here, whenever you're ready." },
+  { id: "before", label: "Before you leave India", icon: "🧳", blurb: "Paperwork that's easiest to sort while you're still in India, plus a bit of cultural homework so nothing feels like a surprise on day one.", color: "#5E2D85", textColor: "#ffffff" },
+  { id: "week2", label: "First 2 weeks in Finland", icon: "🛫", blurb: "Mostly about getting yourself registered with the Finnish system — everything else depends on this.", color: "#0D6FB0", textColor: "#ffffff" },
+  { id: "month1", label: "First month", icon: "📅", blurb: "Once the basics are registered, these round out your setup.", color: "#8A5B9E", textColor: "#ffffff" },
+  { id: "month3", label: "First 3 months", icon: "🌱", blurb: "Not urgent, but worth knowing about before they sneak up on you.", color: "#D81B81", textColor: "#ffffff" },
+  { id: "ongoing", label: "Ongoing", icon: "🔁", blurb: "No deadline — these are about actually building a life here, whenever you're ready.", color: "#EFA126", textColor: "#16263c" },
 ];
 
 /*

@@ -772,14 +772,19 @@ function renderPhaseSection(phase, steps, openByDefault) {
   if (!steps.length) return "";
   const doneCount = steps.filter((s, i) => state.progress[questKeyFor(phase.id, s, i)]).length;
   return `
-    <details class="phase-section" ${openByDefault ? "open" : ""}>
+    <details class="phase-section" style="--phase-color:${phase.color}; --phase-text:${phase.textColor}" ${openByDefault ? "open" : ""}>
       <summary>
-        <span>${phase.icon} ${escapeHtml(phase.label)}</span>
-        <span class="phase-progress-pill ${doneCount === steps.length ? "complete" : ""}">${doneCount === steps.length ? "✓ " : ""}${doneCount}/${steps.length}</span>
+        <span class="phase-summary-label">${phase.icon} ${escapeHtml(phase.label)}</span>
+        <span class="phase-summary-right">
+          <span class="phase-progress-pill ${doneCount === steps.length ? "complete" : ""}">${doneCount === steps.length ? "✓ " : ""}${doneCount}/${steps.length}</span>
+          <span class="phase-chevron" aria-hidden="true">▾</span>
+        </span>
       </summary>
-      ${phase.blurb ? `<p class="phase-blurb">${escapeHtml(phase.blurb)}</p>` : ""}
-      <div class="step-list">
-        ${steps.map((s, i) => renderStepCard(s, phase.id, i, false)).join("")}
+      <div class="phase-body">
+        ${phase.blurb ? `<p class="phase-blurb">${escapeHtml(phase.blurb)}</p>` : ""}
+        <div class="step-list">
+          ${steps.map((s, i) => renderStepCard(s, phase.id, i, false)).join("")}
+        </div>
       </div>
     </details>
   `;
