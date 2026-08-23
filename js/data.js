@@ -133,6 +133,8 @@ const FRIEND_WORDS = [
   { lang: "Kannada", code: "kn", word: "ಕಾವೇರಿ" },
   { lang: "Malayalam", code: "ml", word: "കാവേരി" },
   { lang: "Punjabi", code: "pa", word: "ਕਾਵੇਰੀ" },
+  { lang: "Odia", code: "or", word: "କାବେରୀ" },
+  { lang: "Assamese", code: "as", word: "কাৱেৰী" },
   { lang: "Urdu", code: "ur", word: "کاویری" },
 ];
 

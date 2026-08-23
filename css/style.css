@@ -213,10 +213,10 @@ em { color: var(--primary-dark); font-style: normal; }
 }
 .hero-mood-brandmark .hero-name {
   font-family: var(--font-heading); font-weight: 800; font-size: 17px; letter-spacing: 0.3px;
-  color: #16263c; display: inline-block; min-width: 70px;
-  opacity: 1; transition: opacity 0.28s ease;
+  color: #16263c; display: inline-block; min-width: 70px; user-select: none;
+  opacity: 1; transform: translateY(0); transition: opacity 0.4s ease, transform 0.4s ease;
 }
-.hero-mood-brandmark .hero-name.fading { opacity: 0; }
+.hero-mood-brandmark .hero-name.fading { opacity: 0; transform: translateY(-6px); }
 .hero-mood-labels {
   position: absolute; inset: 0; pointer-events: none;
 }

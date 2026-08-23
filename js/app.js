@@ -264,8 +264,8 @@ function startHeroWordRotation() {
       liveEl.textContent = entry.word;
       liveEl.lang = entry.code;
       liveEl.classList.remove("fading");
-    }, 280);
-  }, 2200);
+    }, 400);
+  }, 2000);
 }
 
 function render() {
