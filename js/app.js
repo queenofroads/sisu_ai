@@ -387,7 +387,7 @@ function renderLanding() {
         <div class="buddy-teaser-copy">
           <h2>Ask it what you'd ask a friend who already lives here.</h2>
           <p class="muted">Your intake already feeds it — where you're from, who's with you, what you're curious about. Ask it something the plan hasn't covered yet, like "is small talk considered rude?" or "we're a family of four moving in November," and it answers with your actual situation in mind, grounded in real Finnish sources.</p>
-          <button class="btn btn-secondary" data-action="go-auth" data-mode="signup">💬 Meet your AI Buddy</button>
+          <button class="btn btn-secondary" data-action="go-auth" data-mode="signup">💬 Meet Kaveri, your AI Buddy</button>
           <p class="buddy-teaser-note muted">Optional — bring your own Claude API key once you're in. Kept only in your browser tab, never saved anywhere.</p>
         </div>
         <div class="buddy-teaser-art" aria-hidden="true">
