@@ -66,6 +66,19 @@ function defaultState() {
     communityLoading: false,
     communityError: null,
     aiChatLog: [],
+
+    // ---- Mobile app view (design "1a") — local-only UI state, see
+    // js/mobileApp.js. Not synced to Supabase; a fresh browser/device just
+    // starts these over, same as everything else in this localStorage blob.
+    mobileAppOn: null, // null = auto (narrow viewport); true/false = manual override via the "App view" toggle
+    mobileTab: "today", // today | quests | buddy | people | you
+    mobileSel: null, // { phaseId, idx } of the quest shown in the detail overlay
+    mobilePeopleTab: "board", // board | ask
+    levelUpLabel: null,
+    levelUpEarned: 0,
+    roadmapStartedAt: null, // set once, first time a roadmap is generated — powers "Day N in {city}"
+    streakLastDate: null, // yyyy-mm-dd the app was last opened
+    streakCount: 0,
   };
 }
 
@@ -99,16 +112,32 @@ function escapeHtml(str) {
 
 // ---------- Derived helpers ----------
 
-function computeTotalPoints() {
+// Optional `progress` lets callers ask "what would the total be under this
+// hypothetical progress object" (used by the progress-toggle handler below
+// to detect a level-up without mutating state first) — defaults to the
+// live state.progress for every existing call site.
+function computeTotalPoints(progress) {
+  const p = progress || state.progress;
   const roadmap = state.roadmap || {};
   let total = 0;
   PHASES.forEach((ph) => {
     (roadmap[ph.id] || []).forEach((s, i) => {
       const key = questKeyFor(ph.id, s, i);
-      if (state.progress[key]) total += s.points || 0;
+      if (p[key]) total += s.points || 0;
     });
   });
   return total;
+}
+
+// Best-effort, browser-local "day streak" — increments once per calendar
+// day the mobile app is opened, no Supabase sync (would need a schema
+// migration; out of scope, see CLAUDE.md's scope-discipline rule).
+function touchStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (state.streakLastDate === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const streakCount = state.streakLastDate === yesterday ? state.streakCount + 1 : 1;
+  setState({ streakLastDate: today, streakCount });
 }
 
 function progressFromCompletions(roadmap, completionKeys) {
@@ -259,6 +288,11 @@ function startBrandWordRotation() {
   }, 2000);
 }
 
+function isMobileAppActive() {
+  const isNarrow = window.matchMedia("(max-width: 640px)").matches;
+  return state.mobileAppOn === null ? isNarrow : state.mobileAppOn;
+}
+
 function render() {
   if (!isSupabaseConfigured()) {
     $app.innerHTML = renderSetupBanner();
@@ -267,10 +301,23 @@ function render() {
   if (state.view === "landing") $app.innerHTML = renderLanding();
   else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
-  else if (state.view === "roadmap") $app.innerHTML = renderRoadmap();
+  else if (state.view === "roadmap") {
+    // The mobile app (design "1a", see js/mobileApp.js) is a full-viewport
+    // fixed overlay drawn on top of the existing desktop roadmap — the
+    // desktop DOM underneath is untouched either way, so this can't regress
+    // renderRoadmap(). Active automatically on narrow viewports, or via the
+    // manual "App view" toggle for testing on any screen size.
+    const mobileActive = isMobileAppActive();
+    $app.innerHTML = renderRoadmap() + (mobileActive ? renderMobileApp() : "");
+    if (mobileActive) touchStreak();
+  }
   if (state.view === "wizard") applyConditionalVisibility();
   window.scrollTo(0, 0);
 }
+
+window.addEventListener("resize", () => {
+  if (state.view === "roadmap" && state.mobileAppOn === null) render();
+});
 
 // Hides/shows question wrappers with data-show-if based on their controlling
 // field's current value. Called after every wizard render (so defaults are
@@ -711,6 +758,7 @@ function renderRoadmap() {
         <div class="level-next muted">${nextLevel ? `${nextLevel.min - totalPoints} pts to ${nextLevel.icon} ${nextLevel.label}` : "Max level reached! 🎉"}</div>
       </div>
       <div class="header-actions">
+        <button class="btn btn-ghost" data-action="toggle-mobile-app">${isMobileAppActive() ? "🖥️ Desktop view" : "📱 App view"}</button>
         <button class="btn btn-ghost" data-action="edit-profile">Edit my details</button>
         <button class="btn btn-ghost" data-action="download-pdf">📄 Download PDF</button>
         <button class="btn btn-ghost" data-action="log-out">Log out</button>
@@ -1047,7 +1095,7 @@ document.addEventListener("click", (e) => {
       if (state.categoryAnswers[id]) relevantAnswers[id] = state.categoryAnswers[id];
     });
     const roadmap = buildRoadmap(state.profile, relevantAnswers);
-    setState({ roadmap, progress: {}, view: "roadmap" });
+    setState({ roadmap, progress: {}, view: "roadmap", roadmapStartedAt: state.roadmapStartedAt || Date.now() });
     if (state.authUserId) {
       fetchMyCompletions(state.authUserId)
         .then((completions) => setState({ progress: progressFromCompletions(roadmap, completions) }))
@@ -1098,6 +1146,26 @@ document.addEventListener("click", (e) => {
     document.getElementById("volunteer-modal").hidden = false;
   } else if (action === "close-volunteer") {
     document.getElementById("volunteer-modal").hidden = true;
+  } else if (action === "toggle-mobile-app") {
+    setState({ mobileAppOn: !isMobileAppActive() });
+  } else if (action === "mobile-tab") {
+    const patch = { mobileTab: el.dataset.tab, mobileSel: null };
+    if (el.dataset.sub) patch.mobilePeopleTab = el.dataset.sub;
+    setState(patch);
+  } else if (action === "mobile-open-quest") {
+    setState({ mobileSel: { phaseId: el.dataset.phase, idx: Number(el.dataset.idx) } });
+  } else if (action === "mobile-close-detail") {
+    setState({ mobileSel: null });
+  } else if (action === "mobile-people-tab") {
+    setState({ mobilePeopleTab: el.dataset.sub });
+  } else if (action === "close-levelup") {
+    setState({ levelUpLabel: null });
+  } else if (action === "mobile-quick-ask") {
+    const input = document.querySelector('#mobile-ai-ask input[name="question"]');
+    if (input) {
+      input.value = el.dataset.q;
+      input.focus();
+    }
   }
 });
 
@@ -1249,7 +1317,22 @@ document.addEventListener("click", (e) => {
     fireConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
   }
   const progress = { ...state.progress, [key]: nowChecked };
-  setState({ progress, syncError: null });
+
+  // Level-up celebration (mirrors the "1a" prototype's toggle() logic) —
+  // only the mobile view renders levelUp, so this is inert for the desktop
+  // roadmap.
+  const patch = { progress, syncError: null };
+  if (nowChecked) {
+    const beforeTotal = computeTotalPoints();
+    const afterTotal = computeTotalPoints(progress);
+    const levelBefore = levelFor(beforeTotal);
+    const levelAfter = levelFor(afterTotal);
+    if (afterTotal > beforeTotal && levelAfter.label !== levelBefore.label) {
+      patch.levelUpLabel = levelAfter.label;
+      patch.levelUpEarned = afterTotal - beforeTotal;
+    }
+  }
+  setState(patch);
 
   if (!state.authUserId) return;
   const questCategory = el.dataset.questCategory;
