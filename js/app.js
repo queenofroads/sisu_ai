@@ -385,27 +385,13 @@ function renderLanding() {
               <div class="ma-pad">
                 <div class="ma-hero">
                   <div class="ma-hero-label">ONE THING TODAY</div>
-                  <div class="ma-hero-title">Book temporary accommodation</div>
-                  <p class="ma-hero-sub">A short-term base to land in while you search properly.</p>
-                  <span class="ma-source-chip">📎 Forenom</span>
+                  <div class="ma-hero-title">Try karjalanpiirakka</div>
+                  <p class="ma-hero-sub">A thin rye crust with rice porridge filling — sold in nearly every grocery store.</p>
+                  <span class="ma-source-chip">📎 Visit Finland</span>
                   <div class="ma-hero-actions">
-                    <span class="ma-hero-done">Mark done · +20</span>
+                    <span class="ma-hero-done">Mark done · +5</span>
                     <span class="ma-hero-chat">💬</span>
                   </div>
-                </div>
-              </div>
-              <div class="ma-pad ma-stats-grid">
-                <div class="ma-stat-card">
-                  <div class="ma-ring" style="background:conic-gradient(var(--ma-amber) 0turn 0.3turn, var(--ma-border) 0turn 1turn)"><span>🌱</span></div>
-                  <div>
-                    <div class="ma-stat-num">45 pts</div>
-                    <div class="ma-stat-label">5 to 🏠 Settler</div>
-                  </div>
-                </div>
-                <div class="ma-stat-card ma-streak-card">
-                  <div class="ma-streak-bars"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
-                  <div class="ma-stat-num">4 days</div>
-                  <div class="ma-stat-label">in a row</div>
                 </div>
               </div>
             </div>
@@ -427,6 +413,20 @@ function renderLanding() {
         <span class="trust-item">🎯 Personalized to your move</span>
         <span class="trust-item">🏆 Earn points as you go</span>
       </div>
+    </div>
+    <div class="buddy-teaser-band">
+      <section class="buddy-teaser">
+        <div class="buddy-teaser-copy">
+          <h2>Ask it what you'd ask a friend who already lives here.</h2>
+          <p class="muted">Your intake already feeds it — where you're from, who's with you, what you're curious about. Ask it something the plan hasn't covered yet, like "is small talk considered rude?" or "we're a family of four moving in November," and it answers with your actual situation in mind, grounded in real Finnish sources.</p>
+          <button class="btn btn-secondary" data-action="go-auth" data-mode="signup">💬 Meet Kaveri, your AI Buddy</button>
+          <p class="buddy-teaser-note muted">Optional — bring your own Claude API key once you're in. Kept only in your browser tab, never saved anywhere.</p>
+        </div>
+        <div class="buddy-teaser-art" aria-hidden="true">
+          <svg viewBox="0 0 400 400" class="particle-field">${PARTICLE_FIELD_SVG}</svg>
+          ${BUDDY_CHIPS.map((c, i) => `<span class="buddy-chip buddy-chip-${i + 1}"><span class="chip-dot" style="--dot:${c.color}"></span>${escapeHtml(c.text)}</span>`).join("")}
+        </div>
+      </section>
     </div>
     <section class="culture-preview-section">
       <h2>Know Finland before you land</h2>
@@ -482,20 +482,6 @@ function renderLanding() {
         <div class="how-card"><span class="how-num">3</span><h3>🏆 Complete quests, earn points</h3><p>Every quest is grounded in real Migri, DVV, Kela and InfoFinland guidance — and worth real points on the leaderboard.</p></div>
       </div>
     </section>
-    <div class="buddy-teaser-band">
-      <section class="buddy-teaser">
-        <div class="buddy-teaser-copy">
-          <h2>Ask it what you'd ask a friend who already lives here.</h2>
-          <p class="muted">Your intake already feeds it — where you're from, who's with you, what you're curious about. Ask it something the plan hasn't covered yet, like "is small talk considered rude?" or "we're a family of four moving in November," and it answers with your actual situation in mind, grounded in real Finnish sources.</p>
-          <button class="btn btn-secondary" data-action="go-auth" data-mode="signup">💬 Meet Kaveri, your AI Buddy</button>
-          <p class="buddy-teaser-note muted">Optional — bring your own Claude API key once you're in. Kept only in your browser tab, never saved anywhere.</p>
-        </div>
-        <div class="buddy-teaser-art" aria-hidden="true">
-          <svg viewBox="0 0 400 400" class="particle-field">${PARTICLE_FIELD_SVG}</svg>
-          ${BUDDY_CHIPS.map((c, i) => `<span class="buddy-chip buddy-chip-${i + 1}"><span class="chip-dot" style="--dot:${c.color}"></span>${escapeHtml(c.text)}</span>`).join("")}
-        </div>
-      </section>
-    </div>
     <section class="stories">
       <h2>What a first year with Kaveri could look like</h2>
       <p class="stories-note muted">Illustrative journeys, not real submitted testimonials — the kinds of stories Kaveri is built to help write.</p>

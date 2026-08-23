@@ -56,10 +56,18 @@ function mobileFlattenRoadmap(roadmap) {
   return out;
 }
 
+// Prefers something warm/cultural for "today" over sterile admin — Kaveri
+// is a friend first, not just a paperwork checklist. Urgent admin still
+// surfaces (via "Kaveri's picks" on desktop, and the Quests tab here), so
+// nothing time-sensitive actually gets buried by this.
 function mobilePickToday(allSteps, progress) {
   const undone = allSteps.filter((e) => !progress[questKeyFor(e.phaseId, e.step, e.idx)]);
   if (!undone.length) return null;
-  return undone.find((e) => e.step.questCategory === "legal") || undone[0];
+  return (
+    undone.find((e) => e.step.questCategory === "cultural") ||
+    undone.find((e) => e.step.questCategory === "legal") ||
+    undone[0]
+  );
 }
 
 function mobileCultureRail(allSteps, progress) {

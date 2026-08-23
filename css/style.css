@@ -255,7 +255,7 @@ em { color: var(--primary-dark); font-style: normal; }
 
 .hero-phone-preview {
   position: relative; flex: 0 0 auto;
-  width: 260px; height: 560px;
+  width: 260px; height: 520px;
   /* Same custom properties .mobile-app-root defines — this preview isn't
      inside that fixed-overlay wrapper, so the .ma-* component classes need
      their own copy to resolve against. */
