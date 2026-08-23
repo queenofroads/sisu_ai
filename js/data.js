@@ -128,7 +128,7 @@ const BACKGROUNDS = [
 ];
 
 const PHASES = [
-  { id: "before", label: "Before you leave India", icon: "🧳", blurb: "Sort these while you're still in India and have easy access to Indian paperwork." },
+  { id: "before", label: "Before you leave India", icon: "🧳", blurb: "Paperwork that's easiest to sort while you're still in India, plus a bit of cultural homework so nothing feels like a surprise on day one." },
   { id: "week2", label: "First 2 weeks in Finland", icon: "🛫", blurb: "Mostly about getting yourself registered with the Finnish system — everything else depends on this." },
   { id: "month1", label: "First month", icon: "📅", blurb: "Once the basics are registered, these round out your setup." },
   { id: "month3", label: "First 3 months", icon: "🌱", blurb: "Not urgent, but worth knowing about before they sneak up on you." },
@@ -596,10 +596,10 @@ const ROADMAP_GENERATORS = {
     const steps = [];
     if (a.curiosity) {
       steps.push({
-        phase: "ongoing",
+        phase: "before",
         title: "Follow up on what you're curious about",
-        why: `You told us you're curious about: ${a.curiosity}. Finnish culture and social norms are covered well in one place, worth reading before you guess at etiquette.`,
-        action: "Read InfoFinland's overview of Finnish culture and social norms, then look up your specific interest by name once you're settled.",
+        why: `You told us you're curious about: ${a.curiosity}. Finnish culture and social norms are covered well in one place, worth reading before you guess at etiquette on day one.`,
+        action: "Read InfoFinland's overview of Finnish culture and social norms before you leave, then look up your specific interest by name.",
         source: SOURCES.infoFinlandCustoms,
       });
     }
@@ -667,21 +667,23 @@ const ROADMAP_GENERATORS = {
 const CULTURAL_QUESTS = [
   {
     title: "Learn the everyday social norms",
-    why: "A handful of small habits — handshakes, eye contact, personal space — cover most of what surprises newcomers in daily interactions.",
-    action: "Read InfoFinland's overview of Finnish culture and social norms.",
+    phase: "before",
+    why: "A handful of small habits — handshakes, eye contact, personal space, comfort with silence — cover most of what surprises newcomers in daily interactions. Worth knowing before you land, not figuring out in the moment.",
+    action: "Read InfoFinland's overview of Finnish culture and social norms before you leave.",
     source: SOURCES.infoFinlandCustoms,
+  },
+  {
+    title: "Mark the next Finnish public holiday on your calendar",
+    phase: "before",
+    why: "Vappu (May Day), Juhannus (Midsummer) and the winter holidays all come with their own traditions — knowing what's coming before you arrive means you're not caught off guard by a quiet, closed city.",
+    action: "Check InfoFinland's list of Finnish public holidays and note whichever one falls soonest after you land.",
+    source: SOURCES.infoFinlandHolidays,
   },
   {
     title: "Try a Finnish sauna",
     why: "With roughly one sauna per two people nationwide, this isn't a spa treat here — it's the default way Finns unwind, and often where real conversations happen.",
     action: "Visit a public sauna or ask a Finnish colleague/neighbour about joining theirs.",
     source: SOURCES.visitFinlandSauna,
-  },
-  {
-    title: "Mark a Finnish public holiday on your calendar",
-    why: "Vappu (May Day), Juhannus (Midsummer) and the winter holidays all come with their own traditions — knowing the dates ahead of time means you don't miss them.",
-    action: "Check InfoFinland's list of Finnish public holidays and pick the next one coming up.",
-    source: SOURCES.infoFinlandHolidays,
   },
   {
     title: "Try an outdoor activity, whatever the season",
@@ -888,12 +890,16 @@ function buildRoadmap(profile, categoryAnswers) {
     });
   });
 
-  // Cultural and Food quests are universal — every user gets them, always in
-  // "ongoing", regardless of what they picked in the wizard.
+  // Cultural and Food quests are universal — every user gets them, regardless
+  // of what they picked in the wizard. Most are experiential (need you to
+  // actually be in Finland) and land in "ongoing"; a couple are pure reading
+  // — those are tagged phase: "before" above so Kaveri surfaces them
+  // proactively, ahead of arrival, instead of waiting until you're settled.
   CULTURAL_QUESTS.forEach((s) => {
-    stepsByPhase.ongoing.push({
+    const phase = s.phase || "ongoing";
+    stepsByPhase[phase].push({
       ...s,
-      phase: "ongoing",
+      phase,
       categoryId: "cultural",
       categoryLabel: QUEST_CATEGORIES.cultural.label,
       categoryIcon: QUEST_CATEGORIES.cultural.icon,
