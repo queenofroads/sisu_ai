@@ -293,12 +293,57 @@ function isMobileAppActive() {
   return state.mobileAppOn === null ? isNarrow : state.mobileAppOn;
 }
 
+// Rotates the hero preview's "ONE THING TODAY" card through HERO_CARD_ROTATION
+// — same fade-and-swap mechanism as the wordmark rotation above. Only exists
+// on the landing page, so it's started/stopped alongside that view instead
+// of running globally.
+let heroCardTimer = null;
+let heroCardIndex = 0;
+
+function stopHeroCardRotation() {
+  if (heroCardTimer) {
+    clearInterval(heroCardTimer);
+    heroCardTimer = null;
+  }
+}
+
+function startHeroCardRotation() {
+  stopHeroCardRotation();
+  heroCardIndex = 0;
+  heroCardTimer = setInterval(() => {
+    const el = document.getElementById("hero-card");
+    if (!el) {
+      stopHeroCardRotation();
+      return;
+    }
+    el.classList.add("fading");
+    setTimeout(() => {
+      const liveEl = document.getElementById("hero-card");
+      if (!liveEl) return;
+      heroCardIndex = (heroCardIndex + 1) % HERO_CARD_ROTATION.length;
+      const entry = HERO_CARD_ROTATION[heroCardIndex];
+      document.getElementById("hero-card-label").textContent = entry.label;
+      document.getElementById("hero-card-title").textContent = entry.title;
+      document.getElementById("hero-card-sub").textContent = entry.sub;
+      const chipEl = document.getElementById("hero-card-chip");
+      chipEl.style.display = entry.chip ? "" : "none";
+      if (entry.chip) chipEl.textContent = entry.chip;
+      document.getElementById("hero-card-cta").textContent = entry.cta;
+      liveEl.classList.remove("fading");
+    }, 350);
+  }, 3800);
+}
+
 function render() {
+  stopHeroCardRotation();
   if (!isSupabaseConfigured()) {
     $app.innerHTML = renderSetupBanner();
     return;
   }
-  if (state.view === "landing") $app.innerHTML = renderLanding();
+  if (state.view === "landing") {
+    $app.innerHTML = renderLanding();
+    startHeroCardRotation();
+  }
   else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
   else if (state.view === "roadmap") {
@@ -383,13 +428,13 @@ function renderLanding() {
                 </div>
               </div>
               <div class="ma-pad">
-                <div class="ma-hero">
-                  <div class="ma-hero-label">ONE THING TODAY</div>
-                  <div class="ma-hero-title">Try karjalanpiirakka</div>
-                  <p class="ma-hero-sub">A thin rye crust with rice porridge filling — sold in nearly every grocery store.</p>
-                  <span class="ma-source-chip">📎 Visit Finland</span>
+                <div class="ma-hero" id="hero-card">
+                  <div class="ma-hero-label" id="hero-card-label">ONE THING TODAY</div>
+                  <div class="ma-hero-title" id="hero-card-title">Try karjalanpiirakka</div>
+                  <p class="ma-hero-sub" id="hero-card-sub">A thin rye crust with rice porridge filling — sold in nearly every grocery store.</p>
+                  <span class="ma-source-chip" id="hero-card-chip">📎 Visit Finland</span>
                   <div class="ma-hero-actions">
-                    <span class="ma-hero-done">Mark done · +5</span>
+                    <span class="ma-hero-done" id="hero-card-cta">Mark done · +5</span>
                     <span class="ma-hero-chat">💬</span>
                   </div>
                 </div>
@@ -505,6 +550,20 @@ function renderLanding() {
 }
 
 const PARTICLE_FIELD_SVG = `<line x1="152.2" y1="92.3" x2="123.1" y2="86.1" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><line x1="182.9" y1="220.6" x2="150.6" y2="180.6" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><line x1="222.3" y1="127.7" x2="262.4" y2="120.3" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><line x1="238.5" y1="248.0" x2="251.5" y2="212.4" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><line x1="139.0" y1="21.8" x2="111.1" y2="54.8" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><line x1="262.4" y1="120.3" x2="265.8" y2="151.4" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><line x1="71.1" y1="241.2" x2="62.4" y2="219.3" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><line x1="48.0" y1="155.4" x2="91.1" y2="169.7" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><line x1="91.1" y1="169.7" x2="113.8" y2="154.3" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><line x1="324.7" y1="306.7" x2="338.8" y2="265.8" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/><circle cx="152.2" cy="92.3" r="1.8" fill="#8A5B9E" fill-opacity="0.72"/><circle cx="182.9" cy="220.6" r="3.2" fill="#5E2D85" fill-opacity="0.61"/><circle cx="222.3" cy="127.7" r="3.2" fill="#8A5B9E" fill-opacity="0.66"/><circle cx="238.5" cy="248.0" r="2" fill="#DE5E99" fill-opacity="0.88"/><circle cx="159.2" cy="366.7" r="1.8" fill="#F1E532" fill-opacity="0.95"/><circle cx="127.4" cy="288.9" r="2.4" fill="#F1E532" fill-opacity="0.57"/><circle cx="139.0" cy="21.8" r="1.6" fill="#D81B81" fill-opacity="0.8"/><circle cx="262.4" cy="120.3" r="2" fill="#27A2DA" fill-opacity="0.89"/><circle cx="244.4" cy="197.5" r="2" fill="#5E2D85" fill-opacity="0.57"/><rect x="68.9" y="239.0" width="4.5" height="4.5" fill="#0D6FB0" fill-opacity="0.93" rx="0.6"/><circle cx="48.0" cy="155.4" r="1.8" fill="#F1E532" fill-opacity="0.6"/><circle cx="91.1" cy="169.7" r="2" fill="#0D6FB0" fill-opacity="0.82"/><rect x="323.4" y="305.4" width="2.6" height="2.6" fill="#F1E532" fill-opacity="0.8" rx="0.6"/><circle cx="72.9" cy="112.8" r="2.4" fill="#DE5E99" fill-opacity="0.83"/><circle cx="318.1" cy="219.2" r="1.6" fill="#E89A1C" fill-opacity="0.69"/><circle cx="22.2" cy="266.1" r="2.4" fill="#D81B81" fill-opacity="0.74"/><circle cx="287.3" cy="144.9" r="1.6" fill="#D81B81" fill-opacity="0.81"/><circle cx="62.4" cy="219.3" r="3.2" fill="#27A2DA" fill-opacity="0.74"/><circle cx="100.9" cy="139.0" r="1.6" fill="#27A2DA" fill-opacity="0.85"/><circle cx="338.8" cy="265.8" r="3.2" fill="#D81B81" fill-opacity="0.75"/><circle cx="179.8" cy="107.5" r="1.8" fill="#27A2DA" fill-opacity="0.75"/><rect x="21.6" y="201.4" width="3.2" height="3.2" fill="#E89A1C" fill-opacity="0.56" rx="0.6"/><circle cx="251.5" cy="212.4" r="2" fill="#5E2D85" fill-opacity="0.83"/><circle cx="311.6" cy="108.2" r="2" fill="#D81B81" fill-opacity="0.77"/><rect x="370.8" y="170.9" width="5.1" height="5.1" fill="#8A5B9E" fill-opacity="0.66" rx="0.6"/><circle cx="99.4" cy="43.6" r="2.4" fill="#27A2DA" fill-opacity="0.89"/><circle cx="64.7" cy="83.1" r="2" fill="#8A5B9E" fill-opacity="0.9"/><circle cx="265.8" cy="151.4" r="2" fill="#F1E532" fill-opacity="0.76"/><circle cx="217.3" cy="10.8" r="2.8" fill="#27A2DA" fill-opacity="0.63"/><circle cx="111.1" cy="54.8" r="2.4" fill="#D81B81" fill-opacity="0.76"/><circle cx="113.8" cy="154.3" r="1.6" fill="#F1E532" fill-opacity="0.6"/><circle cx="73.2" cy="321.0" r="3.2" fill="#5E2D85" fill-opacity="0.61"/><circle cx="343.4" cy="115.8" r="1.6" fill="#D81B81" fill-opacity="0.74"/><circle cx="150.6" cy="180.6" r="1.6" fill="#8A5B9E" fill-opacity="0.59"/><circle cx="247.6" cy="48.1" r="2.8" fill="#F1E532" fill-opacity="0.75"/><circle cx="123.1" cy="86.1" r="1.8" fill="#5E2D85" fill-opacity="0.78"/><rect x="222.1" y="157.6" width="3.2" height="3.2" fill="#E89A1C" fill-opacity="0.57" rx="0.6"/><circle cx="193.5" cy="34.4" r="2" fill="#D81B81" fill-opacity="0.84"/><circle cx="257.2" cy="34.0" r="2.8" fill="#DE5E99" fill-opacity="0.59"/><circle cx="50.9" cy="188.9" r="2" fill="#D81B81" fill-opacity="0.88"/><circle cx="359.1" cy="265.0" r="2.4" fill="#E89A1C" fill-opacity="0.9"/><circle cx="209.7" cy="150.7" r="1.6" fill="#F1E532" fill-opacity="0.78"/><rect x="124.0" y="107.7" width="5.1" height="5.1" fill="#27A2DA" fill-opacity="0.57" rx="0.6"/><circle cx="235.7" cy="144.3" r="2" fill="#0D6FB0" fill-opacity="0.78"/><circle cx="376.3" cy="219.7" r="1.6" fill="#E89A1C" fill-opacity="0.72"/><circle cx="314.1" cy="171.1" r="3.2" fill="#E89A1C" fill-opacity="0.98"/><circle cx="205.7" cy="98.3" r="2.8" fill="#E89A1C" fill-opacity="0.61"/><rect x="165.6" y="301.3" width="3.2" height="3.2" fill="#E89A1C" fill-opacity="0.94" rx="0.6"/><circle cx="61.8" cy="286.4" r="1.8" fill="#D81B81" fill-opacity="1.0"/><rect x="231.9" y="23.4" width="2.6" height="2.6" fill="#8A5B9E" fill-opacity="0.88" rx="0.6"/><rect x="281.9" y="356.4" width="3.8" height="3.8" fill="#F1E532" fill-opacity="0.92" rx="0.6"/><circle cx="97.6" cy="229.8" r="2" fill="#F1E532" fill-opacity="0.64"/><circle cx="267.3" cy="305.8" r="3.2" fill="#DE5E99" fill-opacity="0.99"/><circle cx="299.3" cy="201.2" r="2.8" fill="#27A2DA" fill-opacity="0.77"/><circle cx="173.6" cy="254.3" r="2.8" fill="#E89A1C" fill-opacity="0.98"/><circle cx="276.8" cy="206.5" r="2.4" fill="#DE5E99" fill-opacity="0.96"/><circle cx="360.6" cy="115.9" r="2" fill="#E89A1C" fill-opacity="0.62"/><circle cx="217.8" cy="64.3" r="1.6" fill="#27A2DA" fill-opacity="0.9"/><circle cx="126.5" cy="335.8" r="2.4" fill="#8A5B9E" fill-opacity="0.97"/><rect x="271.4" y="39.8" width="2.9" height="2.9" fill="#DE5E99" fill-opacity="0.58" rx="0.6"/><circle cx="260.7" cy="81.4" r="2" fill="#E89A1C" fill-opacity="0.71"/><circle cx="186.2" cy="369.4" r="1.8" fill="#5E2D85" fill-opacity="0.89"/><circle cx="336.2" cy="191.8" r="3.2" fill="#27A2DA" fill-opacity="0.62"/><circle cx="353.1" cy="92.4" r="2" fill="#0D6FB0" fill-opacity="0.95"/><circle cx="203.5" cy="354.7" r="1.8" fill="#F1E532" fill-opacity="0.67"/><circle cx="129.5" cy="60.3" r="1.6" fill="#27A2DA" fill-opacity="0.92"/><circle cx="382.0" cy="145.9" r="1.8" fill="#F1E532" fill-opacity="0.61"/><circle cx="306.8" cy="246.8" r="1.6" fill="#5E2D85" fill-opacity="0.78"/><circle cx="240.2" cy="331.2" r="1.6" fill="#DE5E99" fill-opacity="0.96"/><circle cx="322.4" cy="327.3" r="1.8" fill="#8A5B9E" fill-opacity="0.64"/><circle cx="238.6" cy="305.7" r="2" fill="#5E2D85" fill-opacity="0.67"/><circle cx="36.3" cy="169.8" r="1.6" fill="#8A5B9E" fill-opacity="0.78"/><rect x="370.7" y="129.8" width="3.8" height="3.8" fill="#F1E532" fill-opacity="0.69" rx="0.6"/><circle cx="131.1" cy="127.8" r="3.2" fill="#27A2DA" fill-opacity="0.57"/><rect x="109.0" y="259.8" width="5.1" height="5.1" fill="#0D6FB0" fill-opacity="0.63" rx="0.6"/><circle cx="380.8" cy="198.3" r="1.8" fill="#F1E532" fill-opacity="0.62"/><circle cx="156.7" cy="64.0" r="2.8" fill="#0D6FB0" fill-opacity="0.97"/><circle cx="284.8" cy="225.7" r="2" fill="#E89A1C" fill-opacity="0.86"/><circle cx="194.3" cy="389.0" r="1.8" fill="#F1E532" fill-opacity="0.95"/><rect x="242.0" y="87.7" width="2.6" height="2.6" fill="#F1E532" fill-opacity="0.63" rx="0.6"/><circle cx="64.6" cy="172.6" r="2" fill="#E89A1C" fill-opacity="0.9"/><circle cx="260.6" cy="277.2" r="1.8" fill="#0D6FB0" fill-opacity="0.6"/><circle cx="42.4" cy="224.1" r="2" fill="#0D6FB0" fill-opacity="0.79"/><circle cx="93.9" cy="302.6" r="2.8" fill="#F1E532" fill-opacity="0.84"/><circle cx="379.6" cy="245.5" r="1.8" fill="#E89A1C" fill-opacity="0.71"/><rect x="91.3" y="322.1" width="2.6" height="2.6" fill="#27A2DA" fill-opacity="0.94" rx="0.6"/><circle cx="108.0" cy="278.8" r="2.8" fill="#D81B81" fill-opacity="0.8"/><rect x="49.0" y="98.5" width="4.5" height="4.5" fill="#27A2DA" fill-opacity="0.81" rx="0.6"/><circle cx="199.4" cy="283.9" r="1.8" fill="#5E2D85" fill-opacity="0.95"/><circle cx="64.9" cy="136.0" r="1.6" fill="#5E2D85" fill-opacity="0.6"/>`;
+
+// Rotates the hero preview's "ONE THING TODAY" card through five warm,
+// human tones instead of always looking like an admin checklist — a real
+// quest, a fun fact (from FUN_FACTS, already grounded), a caring check-in,
+// and an honest seasonal note (general daylight-hours knowledge, not a
+// live weather claim we can't back). Illustrative only — decorative,
+// aria-hidden preview, not tied to any real user's actual data.
+const HERO_CARD_ROTATION = [
+  { label: "ONE THING TODAY", title: "Try karjalanpiirakka", sub: "A thin rye crust with rice porridge filling — sold in nearly every grocery store.", chip: "📎 Visit Finland", cta: "Mark done · +5" },
+  { label: "DID YOU KNOW?", title: "Everyman's Right", sub: "Anyone can roam, camp, and pick berries in almost any Finnish forest, regardless of who owns the land.", chip: null, cta: "Ask Kaveri more" },
+  { label: "FUN FACT", title: "3 million saunas", sub: "Finland has roughly one sauna for every two people — the whole country could fit inside them at once.", chip: null, cta: "😄 Love that" },
+  { label: "CHECKING IN", title: "How's it going so far?", sub: "No task today — just wanted to see how you're settling in. I'm here if anything's on your mind.", chip: null, cta: "💬 Talk to Kaveri" },
+  { label: "SEASON CHECK", title: "Finnish winters run dark, not cold", sub: "Espoo gets around 6 hours of daylight in December — most people just lean into it with candles and sauna.", chip: null, cta: "Good to know" },
+];
 
 const BUDDY_CHIPS = [
   { color: "#27A2DA", text: "Curious about sauna etiquette" },

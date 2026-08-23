@@ -273,6 +273,10 @@ em { color: var(--primary-dark); font-style: normal; }
   display: flex; flex-direction: column; overflow: hidden;
   border-radius: 32px; box-shadow: 0 30px 70px rgba(60, 30, 10, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
+/* Cross-fade for the rotating "ONE THING TODAY" card content, see
+   startHeroCardRotation() in app.js. */
+#hero-card { opacity: 1; transition: opacity 0.35s ease; }
+#hero-card.fading { opacity: 0; }
 @media (max-width: 860px) {
   .hero-mood-split { flex-direction: column; }
   .hero-phone-preview { width: 220px; height: 480px; }
