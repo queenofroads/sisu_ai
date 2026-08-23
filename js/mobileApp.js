@@ -283,9 +283,35 @@ function mobileSourceChip(entry) {
 
 // ---------- Quests ----------
 
+const MOBILE_QUEST_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "legal", label: "⚖️ Admin" },
+  { id: "social", label: "👥 Social" },
+  { id: "cultural", label: "🎭 Cultural" },
+  { id: "food", label: "🍴 Food" },
+];
+
+// Steps keep their original index (needed by questKeyFor / the detail
+// overlay's roadmap[phaseId][idx] lookup) even after filtering.
+function mobileQuestGroups(roadmap, filter) {
+  return PHASES.map((ph) => {
+    const all = (roadmap[ph.id] || []).map((s, i) => ({ s, i }));
+    const steps = filter === "all" ? all : all.filter((e) => e.s.questCategory === filter);
+    return { ph, steps };
+  }).filter((g) => g.steps.length);
+}
+
+function mobileDefaultOpenPhase(groups, progress) {
+  const withUndone = groups.find((g) => g.steps.some((e) => !progress[questKeyFor(g.ph.id, e.s, e.i)]));
+  return (withUndone || groups[0] || {}).ph ? (withUndone || groups[0]).ph.id : null;
+}
+
 function renderMobileQuests(roadmap, progress, doneCount, totalCount) {
   const overallPct = totalCount ? Math.round((doneCount / totalCount) * 100) : 0;
-  const groups = PHASES.map((ph) => ({ ph, steps: roadmap[ph.id] || [] })).filter((g) => g.steps.length);
+  const filter = state.mobileQuestFilter || "all";
+  const groups = mobileQuestGroups(roadmap, filter);
+  const defaultOpen = mobileDefaultOpenPhase(groups, progress);
+  const openPhase = state.mobileOpenPhase == null ? defaultOpen : state.mobileOpenPhase;
 
   return `
     <div class="ma-screen-scroll">
@@ -293,18 +319,37 @@ function renderMobileQuests(roadmap, progress, doneCount, totalCount) {
         <div class="ma-page-title">Your board</div>
         <p class="ma-page-sub">${doneCount} of ${totalCount} done · every one links to a real official source.</p>
         <div class="ma-progress-bar"><div style="width:${overallPct}%"></div></div>
+        <div class="ma-quest-filter-row">
+          ${MOBILE_QUEST_FILTERS.map(
+            (f) => `<button type="button" class="ma-pill ${filter === f.id ? "active" : ""}" data-action="mobile-quest-filter" data-filter="${f.id}">${f.label}</button>`
+          ).join("")}
+        </div>
       </div>
-      ${groups
-        .map(
-          (g) => `
+      ${
+        groups.length
+          ? groups
+              .map((g) => {
+                const isOpen = g.ph.id === openPhase;
+                const doneInGroup = g.steps.filter((e) => progress[questKeyFor(g.ph.id, e.s, e.i)]).length;
+                return `
         <div class="ma-pad">
-          <div class="ma-phase-head"><span>${g.ph.icon}</span><span class="ma-phase-label">${escapeHtml(g.ph.label)}</span><span class="ma-phase-count">${g.steps.filter((s, i) => progress[questKeyFor(g.ph.id, s, i)]).length}/${g.steps.length}</span></div>
-          <div class="ma-quest-list">
-            ${g.steps.map((s, i) => renderMobileQuestRow(s, g.ph.id, i, progress)).join("")}
-          </div>
-        </div>`
-        )
-        .join("")}
+          <button type="button" class="ma-phase-head ma-phase-head-btn" data-action="mobile-toggle-phase" data-phase="${g.ph.id}">
+            <span>${g.ph.icon}</span><span class="ma-phase-label">${escapeHtml(g.ph.label)}</span>
+            <span class="ma-phase-count">${doneInGroup}/${g.steps.length}</span>
+            <span class="ma-phase-chevron ${isOpen ? "open" : ""}">›</span>
+          </button>
+          ${
+            isOpen
+              ? `<div class="ma-quest-list">
+            ${g.steps.map((e) => renderMobileQuestRow(e.s, g.ph.id, e.i, progress)).join("")}
+          </div>`
+              : ""
+          }
+        </div>`;
+              })
+              .join("")
+          : `<div class="ma-pad"><p class="ma-muted">No quests in this category right now.</p></div>`
+      }
     </div>
   `;
 }

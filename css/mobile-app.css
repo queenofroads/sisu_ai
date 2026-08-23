@@ -182,10 +182,23 @@
 .ma-progress-bar div { height: 100%; background: var(--ma-terracotta); border-radius: 3px; }
 .ma-progress-bar-lg { height: 6px; margin-bottom: 12px; }
 
+/* Board is filterable (by quest category) and collapses into one-phase-open
+   accordions — a flat list of every quest read as an endless scroll, this
+   gives it structure without hiding anything permanently. See
+   mobileQuestGroups()/mobileDefaultOpenPhase() in mobileApp.js. */
+.ma-quest-filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+
 .ma-phase-head { display: flex; align-items: center; gap: 9px; margin-bottom: 11px; }
-.ma-phase-label { font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em; }
+.ma-phase-head-btn {
+  width: 100%; background: none; border: none; padding: 10px 2px; margin: 0 0 2px;
+  cursor: pointer; font-family: inherit; color: inherit; text-align: left;
+  border-bottom: 1px solid var(--ma-border);
+}
+.ma-phase-label { font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em; flex: 1; }
 .ma-phase-count { font-size: 11px; color: var(--ma-muted); }
-.ma-quest-list { display: flex; flex-direction: column; gap: 9px; margin-bottom: 4px; }
+.ma-phase-chevron { display: inline-block; transform: rotate(90deg); transition: transform 0.2s ease; color: var(--ma-muted); font-size: 15px; }
+.ma-phase-chevron.open { transform: rotate(270deg); }
+.ma-quest-list { display: flex; flex-direction: column; gap: 9px; margin: 11px 0 4px; }
 
 .ma-quest-row {
   display: flex; align-items: center; gap: 12px; background: var(--ma-surface); border: 1px solid var(--ma-border);

@@ -74,6 +74,8 @@ function defaultState() {
     mobileTab: "today", // today | quests | buddy | people | you
     mobileSel: null, // { phaseId, idx } of the quest shown in the detail overlay
     mobilePeopleTab: "board", // board | ask
+    mobileQuestFilter: "all", // all | legal | social | cultural | food — see MOBILE_QUEST_FILTERS
+    mobileOpenPhase: null, // phaseId of the expanded quest-board accordion section; null = auto (first phase with something left to do)
     levelUpLabel: null,
     levelUpEarned: 0,
     roadmapStartedAt: null, // set once, first time a roadmap is generated — powers "Day N in {city}"
@@ -1256,6 +1258,15 @@ document.addEventListener("click", (e) => {
     setState({ mobileSel: null });
   } else if (action === "mobile-people-tab") {
     setState({ mobilePeopleTab: el.dataset.sub });
+  } else if (action === "mobile-quest-filter") {
+    setState({ mobileQuestFilter: el.dataset.filter, mobileOpenPhase: null });
+  } else if (action === "mobile-toggle-phase") {
+    const roadmap = state.roadmap || {};
+    const filter = state.mobileQuestFilter || "all";
+    const groups = mobileQuestGroups(roadmap, filter);
+    const defaultOpen = mobileDefaultOpenPhase(groups, state.progress);
+    const current = state.mobileOpenPhase == null ? defaultOpen : state.mobileOpenPhase;
+    setState({ mobileOpenPhase: current === el.dataset.phase ? "__none__" : el.dataset.phase });
   } else if (action === "close-levelup") {
     setState({ levelUpLabel: null });
   } else if (action === "mobile-quick-ask") {
