@@ -418,10 +418,20 @@ em { color: var(--primary-dark); font-style: normal; }
   white-space: nowrap;
 }
 .chip-dot { width: 8px; height: 8px; min-width: 8px; border-radius: 50%; background: var(--dot); }
-.buddy-chip-1 { top: 6%; left: -4%; }
-.buddy-chip-2 { top: 28%; right: -8%; }
-.buddy-chip-3 { bottom: 22%; left: -10%; }
-.buddy-chip-4 { bottom: 2%; right: -2%; }
+/* Gentle asynchronous bob — one shared keyframe, staggered via negative
+   delays + different durations/directions so the four chips drift
+   independently instead of bouncing in lockstep. */
+@keyframes chip-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.buddy-chip-1 { top: 6%; left: -4%; animation: chip-float 6s ease-in-out infinite; animation-delay: -0.5s; }
+.buddy-chip-2 { top: 28%; right: -8%; animation: chip-float 7s ease-in-out infinite; animation-delay: -3.2s; }
+.buddy-chip-3 { bottom: 22%; left: -10%; animation: chip-float 6.5s ease-in-out infinite reverse; animation-delay: -1.8s; }
+.buddy-chip-4 { bottom: 2%; right: -2%; animation: chip-float 7.5s ease-in-out infinite; animation-delay: -4.5s; }
+@media (prefers-reduced-motion: reduce) {
+  .buddy-chip-1, .buddy-chip-2, .buddy-chip-3, .buddy-chip-4 { animation: none; }
+}
 @media (max-width: 860px) {
   .buddy-teaser { grid-template-columns: 1fr; gap: 32px; }
   .buddy-teaser-copy { text-align: center; }
