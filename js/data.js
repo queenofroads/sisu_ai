@@ -159,7 +159,7 @@ const PHASES = [
   { id: "week2", label: "First 2 weeks in Finland", icon: "🛫", blurb: "Mostly about getting yourself registered with the Finnish system — everything else depends on this.", color: "#0D6FB0", textColor: "#ffffff" },
   { id: "month1", label: "First month", icon: "📅", blurb: "Once the basics are registered, these round out your setup.", color: "#8A5B9E", textColor: "#ffffff" },
   { id: "month3", label: "First 3 months", icon: "🌱", blurb: "Not urgent, but worth knowing about before they sneak up on you.", color: "#D81B81", textColor: "#ffffff" },
-  { id: "ongoing", label: "Ongoing", icon: "🔁", blurb: "No deadline — these are about actually building a life here, whenever you're ready.", color: "#EFA126", textColor: "#16263c" },
+  { id: "ongoing", label: "Ongoing", icon: "🔁", blurb: "No deadline — these are about actually building a life here, whenever you're ready.", color: "#E89A1C", textColor: "#3a2007" },
 ];
 
 /*

@@ -1,24 +1,27 @@
 :root {
-  /* Brand palette: Sea Blue / Turquoise / Indigo / Plum / Pink / Cranberry /
-     Melon / Yellow — --primary and --accent below, plus the quest category
-     colors in data.js and the decorative accents across the landing page. */
-  --bg: #f5f8fc;
-  --surface: #ffffff;
-  --border: #d7e3f0;
-  --text: #0d1b2e;
-  --muted: #526178;
-  --primary: #0d6fb0;
-  --primary-dark: #0a5689;
-  --accent: #efa126;
+  /* Warm cream/terracotta palette, matching the "Kaveri App" mobile design
+     (Claude Design canvas import) — --primary/--accent below, quest
+     category colors stay as-is in data.js (Indigo/Sea Blue/Plum/Pink — the
+     mobile design already used the same set, so no change needed there). */
+  --bg: #fbf3e7;
+  --surface: #fffdf9;
+  --border: #ede2ce;
+  --text: #1e2430;
+  --muted: #8a8070;
+  --primary: #c2582f;
+  --primary-dark: #9b4625;
+  --accent: #e89a1c;
+  --accent-text: #3a2007;
   --danger: #b3452e;
   --gold: #c9971f;
   --silver: #8a94a3;
   --bronze: #a5652f;
-  --radius: 12px;
-  --shadow: 0 2px 10px rgba(0, 40, 90, 0.07);
-  /* Lexend was designed to improve reading proficiency — fitting for an app
-     whose whole job is making unfamiliar official text easy to read. */
-  --font-heading: "Lexend", "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --radius: 18px;
+  --shadow: 0 2px 10px rgba(60, 40, 20, 0.08);
+  /* Newsreader (serif) for display headlines, Lexend for everything else —
+     matches the mobile design's type pairing. */
+  --font-heading: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-body: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Dark tokens apply either when the OS prefers dark and the user hasn't
@@ -27,29 +30,32 @@
    — the attribute always wins over the OS setting, in both directions. The
    inline script in index.html's <head> sets data-theme before first paint
    (from localStorage, falling back to the OS preference), so there's no
-   flash of the wrong theme and no flash of unstyled content either. */
+   flash of the wrong theme and no flash of unstyled content either. Same
+   warm hue family as light mode, just darkened — not a different theme. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0a1220;
-    --surface: #101d33;
-    --border: #1e2a4a;
-    --text: #eaf1fb;
-    --muted: #9fb1cc;
-    --primary: #27a2da;
-    --primary-dark: #1e7eaa;
-    --accent: #efa126;
+    --bg: #1c1610;
+    --surface: #262019;
+    --border: #3a3024;
+    --text: #f5ede0;
+    --muted: #b8ac98;
+    --primary: #cc7654;
+    --primary-dark: #a35d40;
+    --accent: #e89a1c;
+    --accent-text: #241400;
     --shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0a1220;
-  --surface: #101d33;
-  --border: #1e2a4a;
-  --text: #eaf1fb;
-  --muted: #9fb1cc;
-  --primary: #27a2da;
-  --primary-dark: #1e7eaa;
-  --accent: #efa126;
+  --bg: #1c1610;
+  --surface: #262019;
+  --border: #3a3024;
+  --text: #f5ede0;
+  --muted: #b8ac98;
+  --primary: #cc7654;
+  --primary-dark: #a35d40;
+  --accent: #e89a1c;
+  --accent-text: #241400;
   --shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
 }
 
@@ -57,7 +63,7 @@
 
 body {
   margin: 0;
-  font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-body);
   font-variant-numeric: tabular-nums;
   background: var(--bg);
   color: var(--text);
@@ -80,7 +86,7 @@ body {
 .theme-toggle:hover { background: var(--bg); }
 .theme-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .brand {
-  font-family: var(--font-heading);
+  font-family: var(--font-body);
   font-weight: 700; font-size: 18px; color: var(--primary); flex-shrink: 0;
   background: none; border: none; padding: 4px 2px; margin: -4px -2px;
   cursor: pointer; border-radius: 6px;
@@ -114,21 +120,27 @@ body {
   padding: 32px 20px 80px;
 }
 
-/* Public Sans (the body face, set on <body> above) is the U.S. civic
-   design system's typeface; pairing it with Lexend (--font-heading, above
-   — designed for reading proficiency) is a deliberate nod to what this app
-   actually does — turn official-but-dense information into something
-   legible. */
-h1, h2, h3, h4 {
+/* Newsreader (serif, --font-heading) for the big display headlines, Lexend
+   (--font-body) bold for card/section-level titles — matches the mobile
+   design's actual type pairing rather than making every heading serif. */
+h1, h2 {
   font-family: var(--font-heading);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0;
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+h1 { font-size: clamp(28px, 4vw, 40px); }
+h2 { font-size: clamp(22px, 2.6vw, 28px); }
+h3, h4 {
+  font-family: var(--font-body);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.3;
   letter-spacing: -0.01em;
   margin: 0 0 12px;
   text-wrap: balance;
 }
-h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; }
-h2 { font-size: clamp(22px, 2.6vw, 26px); }
 h3 { font-size: 19px; font-weight: 600; }
 p { margin: 0 0 12px; }
 .muted { color: var(--muted); font-size: 14px; }
@@ -150,7 +162,7 @@ em { color: var(--primary-dark); font-style: normal; }
   background-color: var(--surface);
   background-image:
     radial-gradient(circle at 15% 20%, rgba(255, 153, 51, 0.20), transparent 55%),
-    radial-gradient(circle at 85% 20%, rgba(13, 111, 176, 0.16), transparent 55%),
+    radial-gradient(circle at 85% 20%, rgba(194, 88, 47, 0.16), transparent 55%),
     radial-gradient(circle at 50% 90%, rgba(19, 136, 8, 0.14), transparent 60%);
 }
 @media (prefers-color-scheme: dark) {
@@ -185,27 +197,22 @@ em { color: var(--primary-dark); font-style: normal; }
 .hero-actions { display: flex; gap: 12px; justify-content: flex-start; flex-wrap: wrap; }
 .hero-note { margin-top: 20px; font-size: 13px; color: var(--muted); }
 
-/* Mood hero: a full-bleed light, airy gradient wash — pastel blobs (blush,
-   gold, mint, sky blue) on a cream base, standing in for a soft
-   out-of-focus photo without using a real one — plus a fine grain overlay
-   to keep it from looking like a flat CSS gradient. Fixed light palette
-   and dark navy text on purpose, so the hero reads the same regardless of
-   the app's light/dark toggle (a deliberate brand treatment, not a themed
-   surface). */
+/* Mood hero: a full-bleed terracotta wash echoing the "ONE THING TODAY"
+   hero card from the mobile design — solid warm terracotta with an amber
+   highlight and a fine grain overlay, cream text. Fixed palette on purpose
+   (not themed), so it reads the same regardless of the app's light/dark
+   toggle — a deliberate brand treatment, like the mobile card it mirrors. */
 .hero-mood {
   position: relative;
   min-height: 72vh;
   margin: 0 calc(50% - 50vw);
   padding: 28px calc(50vw - 50% + 24px) 56px;
   display: flex; flex-direction: column; justify-content: flex-end;
-  color: #16263c;
+  color: #fdf6ea;
   background:
-    radial-gradient(120% 70% at 50% 118%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 55%),
-    radial-gradient(56% 50% at 10% 10%, rgba(239, 161, 38, 0.55) 0%, rgba(239, 161, 38, 0.18) 36%, rgba(239, 161, 38, 0) 68%),
-    radial-gradient(60% 54% at 90% 8%, rgba(39, 162, 218, 0.5) 0%, rgba(39, 162, 218, 0.16) 38%, rgba(39, 162, 218, 0) 70%),
-    radial-gradient(68% 62% at 62% 92%, rgba(94, 45, 133, 0.4) 0%, rgba(94, 45, 133, 0.16) 42%, rgba(94, 45, 133, 0) 74%),
-    radial-gradient(54% 54% at 22% 78%, rgba(216, 27, 129, 0.4) 0%, rgba(216, 27, 129, 0.14) 42%, rgba(216, 27, 129, 0) 72%),
-    linear-gradient(160deg, #fdf9f3 0%, #fbf4ea 50%, #f4f1ea 100%);
+    radial-gradient(70% 60% at 88% 4%, rgba(253, 246, 234, 0.14) 0%, rgba(253, 246, 234, 0) 60%),
+    radial-gradient(60% 55% at 8% 100%, rgba(232, 154, 28, 0.35) 0%, rgba(232, 154, 28, 0) 65%),
+    linear-gradient(160deg, #cf6a3d 0%, #c2582f 45%, #9b4625 100%);
   overflow: hidden;
 }
 .hero-mood::before {
@@ -213,8 +220,8 @@ em { color: var(--primary-dark); font-style: normal; }
   position: absolute; inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 180px 180px;
-  mix-blend-mode: multiply;
-  opacity: 0.05;
+  mix-blend-mode: overlay;
+  opacity: 0.12;
   pointer-events: none;
 }
 .hero-mood-labels {
@@ -222,21 +229,24 @@ em { color: var(--primary-dark); font-style: normal; }
 }
 .mood-label {
   position: absolute; font-size: 13px; font-weight: 600; letter-spacing: 0.2px;
-  background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(2px);
-  border: 1px solid rgba(22, 38, 60, 0.12); border-radius: 999px;
-  padding: 7px 14px; white-space: nowrap; box-shadow: 0 2px 10px rgba(22, 38, 60, 0.08);
+  background: rgba(253, 246, 234, 0.16); backdrop-filter: blur(2px);
+  border: 1px solid rgba(253, 246, 234, 0.3); border-radius: 999px;
+  color: #fdf6ea;
+  padding: 7px 14px; white-space: nowrap;
 }
 .mood-label-1 { top: 10%; left: 6%; }
 .mood-label-2 { top: 22%; right: 8%; }
 .mood-label-3 { top: 32%; left: 32%; }
 .hero-mood-content { position: relative; max-width: 640px; }
 .hero-mood-content h1 {
-  font-size: clamp(28px, 4vw, 44px); line-height: 1.1; margin: 0 0 14px; color: #16263c;
+  font-size: clamp(28px, 4vw, 44px); line-height: 1.1; margin: 0 0 14px; color: #fdf6ea;
 }
-.hero-mood-sub { max-width: 480px; color: #3c4c60; margin: 0 0 26px; }
+.hero-mood-sub { max-width: 480px; color: rgba(253, 246, 234, 0.85); margin: 0 0 26px; }
 .hero-mood-actions { justify-content: flex-start; }
-.hero-mood-actions.hero-actions .btn-ghost.hero-mood-ghost { color: #16263c; border-color: rgba(22, 38, 60, 0.35); }
-.hero-mood-actions.hero-actions .btn-ghost.hero-mood-ghost:hover { background: rgba(22, 38, 60, 0.06); }
+.hero-mood-actions.hero-actions .btn-primary.hero-mood-primary { background: #fdf6ea; color: #c2582f; }
+.hero-mood-actions.hero-actions .btn-primary.hero-mood-primary:hover { background: #fff; }
+.hero-mood-actions.hero-actions .btn-ghost.hero-mood-ghost { color: #fdf6ea; border-color: rgba(253, 246, 234, 0.4); }
+.hero-mood-actions.hero-actions .btn-ghost.hero-mood-ghost:hover { background: rgba(253, 246, 234, 0.12); }
 
 /* Full-bleed surface band directly under the hero, so the trust strip reads
    as a deliberate transition zone instead of stray text floating on the
@@ -390,8 +400,8 @@ em { color: var(--primary-dark); font-style: normal; }
 
 /* ---------- Buttons ---------- */
 .btn {
-  border: none; border-radius: 8px; padding: 12px 22px;
-  font-size: 15px; font-weight: 600; cursor: pointer;
+  border: none; border-radius: 14px; padding: 13px 22px;
+  font-size: 15px; font-weight: 700; cursor: pointer;
   transition: transform 0.05s ease, box-shadow 0.15s ease;
 }
 .btn:active { transform: scale(0.98); }
@@ -399,9 +409,9 @@ em { color: var(--primary-dark); font-style: normal; }
 .btn-primary { background: var(--primary); color: white; }
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
-.btn-secondary { background: var(--accent); color: #241505; }
+.btn-secondary { background: var(--accent); color: var(--accent-text); }
 @media (hover: hover) and (pointer: fine) {
-  .btn-primary:hover, .btn-secondary:hover { box-shadow: 0 4px 12px rgba(0, 40, 90, 0.2); transform: translateY(-1px); }
+  .btn-primary:hover, .btn-secondary:hover { box-shadow: 0 4px 12px rgba(60, 40, 20, 0.22); transform: translateY(-1px); }
 }
 .btn:focus-visible, .link-btn:focus-visible {
   outline: 2px solid var(--primary); outline-offset: 2px;
@@ -418,7 +428,7 @@ em { color: var(--primary-dark); font-style: normal; }
 }
 .auth-card form { display: flex; flex-direction: column; gap: 14px; margin: 20px 0; text-align: left; }
 .auth-error { background: rgba(179, 69, 46, 0.1); border: 1px solid var(--danger); color: var(--danger); border-radius: 8px; padding: 10px 14px; font-size: 14px; text-align: left; }
-.auth-notice { background: rgba(13, 111, 176, 0.08); border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; padding: 10px 14px; font-size: 14px; text-align: left; }
+.auth-notice { background: rgba(194, 88, 47, 0.08); border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; padding: 10px 14px; font-size: 14px; text-align: left; }
 label { font-size: 14px; font-weight: 600; display: flex; flex-direction: column; gap: 6px; }
 input, select {
   font-family: inherit; font-size: 16px; padding: 10px 12px;
@@ -472,7 +482,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 }
 .chip input { width: auto; }
 .chip input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-.chip:has(input:checked) { border-color: var(--primary); background: rgba(13, 111, 176, 0.08); }
+.chip:has(input:checked) { border-color: var(--primary); background: rgba(194, 88, 47, 0.08); }
 @media (hover: hover) and (pointer: fine) {
   .chip:hover { border-color: var(--accent); }
 }
@@ -485,7 +495,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 
 .score-panel {
   display: flex; flex-direction: column; gap: 8px; align-items: flex-end; min-width: 220px;
-  background: linear-gradient(135deg, rgba(13, 111, 176, 0.07), rgba(239, 161, 38, 0.15));
+  background: linear-gradient(135deg, rgba(194, 88, 47, 0.07), rgba(232, 154, 28, 0.15));
   border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px;
 }
 .score-top { display: flex; align-items: center; gap: 10px; }
@@ -519,7 +529,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 .assistant-name { font-weight: 800; display: flex; align-items: center; gap: 8px; }
 .assistant-tag {
   font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
-  color: var(--primary); background: rgba(13, 111, 176, 0.1);
+  color: var(--primary); background: rgba(194, 88, 47, 0.1);
   padding: 2px 9px; border-radius: 999px;
 }
 .assistant-hint { font-size: 13px; color: var(--muted); }
@@ -538,7 +548,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
   .roadmap-sidebar { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; padding-right: 2px; order: 0; }
 }
 
-.priorities { background: rgba(239, 161, 38, 0.12); border: 1px solid var(--accent); border-radius: var(--radius); padding: 18px; margin-bottom: 28px; }
+.priorities { background: rgba(232, 154, 28, 0.12); border: 1px solid var(--accent); border-radius: var(--radius); padding: 18px; margin-bottom: 28px; }
 .priority-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
 
 .phases { display: flex; flex-direction: column; gap: 14px; }
@@ -633,7 +643,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
   cursor: pointer; display: grid; place-content: center;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
 }
-.step-check input:hover { border-color: var(--badge-color, var(--primary)); box-shadow: 0 0 0 4px rgba(13, 111, 176, 0.12); }
+.step-check input:hover { border-color: var(--badge-color, var(--primary)); box-shadow: 0 0 0 4px rgba(194, 88, 47, 0.12); }
 .step-check input:active { transform: scale(0.9); }
 .step-check input:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 .step-check input:checked { background: var(--badge-color, var(--primary)); border-color: var(--badge-color, var(--primary)); }
@@ -650,7 +660,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 .step-points-earned { font-size: 12px; font-weight: 800; color: var(--primary); white-space: nowrap; }
 .step-why { color: var(--muted); font-size: 14px; }
 .step-action {
-  font-size: 14px; background: rgba(13, 111, 176, 0.06);
+  font-size: 14px; background: rgba(194, 88, 47, 0.06);
   border-radius: 8px; padding: 8px 12px; margin: 10px 0;
 }
 .step-sources { display: flex; flex-direction: column; gap: 4px; }
@@ -661,7 +671,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 .section-header { padding: 12px 20px; color: #fff; }
 .section-header-title { font-weight: 800; font-size: 16px; }
 .section-header-gold { background: linear-gradient(135deg, var(--gold), #a97a12); }
-.section-header-social { background: linear-gradient(135deg, #0d6fb0, var(--accent)); }
+.section-header-social { background: linear-gradient(135deg, #c2582f, var(--accent)); }
 .section-body { padding: 20px; }
 
 .avatar-circle {
@@ -678,7 +688,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 .leaderboard { margin-top: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
 .leaderboard-list { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .leaderboard-list li { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 8px; }
-.leaderboard-list li.me { background: rgba(13, 111, 176, 0.08); font-weight: 700; }
+.leaderboard-list li.me { background: rgba(194, 88, 47, 0.08); font-weight: 700; }
 .lb-rank { width: 24px; text-align: center; font-weight: 700; }
 .lb-name { flex: 1; }
 .lb-points { color: var(--primary); font-weight: 700; }
