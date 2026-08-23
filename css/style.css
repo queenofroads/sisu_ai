@@ -237,7 +237,12 @@ em { color: var(--primary-dark); font-style: normal; }
 .mood-label-1 { top: 10%; left: 6%; }
 .mood-label-2 { top: 22%; right: 8%; }
 .mood-label-3 { top: 32%; left: 32%; }
-.hero-mood-content { position: relative; max-width: 640px; }
+/* Two-column hero: copy + CTA beside a static preview of the real mobile
+   app screen (reusing the actual .ma-* classes from css/mobile-app.css, so
+   it's a true rendering of the product, not a decorative illustration) —
+   "show, don't decorate," same principle as the plan-preview mockup below. */
+.hero-mood-split { flex-direction: row; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+.hero-mood-content { position: relative; max-width: 640px; flex: 1 1 380px; }
 .hero-mood-content h1 {
   font-size: clamp(28px, 4vw, 44px); line-height: 1.1; margin: 0 0 14px; color: #fdf6ea;
 }
@@ -247,6 +252,31 @@ em { color: var(--primary-dark); font-style: normal; }
 .hero-mood-actions.hero-actions .btn-primary.hero-mood-primary:hover { background: #fff; }
 .hero-mood-actions.hero-actions .btn-ghost.hero-mood-ghost { color: #fdf6ea; border-color: rgba(253, 246, 234, 0.4); }
 .hero-mood-actions.hero-actions .btn-ghost.hero-mood-ghost:hover { background: rgba(253, 246, 234, 0.12); }
+
+.hero-phone-preview {
+  position: relative; flex: 0 0 auto;
+  width: 260px; height: 560px;
+  /* Same custom properties .mobile-app-root defines — this preview isn't
+     inside that fixed-overlay wrapper, so the .ma-* component classes need
+     their own copy to resolve against. */
+  --ma-cream: #fbf3e7; --ma-cream-deep: #f4ead9; --ma-surface: #fffdf9;
+  --ma-card-alt: #f0eae0; --ma-border: #ede2ce; --ma-border-2: #e3d8c4;
+  --ma-ink: #1e2430; --ma-body: #4a4438; --ma-muted: #8a8070; --ma-muted-2: #6b6459;
+  --ma-terracotta: #c2582f; --ma-cream-text: #fdf6ea; --ma-purple: #5e2d85;
+  --ma-amber: #e89a1c; --ma-teal: #2e6e8e;
+  font-family: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.hero-phone-preview * { box-sizing: border-box; }
+.hero-phone-inner {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  background: var(--ma-cream); color: var(--ma-ink);
+  display: flex; flex-direction: column; overflow: hidden;
+  border-radius: 32px; box-shadow: 0 30px 70px rgba(60, 30, 10, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+@media (max-width: 860px) {
+  .hero-mood-split { flex-direction: column; }
+  .hero-phone-preview { width: 220px; height: 480px; }
+}
 
 /* Full-bleed surface band directly under the hero, so the trust strip reads
    as a deliberate transition zone instead of stray text floating on the

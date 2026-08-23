@@ -352,18 +352,71 @@ function renderSetupBanner() {
 
 function renderLanding() {
   return `
-    <section class="hero-mood">
-      <div class="hero-mood-labels" aria-hidden="true">
-        <span class="mood-label mood-label-1">Ready before you land</span>
-        <span class="mood-label mood-label-2">Knows Finnish customs, not just paperwork</span>
-        <span class="mood-label mood-label-3">Closer to your community</span>
-      </div>
+    <section class="hero-mood hero-mood-split">
       <div class="hero-mood-content">
         <h1>Belonging starts before you land.</h1>
         <p class="hero-mood-sub">Kaveri gets you ready for Finland's culture and everyday life — not just the paperwork — so none of it feels foreign on day one. Grounded in real official sources, personalized to your move.</p>
         <div class="hero-actions hero-mood-actions">
           <button class="btn btn-primary hero-mood-primary" data-action="go-auth" data-mode="signup">Sign up & start my quests</button>
           <button class="btn btn-ghost hero-mood-ghost" data-action="go-auth" data-mode="login">Log in</button>
+        </div>
+      </div>
+      <div class="hero-phone-preview" aria-hidden="true">
+        <div class="ma-phone hero-phone-inner">
+          <div class="ma-screen">
+            <div class="ma-screen-scroll">
+              <div class="ma-topbar ma-top-pad">
+                <div class="ma-who">
+                  <div class="ma-avatar ma-avatar-purple">AN</div>
+                  <div>
+                    <div class="ma-greeting">Moi, Ananya</div>
+                    <div class="ma-subtle">Day 3 in Espoo</div>
+                  </div>
+                </div>
+                <span class="ma-icon-btn">🔔</span>
+              </div>
+              <div class="ma-pad">
+                <div class="ma-route">
+                  <span class="ma-route-from">India</span>
+                  <div class="ma-route-track"><div class="ma-route-fill" style="width:12%"></div></div>
+                  <span class="ma-route-to">Espoo</span>
+                </div>
+              </div>
+              <div class="ma-pad">
+                <div class="ma-hero">
+                  <div class="ma-hero-label">ONE THING TODAY</div>
+                  <div class="ma-hero-title">Book temporary accommodation</div>
+                  <p class="ma-hero-sub">A short-term base to land in while you search properly.</p>
+                  <span class="ma-source-chip">📎 Forenom</span>
+                  <div class="ma-hero-actions">
+                    <span class="ma-hero-done">Mark done · +20</span>
+                    <span class="ma-hero-chat">💬</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ma-pad ma-stats-grid">
+                <div class="ma-stat-card">
+                  <div class="ma-ring" style="background:conic-gradient(var(--ma-amber) 0turn 0.3turn, var(--ma-border) 0turn 1turn)"><span>🌱</span></div>
+                  <div>
+                    <div class="ma-stat-num">45 pts</div>
+                    <div class="ma-stat-label">5 to 🏠 Settler</div>
+                  </div>
+                </div>
+                <div class="ma-stat-card ma-streak-card">
+                  <div class="ma-streak-bars"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
+                  <div class="ma-stat-num">4 days</div>
+                  <div class="ma-stat-label">in a row</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ma-tabbar">
+            <span class="ma-tab active"><span class="ma-tab-icon">🏠</span><span class="ma-tab-label">Today</span></span>
+            <span class="ma-tab"><span class="ma-tab-icon">🗺️</span><span class="ma-tab-label">Quests</span></span>
+            <span class="ma-tab"><span class="ma-tab-icon">💬</span><span class="ma-tab-label">Kaveri</span></span>
+            <span class="ma-tab"><span class="ma-tab-icon">👥</span><span class="ma-tab-label">People</span></span>
+            <span class="ma-tab"><span class="ma-tab-icon">🌱</span><span class="ma-tab-label">You</span></span>
+          </div>
         </div>
       </div>
     </section>
