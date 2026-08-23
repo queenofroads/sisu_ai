@@ -104,15 +104,40 @@ body {
 }
 .brand-wordmark.fading { opacity: 0; transform: translateY(-4px); }
 
-/* Utility links (Fun Fact, Events, Volunteer, Resources) live in the
-   footer, not the header — the topbar is just brand + theme toggle. */
-.site-footer { border-top: 1px solid var(--border); margin-top: 40px; padding: 24px 20px 40px; }
-.site-footer-links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 880px; margin: 0 auto; }
-.site-footer-links .link-btn {
-  display: inline-block; width: auto; text-decoration: none; color: var(--text);
-  border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 13px;
+/* Utility links (Fun Fact, Events, Volunteer, Resources, Join Waitlist) live
+   in a continuously sliding "belt" right under the topbar. The track's
+   markup is the link list duplicated once (the 2nd copy is aria-hidden +
+   unfocusable) so a translateX(-50%) loop is seamless — see index.html. */
+.link-belt {
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 10px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
-.site-footer-links .link-btn:hover { background: var(--bg); }
+.link-belt-track {
+  display: flex; align-items: center; gap: 10px; width: max-content;
+  animation: link-belt-scroll 26s linear infinite;
+}
+.link-belt:hover .link-belt-track,
+.link-belt-track:focus-within {
+  animation-play-state: paused;
+}
+@keyframes link-belt-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.link-belt .link-btn {
+  display: inline-block; width: auto; white-space: nowrap; text-decoration: none; color: var(--text);
+  border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 13px;
+  flex-shrink: 0;
+}
+.link-belt .link-btn:hover { background: var(--bg); }
+@media (prefers-reduced-motion: reduce) {
+  .link-belt-track { animation: none; overflow-x: auto; }
+  .link-belt { -webkit-mask-image: none; mask-image: none; }
+}
 
 #app {
   max-width: 880px;
@@ -812,7 +837,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 
 /* ---------- Print / "Download PDF" (roadmap view only) ---------- */
 @media print {
-  .topbar, .header-actions, .roadmap-sidebar, .settings-modal { display: none !important; }
+  .topbar, .link-belt, .header-actions, .roadmap-sidebar, .settings-modal { display: none !important; }
   body { background: #fff; }
   #app { max-width: 100%; padding: 0; }
   .roadmap-layout { display: block; }
