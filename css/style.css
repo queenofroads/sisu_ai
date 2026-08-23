@@ -85,6 +85,8 @@ body {
 }
 .brand:hover { opacity: 0.8; }
 .brand:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.brand [data-wordmark] { display: inline-block; opacity: 1; transition: opacity 0.28s ease; }
+.brand [data-wordmark].fading { opacity: 0; }
 
 /* Utility links (Fun Fact, Events, Volunteer, Resources) live in the
    footer, not the header — the topbar is just brand + theme toggle. */
