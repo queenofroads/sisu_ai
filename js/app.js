@@ -298,10 +298,12 @@ function renderLanding() {
         </div>
       </div>
     </section>
-    <div class="hero-trust">
-      <span class="trust-item">🛡️ Real official sources</span>
-      <span class="trust-item">🎯 Personalized to your move</span>
-      <span class="trust-item">🏆 Earn points as you go</span>
+    <div class="hero-trust-band">
+      <div class="hero-trust">
+        <span class="trust-item">🛡️ Real official sources</span>
+        <span class="trust-item">🎯 Personalized to your move</span>
+        <span class="trust-item">🏆 Earn points as you go</span>
+      </div>
     </div>
     <section class="plan-preview-section">
       <h2>See your plan before you start</h2>
@@ -343,18 +345,20 @@ function renderLanding() {
         <div class="how-card"><span class="how-num">3</span><h3>🏆 Complete quests, earn points</h3><p>Every quest is grounded in real Migri, DVV, Kela and InfoFinland guidance — and worth real points on the leaderboard.</p></div>
       </div>
     </section>
-    <section class="buddy-teaser">
-      <div class="buddy-teaser-copy">
-        <h2>The more you tell Kaveri, the better it can help.</h2>
-        <p class="muted">Your intake already feeds it — family, timeline, permit stage, the plan so far. Ask it something the plan hasn't covered yet, like "we're a family of four moving in November," and it answers with your actual situation in mind, grounded in real Migri, DVV and Kela guidance.</p>
-        <button class="btn btn-secondary" data-action="go-auth" data-mode="signup">💬 Meet your AI Buddy</button>
-        <p class="buddy-teaser-note muted">Optional — bring your own Claude API key once you're in. Kept only in your browser tab, never saved anywhere.</p>
-      </div>
-      <div class="buddy-teaser-art" aria-hidden="true">
-        <svg viewBox="0 0 400 400" class="particle-field">${PARTICLE_FIELD_SVG}</svg>
-        ${BUDDY_CHIPS.map((c, i) => `<span class="buddy-chip buddy-chip-${i + 1}"><span class="chip-dot" style="--dot:${c.color}"></span>${escapeHtml(c.text)}</span>`).join("")}
-      </div>
-    </section>
+    <div class="buddy-teaser-band">
+      <section class="buddy-teaser">
+        <div class="buddy-teaser-copy">
+          <h2>The more you tell Kaveri, the better it can help.</h2>
+          <p class="muted">Your intake already feeds it — family, timeline, permit stage, the plan so far. Ask it something the plan hasn't covered yet, like "we're a family of four moving in November," and it answers with your actual situation in mind, grounded in real Migri, DVV and Kela guidance.</p>
+          <button class="btn btn-secondary" data-action="go-auth" data-mode="signup">💬 Meet your AI Buddy</button>
+          <p class="buddy-teaser-note muted">Optional — bring your own Claude API key once you're in. Kept only in your browser tab, never saved anywhere.</p>
+        </div>
+        <div class="buddy-teaser-art" aria-hidden="true">
+          <svg viewBox="0 0 400 400" class="particle-field">${PARTICLE_FIELD_SVG}</svg>
+          ${BUDDY_CHIPS.map((c, i) => `<span class="buddy-chip buddy-chip-${i + 1}"><span class="chip-dot" style="--dot:${c.color}"></span>${escapeHtml(c.text)}</span>`).join("")}
+        </div>
+      </section>
+    </div>
     <section class="stories">
       <h2>What a first year with Kaveri could look like</h2>
       <p class="stories-note muted">Illustrative journeys, not real submitted testimonials — the kinds of stories Kaveri is built to help write.</p>

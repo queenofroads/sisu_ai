@@ -233,8 +233,16 @@ em { color: var(--primary-dark); font-style: normal; }
 .hero-mood-actions.hero-actions .btn-ghost.hero-mood-ghost { color: #fdf8f0; border-color: rgba(253, 248, 240, 0.5); }
 .hero-mood-actions.hero-actions .btn-ghost.hero-mood-ghost:hover { background: rgba(253, 248, 240, 0.12); }
 
-.hero-trust { display: flex; flex-wrap: wrap; gap: 10px 24px; margin: 32px 0 8px; justify-content: center; }
-.trust-item { font-size: 13px; color: var(--muted); white-space: nowrap; }
+/* Full-bleed surface band directly under the hero, so the trust strip reads
+   as a deliberate transition zone instead of stray text floating on the
+   page background. */
+.hero-trust-band {
+  margin: 0 calc(50% - 50vw);
+  padding: 20px calc(50vw - 50% + 24px);
+  background: var(--surface); border-bottom: 1px solid var(--border);
+}
+.hero-trust { display: flex; flex-wrap: wrap; gap: 10px 28px; justify-content: center; }
+.trust-item { font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
 
 .plan-preview-section { margin-top: 48px; }
 .plan-preview-section h2 { text-align: center; margin-bottom: 20px; }
@@ -287,10 +295,18 @@ em { color: var(--primary-dark); font-style: normal; }
 
 /* AI Buddy teaser — headline + floating fact chips beside a self-contained
    SVG "constellation" of dots (no external image, no build step) standing
-   in for the illustration in the reference design. */
+   in for the illustration in the reference design. Sits in its own
+   full-bleed surface band, same device as the trust strip above, so the
+   page reads as alternating bands instead of one long flat scroll. */
+.buddy-teaser-band {
+  margin: 56px calc(50% - 50vw) 0;
+  padding: 48px calc(50vw - 50% + 24px);
+  background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
 .buddy-teaser {
-  margin-top: 56px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 40px; align-items: center;
+  max-width: 1080px; margin: 0 auto;
 }
 .buddy-teaser-copy h2 { margin: 0 0 14px; }
 .buddy-teaser-copy .btn { margin-top: 6px; }
@@ -299,7 +315,7 @@ em { color: var(--primary-dark); font-style: normal; }
 .particle-field { width: 100%; height: 100%; color: var(--border); }
 .buddy-chip {
   position: absolute; display: inline-flex; align-items: center; gap: 8px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 999px;
   padding: 8px 16px; font-size: 13px; font-weight: 600; box-shadow: var(--shadow);
   white-space: nowrap;
 }
