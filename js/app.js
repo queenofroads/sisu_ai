@@ -232,13 +232,52 @@ function timeAgo(iso) {
 
 // ---------- Views ----------
 
+// Rotates the "Kaveri" wordmark through its transliteration in English,
+// Finnish, and major Indian language scripts — fade out, swap the text
+// (and lang attribute, for accessibility/font-script selection), fade back
+// in. Long-ish interval since some scripts take a moment to actually read.
+let heroWordTimer = null;
+let heroWordIndex = 0;
+
+function stopHeroWordRotation() {
+  if (heroWordTimer) {
+    clearInterval(heroWordTimer);
+    heroWordTimer = null;
+  }
+}
+
+function startHeroWordRotation() {
+  stopHeroWordRotation();
+  heroWordIndex = 0;
+  heroWordTimer = setInterval(() => {
+    const el = document.getElementById("hero-wordmark");
+    if (!el) {
+      stopHeroWordRotation();
+      return;
+    }
+    el.classList.add("fading");
+    setTimeout(() => {
+      const liveEl = document.getElementById("hero-wordmark");
+      if (!liveEl) return;
+      heroWordIndex = (heroWordIndex + 1) % FRIEND_WORDS.length;
+      const entry = FRIEND_WORDS[heroWordIndex];
+      liveEl.textContent = entry.word;
+      liveEl.lang = entry.code;
+      liveEl.classList.remove("fading");
+    }, 280);
+  }, 2200);
+}
+
 function render() {
+  stopHeroWordRotation();
   if (!isSupabaseConfigured()) {
     $app.innerHTML = renderSetupBanner();
     return;
   }
-  if (state.view === "landing") $app.innerHTML = renderLanding();
-  else if (state.view === "auth") $app.innerHTML = renderAuth();
+  if (state.view === "landing") {
+    $app.innerHTML = renderLanding();
+    startHeroWordRotation();
+  } else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
   else if (state.view === "roadmap") $app.innerHTML = renderRoadmap();
   if (state.view === "wizard") applyConditionalVisibility();
@@ -281,7 +320,7 @@ function renderLanding() {
     <section class="hero-mood">
       <div class="hero-mood-brandmark">
         <span aria-label="India">🇮🇳</span>
-        <span class="hero-name">Kaveri</span>
+        <span class="hero-name" id="hero-wordmark" lang="${FRIEND_WORDS[0].code}">${escapeHtml(FRIEND_WORDS[0].word)}</span>
         <span aria-label="Finland">🇫🇮</span>
       </div>
       <div class="hero-mood-labels" aria-hidden="true">

@@ -114,6 +114,28 @@ const INDIAN_LANGUAGES = [
   "Punjabi", "Kannada", "Malayalam", "Odia", "Assamese", "Urdu", "Other",
 ];
 
+/*
+ * Rotates the hero wordmark through the name "Kaveri" itself, transliterated
+ * into English, Finnish, and ten major Indian language scripts (it's
+ * already a real, well-known word in Indian languages: the name of a major
+ * South Indian river). Standard transliterations of the name, not
+ * translations — the word stays "Kaveri," only the script changes.
+ */
+const FRIEND_WORDS = [
+  { lang: "Finnish", code: "fi", word: "Kaveri" },
+  { lang: "English", code: "en", word: "Kaveri" },
+  { lang: "Hindi", code: "hi", word: "कावेरी" },
+  { lang: "Bengali", code: "bn", word: "কাবেরী" },
+  { lang: "Marathi", code: "mr", word: "कावेरी" },
+  { lang: "Telugu", code: "te", word: "కావేరి" },
+  { lang: "Tamil", code: "ta", word: "காவேரி" },
+  { lang: "Gujarati", code: "gu", word: "કાવેરી" },
+  { lang: "Kannada", code: "kn", word: "ಕಾವೇರಿ" },
+  { lang: "Malayalam", code: "ml", word: "കാവേരി" },
+  { lang: "Punjabi", code: "pa", word: "ਕਾਵੇਰੀ" },
+  { lang: "Urdu", code: "ur", word: "کاویری" },
+];
+
 const FINLAND_DESTINATIONS = [
   "Espoo", "Helsinki", "Vantaa", "Tampere", "Oulu", "Turku", "Jyväskylä", "Other city in Finland",
 ];

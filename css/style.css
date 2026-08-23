@@ -211,8 +211,10 @@ em { color: var(--primary-dark); font-style: normal; }
 }
 .hero-mood-brandmark .hero-name {
   font-family: var(--font-heading); font-weight: 800; font-size: 17px; letter-spacing: 0.3px;
-  color: #16263c;
+  color: #16263c; display: inline-block; min-width: 70px;
+  opacity: 1; transition: opacity 0.28s ease;
 }
+.hero-mood-brandmark .hero-name.fading { opacity: 0; }
 .hero-mood-labels {
   position: absolute; inset: 0; pointer-events: none;
 }
