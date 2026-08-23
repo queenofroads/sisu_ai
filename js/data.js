@@ -78,10 +78,10 @@ const SOURCES = {
  * category badge shown on each quest card.
  */
 const QUEST_CATEGORIES = {
-  legal: { id: "legal", label: "Administrative Work", icon: "⚖️", color: "#003580", points: 20, blurb: "Permits, registration, bank accounts — the must-do admin." },
-  social: { id: "social", label: "Social", icon: "👥", color: "#0072CE", points: 15, blurb: "Meetups, communities, making connections." },
-  cultural: { id: "cultural", label: "Cultural", icon: "🎭", color: "#4DA8DA", points: 10, blurb: "Finnish traditions and everyday lifestyle." },
-  food: { id: "food", label: "Food", icon: "🍴", color: "#8FCBEC", points: 5, blurb: "Finnish cuisine worth trying." },
+  legal: { id: "legal", label: "Administrative Work", icon: "⚖️", color: "#5E2D85", points: 20, blurb: "Permits, registration, bank accounts — the must-do admin." },
+  social: { id: "social", label: "Social", icon: "👥", color: "#0D6FB0", points: 15, blurb: "Meetups, communities, making connections." },
+  cultural: { id: "cultural", label: "Cultural", icon: "🎭", color: "#8A5B9E", points: 10, blurb: "Finnish traditions and everyday lifestyle." },
+  food: { id: "food", label: "Food", icon: "🍴", color: "#D81B81", points: 5, blurb: "Finnish cuisine worth trying." },
 };
 
 // Points a completed quest in a given questCategory is worth.
