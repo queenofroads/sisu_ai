@@ -232,51 +232,42 @@ function timeAgo(iso) {
 
 // ---------- Views ----------
 
-// Rotates the "Kaveri" wordmark through its transliteration in English,
-// Finnish, and major Indian language scripts — fade out, swap the text
-// (and lang attribute, for accessibility/font-script selection), fade back
-// in. Long-ish interval since some scripts take a moment to actually read.
-let heroWordTimer = null;
-let heroWordIndex = 0;
+// Rotates every "Kaveri" wordmark on the page — the topbar brand (always
+// present) and the hero brandmark (landing view only) — through its
+// transliteration in English, Finnish, and major Indian language scripts,
+// in lockstep: fade out, swap the text (and lang attribute, for
+// accessibility/font-script selection), fade back in. Runs continuously
+// from page load rather than being tied to render(), since the topbar
+// instance lives outside #app and is never touched by a re-render.
+let wordmarkIndex = 0;
 
-function stopHeroWordRotation() {
-  if (heroWordTimer) {
-    clearInterval(heroWordTimer);
-    heroWordTimer = null;
-  }
+function tickWordmarks() {
+  const els = document.querySelectorAll("[data-wordmark]");
+  if (!els.length) return;
+  els.forEach((el) => el.classList.add("fading"));
+  setTimeout(() => {
+    wordmarkIndex = (wordmarkIndex + 1) % FRIEND_WORDS.length;
+    const entry = FRIEND_WORDS[wordmarkIndex];
+    document.querySelectorAll("[data-wordmark]").forEach((el) => {
+      el.textContent = entry.word;
+      el.lang = entry.code;
+      el.classList.remove("fading");
+    });
+  }, 280);
 }
 
-function startHeroWordRotation() {
-  stopHeroWordRotation();
-  heroWordIndex = 0;
-  heroWordTimer = setInterval(() => {
-    const el = document.getElementById("hero-wordmark");
-    if (!el) {
-      stopHeroWordRotation();
-      return;
-    }
-    el.classList.add("fading");
-    setTimeout(() => {
-      const liveEl = document.getElementById("hero-wordmark");
-      if (!liveEl) return;
-      heroWordIndex = (heroWordIndex + 1) % FRIEND_WORDS.length;
-      const entry = FRIEND_WORDS[heroWordIndex];
-      liveEl.textContent = entry.word;
-      liveEl.lang = entry.code;
-      liveEl.classList.remove("fading");
-    }, 280);
-  }, 2200);
+function startWordmarkRotation() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  setInterval(tickWordmarks, 2200);
 }
 
 function render() {
-  stopHeroWordRotation();
   if (!isSupabaseConfigured()) {
     $app.innerHTML = renderSetupBanner();
     return;
   }
   if (state.view === "landing") {
     $app.innerHTML = renderLanding();
-    startHeroWordRotation();
   } else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
   else if (state.view === "roadmap") $app.innerHTML = renderRoadmap();
@@ -320,7 +311,7 @@ function renderLanding() {
     <section class="hero-mood">
       <div class="hero-mood-brandmark">
         <span aria-label="India">🇮🇳</span>
-        <span class="hero-name" id="hero-wordmark" lang="${FRIEND_WORDS[0].code}">${escapeHtml(FRIEND_WORDS[0].word)}</span>
+        <span class="hero-name" data-wordmark lang="${FRIEND_WORDS[wordmarkIndex].code}">${escapeHtml(FRIEND_WORDS[wordmarkIndex].word)}</span>
         <span aria-label="Finland">🇫🇮</span>
       </div>
       <div class="hero-mood-labels" aria-hidden="true">
@@ -1287,3 +1278,4 @@ function summarizeRoadmapForAi() {
 }
 
 initAuth();
+startWordmarkRotation();
