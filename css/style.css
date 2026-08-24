@@ -507,7 +507,13 @@ em { color: var(--primary-dark); font-style: normal; }
 .stories { margin-top: 56px; }
 .stories h2 { text-align: center; margin-bottom: 4px; }
 .stories-note { text-align: center; margin: 0 0 24px; font-size: 13px; }
-.stories-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+/* Explicit 2 columns (not auto-fit) — with 4 story cards, auto-fit was
+   packing 3 per row and stranding the 4th alone, stretched full-width. A
+   fixed 2x2 grid stays balanced regardless of how many stories there are. */
+.stories-grid { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 640px) {
+  .stories-grid { grid-template-columns: repeat(2, 1fr); }
+}
 /* Plain by default — reads as a normal card, not a wall of color — and
    only takes on its story's accent color on hover/focus, so the section
    feels interactive to explore instead of shouting all at once. */
