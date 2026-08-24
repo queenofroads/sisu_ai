@@ -242,11 +242,27 @@ em { color: var(--primary-dark); font-style: normal; }
   padding: 28px calc(50vw - 50% + 24px) 56px;
   display: flex; flex-direction: column; justify-content: flex-end;
   color: #fdf6ea;
-  background:
-    radial-gradient(70% 60% at 88% 4%, rgba(253, 246, 234, 0.14) 0%, rgba(253, 246, 234, 0) 60%),
-    radial-gradient(60% 55% at 8% 100%, rgba(232, 154, 28, 0.35) 0%, rgba(232, 154, 28, 0) 65%),
+  background-image:
+    radial-gradient(circle, rgba(253, 246, 234, 0.16) 0%, rgba(253, 246, 234, 0) 60%),
+    radial-gradient(circle, rgba(232, 154, 28, 0.4) 0%, rgba(232, 154, 28, 0) 65%),
     linear-gradient(160deg, #cf6a3d 0%, #c2582f 45%, #9b4625 100%);
+  background-repeat: no-repeat;
+  background-size: 65% 65%, 60% 60%, 100% 100%;
+  background-position: 88% 4%, 8% 100%, 0 0;
+  animation: hero-gradient-flow 24s ease-in-out infinite;
   overflow: hidden;
+}
+/* Slow drift of the two warm highlight blobs across the terracotta wash —
+   an aurora-like color flow, pure CSS background-position keyframes, no
+   canvas/WebGL/build step. Third background layer (the base linear-gradient)
+   never moves, only the two radial blobs do. */
+@keyframes hero-gradient-flow {
+  0%, 100% { background-position: 88% 4%, 8% 100%, 0 0; }
+  33% { background-position: 55% 30%, 35% 65%, 0 0; }
+  66% { background-position: 70% 55%, 60% 20%, 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-mood { animation: none; }
 }
 .hero-mood::before {
   content: "";
