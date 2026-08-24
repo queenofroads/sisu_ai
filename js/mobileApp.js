@@ -131,6 +131,9 @@ function renderMobileApp() {
   return `
     <div class="mobile-app-root">
       <div class="ma-phone">
+        <div class="ma-close-bar">
+          <button type="button" class="ma-close-btn" data-action="toggle-mobile-app" aria-label="Close app view">✕</button>
+        </div>
         <div class="ma-screen">${screen}</div>
         ${renderMobileTabBar(tab)}
         ${sel ? renderMobileQuestDetail(sel, state.mobileSel.phaseId, state.mobileSel.idx, progress) : ""}

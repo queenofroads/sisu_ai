@@ -64,6 +64,25 @@
   }
 }
 
+/* Always-visible way out of the full-viewport overlay — a dedicated slim
+   bar above every tab's own content (not floated on top of it, since
+   several tabs already have their own top-right control, e.g. the Today
+   tab's bell) so it never collides with anything. Same "toggle-mobile-app"
+   action as the "Switch to desktop view" row buried in the You tab, just
+   reachable from anywhere. */
+.ma-close-bar {
+  flex: none; display: flex; justify-content: flex-end;
+  padding: calc(env(safe-area-inset-top, 0px) + 8px) 14px 0;
+}
+.ma-close-btn {
+  width: 30px; height: 30px; border-radius: 50%; border: none;
+  background: rgba(30, 36, 48, 0.1); color: var(--ma-muted-2);
+  font-size: 14px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.ma-close-btn:hover { background: rgba(30, 36, 48, 0.2); }
+
 .ma-screen { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .ma-screen-scroll { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 18px; padding-bottom: 8px; }
 
