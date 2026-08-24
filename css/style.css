@@ -134,6 +134,14 @@ body {
   flex-shrink: 0;
 }
 .link-belt .link-btn:hover { background: var(--bg); }
+/* Join Waitlist is the one belt item that's a real ask, not a browse
+   link — it gets its own filled, larger treatment so it doesn't read as
+   just another outline pill in the row. */
+.link-belt .link-btn-cta {
+  background: var(--primary); border-color: var(--primary); color: #fdf6ea;
+  font-weight: 700; font-size: 14px; padding: 8px 18px;
+}
+.link-belt .link-btn-cta:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
 @media (prefers-reduced-motion: reduce) {
   .link-belt-track { animation: none; overflow-x: auto; }
   .link-belt { -webkit-mask-image: none; mask-image: none; }
