@@ -87,10 +87,10 @@ body {
 .theme-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .brand {
   font-family: var(--font-body);
-  font-weight: 700; font-size: 18px; color: var(--primary); flex-shrink: 0;
+  font-weight: 700; font-size: 26px; color: var(--primary); flex-shrink: 0;
   background: none; border: none; padding: 4px 2px; margin: -4px -2px;
   cursor: pointer; border-radius: 6px;
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 8px;
 }
 .brand:hover { opacity: 0.8; }
 .brand:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
@@ -99,8 +99,8 @@ body {
    wordmark on the page, always visible in the topbar, not duplicated in
    the hero below it. */
 .brand-wordmark {
-  display: inline-block; min-width: 60px; text-align: left; user-select: none;
-  opacity: 1; transform: translateY(0); transition: opacity 0.4s ease, transform 0.4s ease;
+  display: inline-block; min-width: 84px; text-align: left; user-select: none;
+  opacity: 1; transform: translateY(0); transition: opacity 0.22s ease, transform 0.22s ease;
 }
 .brand-wordmark.fading { opacity: 0; transform: translateY(-4px); }
 

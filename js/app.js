@@ -286,8 +286,8 @@ function startBrandWordRotation() {
       liveEl.textContent = entry.word;
       liveEl.lang = entry.code;
       liveEl.classList.remove("fading");
-    }, 400);
-  }, 2000);
+    }, 220);
+  }, 1100);
 }
 
 function isMobileAppActive() {
