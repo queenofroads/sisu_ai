@@ -336,8 +336,47 @@ function startHeroCardRotation() {
   }, 3800);
 }
 
+// Rotates the hero headline + subhead through HERO_HEADLINE_ROTATION — same
+// fade-and-swap mechanism, its own timer/interval so it drifts out of sync
+// with the phone card's rotation instead of flipping in lockstep.
+let heroHeadlineTimer = null;
+let heroHeadlineIndex = 0;
+
+function stopHeroHeadlineRotation() {
+  if (heroHeadlineTimer) {
+    clearInterval(heroHeadlineTimer);
+    heroHeadlineTimer = null;
+  }
+}
+
+function startHeroHeadlineRotation() {
+  stopHeroHeadlineRotation();
+  heroHeadlineIndex = 0;
+  heroHeadlineTimer = setInterval(() => {
+    const el = document.getElementById("hero-headline");
+    if (!el) {
+      stopHeroHeadlineRotation();
+      return;
+    }
+    el.classList.add("fading");
+    document.getElementById("hero-headline-sub").classList.add("fading");
+    setTimeout(() => {
+      const liveEl = document.getElementById("hero-headline");
+      if (!liveEl) return;
+      heroHeadlineIndex = (heroHeadlineIndex + 1) % HERO_HEADLINE_ROTATION.length;
+      const entry = HERO_HEADLINE_ROTATION[heroHeadlineIndex];
+      liveEl.textContent = entry.title;
+      liveEl.classList.remove("fading");
+      const subEl = document.getElementById("hero-headline-sub");
+      subEl.textContent = entry.sub;
+      subEl.classList.remove("fading");
+    }, 350);
+  }, 5200);
+}
+
 function render() {
   stopHeroCardRotation();
+  stopHeroHeadlineRotation();
   if (!isSupabaseConfigured()) {
     $app.innerHTML = renderSetupBanner();
     return;
@@ -345,6 +384,7 @@ function render() {
   if (state.view === "landing") {
     $app.innerHTML = renderLanding();
     startHeroCardRotation();
+    startHeroHeadlineRotation();
   }
   else if (state.view === "auth") $app.innerHTML = renderAuth();
   else if (state.view === "wizard") $app.innerHTML = renderWizard();
@@ -401,8 +441,8 @@ function renderLanding() {
   return `
     <section class="hero-mood hero-mood-split">
       <div class="hero-mood-content">
-        <h1>Belonging starts before you land.</h1>
-        <p class="hero-mood-sub">Kaveri gets you ready for Finland's culture and everyday life — not just the paperwork — so none of it feels foreign on day one. Grounded in real official sources, personalized to your move.</p>
+        <h1 id="hero-headline">Belonging starts before you land.</h1>
+        <p class="hero-mood-sub" id="hero-headline-sub">Kaveri gets you ready for Finland's culture and everyday life — not just the paperwork — so none of it feels foreign on day one. Grounded in real official sources, personalized to your move.</p>
         <div class="hero-actions hero-mood-actions">
           <button class="btn btn-primary hero-mood-primary" data-action="go-auth" data-mode="signup">Sign up & start my quests</button>
           <button class="btn btn-ghost hero-mood-ghost" data-action="go-auth" data-mode="login">Log in</button>
@@ -565,6 +605,18 @@ const HERO_CARD_ROTATION = [
   { label: "FUN FACT", title: "3 million saunas", sub: "Finland has roughly one sauna for every two people — the whole country could fit inside them at once.", chip: null, cta: "😄 Love that" },
   { label: "CHECKING IN", title: "How's it going so far?", sub: "No task today — just wanted to see how you're settling in. I'm here if anything's on your mind.", chip: null, cta: "💬 Talk to Kaveri" },
   { label: "SEASON CHECK", title: "Finnish winters run dark, not cold", sub: "Espoo gets around 6 hours of daylight in December — most people just lean into it with candles and sauna.", chip: null, cta: "Good to know" },
+];
+
+// Rotates the hero headline through concrete examples of what the board
+// actually covers — grounded in the real quest categories/phases, not
+// vague marketing language. Keeps the opening line as the anchor, then
+// cycles through what it means in practice.
+const HERO_HEADLINE_ROTATION = [
+  { title: "Belonging starts before you land.", sub: "Kaveri gets you ready for Finland's culture and everyday life — not just the paperwork — so none of it feels foreign on day one. Grounded in real official sources, personalized to your move." },
+  { title: "Know what to do before you even book your flight.", sub: "From your residence permit checklist to what to actually pack for the cold — Kaveri sequences it so nothing catches you off guard in week one." },
+  { title: "Not just permits — the parts nobody warns you about.", sub: "Small talk norms, sauna etiquette, what a Finnish silence actually means — the cultural fluency that makes a new country feel less foreign, right alongside the admin." },
+  { title: "One plan for the whole family, not just you.", sub: "Your spouse's visa, your kids' neuvola registration, your first Kela appointment — Kaveri builds one board that covers everyone who's moving, not only the applicant." },
+  { title: "From \"moved here\" to \"living here.\"", sub: "The quests keep going after the paperwork's done — building an actual routine, a real network, a life in Finland, not just a checklist you finish and forget." },
 ];
 
 const BUDDY_CHIPS = [

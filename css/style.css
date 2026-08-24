@@ -272,6 +272,10 @@ em { color: var(--primary-dark); font-style: normal; }
   font-size: clamp(28px, 4vw, 44px); line-height: 1.1; margin: 0 0 14px; color: #fdf6ea;
 }
 .hero-mood-sub { max-width: 480px; color: rgba(253, 246, 234, 0.85); margin: 0 0 26px; }
+/* Cross-fade for the rotating headline + subhead, see
+   startHeroHeadlineRotation() in app.js. */
+#hero-headline, #hero-headline-sub { opacity: 1; transition: opacity 0.35s ease; }
+#hero-headline.fading, #hero-headline-sub.fading { opacity: 0; }
 .hero-mood-actions { justify-content: flex-start; }
 .hero-mood-actions.hero-actions .btn-primary.hero-mood-primary { background: #fdf6ea; color: #c2582f; }
 .hero-mood-actions.hero-actions .btn-primary.hero-mood-primary:hover { background: #fff; }
