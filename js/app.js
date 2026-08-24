@@ -520,7 +520,7 @@ function renderLanding() {
       <p class="culture-preview-note muted">A friend who's already lived here would tell you these before you arrive — Kaveri does too, as soon as you sign up.</p>
       <div class="culture-preview-grid">
         ${CULTURE_PREVIEW.map((c) => `
-          <div class="culture-preview-card">
+          <div class="culture-preview-card" tabindex="0">
             <span class="culture-preview-icon">${c.icon}</span>
             <h3>${escapeHtml(c.title)}</h3>
             <p>${escapeHtml(c.why)}</p>
