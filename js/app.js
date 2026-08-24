@@ -574,7 +574,7 @@ function renderLanding() {
       <p class="stories-note muted">Illustrative journeys, not real submitted testimonials — the kinds of stories Kaveri is built to help write.</p>
       <div class="stories-grid">
         ${STORY_CARDS.map((s) => `
-          <article class="story-card" style="--story-color:${s.color}">
+          <article class="story-card" style="--story-color:${s.color}" tabindex="0">
             <h3>${escapeHtml(s.title)}</h3>
             ${s.paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join("")}
             <div class="story-byline">
@@ -693,6 +693,18 @@ const STORY_CARDS = [
     initials: ["KA", "SA"],
     names: "Karthik & Sana",
     meta: "Pune → Tampere, 4 months in",
+  },
+  {
+    color: "#D81B81",
+    title: "Nikhil stopped feeling like a tourist in his own new home.",
+    paragraphs: [
+      "Nikhil moved to Helsinki as a data analyst, and had his admin sorted within the first month — permit, DVV, bank account, all checked off. What was harder to plan for was everything after: how do you actually start living somewhere instead of just surviving it?",
+      "Kaveri's cultural quests gave him a starting point: learn the everyday social norms before assuming anything, mark Juhannus on the calendar so a suddenly quiet, closed city in June didn't feel like something had gone wrong, and try a sauna instead of politely declining every invite.",
+      "Six months in, karjalanpiirakka is his go-to breakfast, he's tried cross-country skiing once (badly), and a Finnish colleague finally explained why silence in a meeting isn't a bad sign.",
+    ],
+    initials: ["NK"],
+    names: "Nikhil",
+    meta: "Mumbai → Helsinki, data analyst, 6 months in",
   },
 ];
 
