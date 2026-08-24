@@ -564,9 +564,9 @@ function renderLanding() {
     <section class="how">
       <h2>How it works</h2>
       <div class="how-grid">
-        <div class="how-card"><span class="how-num">1</span><h3>🧭 Tell us about your move</h3><p>Where you're from, where you're headed, who's with you, and what you're curious about — Finnish culture included.</p></div>
-        <div class="how-card"><span class="how-num">2</span><h3>🗂️ Pick your quest areas</h3><p>Administrative Work, Social, Cultural, Food — choose what applies, we handle the rest.</p></div>
-        <div class="how-card"><span class="how-num">3</span><h3>🏆 Complete quests, earn points</h3><p>Every quest is grounded in real Migri, DVV, Kela and InfoFinland guidance — and worth real points on the leaderboard.</p></div>
+        <div class="how-card" tabindex="0"><span class="how-num">1</span><h3>🧭 Tell us about your move</h3><p>Where you're from, where you're headed, who's with you, and what you're curious about — Finnish culture included.</p></div>
+        <div class="how-card" tabindex="0"><span class="how-num">2</span><h3>🗂️ Pick your quest areas</h3><p>Administrative Work, Social, Cultural, Food — choose what applies, we handle the rest.</p></div>
+        <div class="how-card" tabindex="0"><span class="how-num">3</span><h3>🏆 Complete quests, earn points</h3><p>Every quest is grounded in real Migri, DVV, Kela and InfoFinland guidance — and worth real points on the leaderboard.</p></div>
       </div>
     </section>
     <section class="stories">
