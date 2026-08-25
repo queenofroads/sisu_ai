@@ -9,6 +9,7 @@
   --text: #1e2430;
   --muted: #8a8070;
   --primary: #c2582f;
+  --primary-rgb: 194, 88, 47;
   --primary-dark: #9b4625;
   --accent: #e89a1c;
   --accent-text: #3a2007;
@@ -40,6 +41,7 @@
     --text: #f5ede0;
     --muted: #b8ac98;
     --primary: #cc7654;
+    --primary-rgb: 204, 118, 84;
     --primary-dark: #a35d40;
     --accent: #e89a1c;
     --accent-text: #241400;
@@ -53,6 +55,7 @@
   --text: #f5ede0;
   --muted: #b8ac98;
   --primary: #cc7654;
+  --primary-rgb: 204, 118, 84;
   --primary-dark: #a35d40;
   --accent: #e89a1c;
   --accent-text: #241400;
@@ -73,7 +76,7 @@ body {
 .topbar {
   display: flex; align-items: center; justify-content: space-between; padding: 14px 20px;
   border-bottom: 1px solid var(--border); background: var(--surface);
-  gap: 12px;
+  gap: 12px; flex-wrap: wrap;
 }
 .theme-toggle {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
@@ -104,48 +107,24 @@ body {
 }
 .brand-wordmark.fading { opacity: 0; transform: translateY(-4px); }
 
-/* Utility links (Fun Fact, Events, Volunteer, Resources, Join Waitlist) live
-   in a continuously sliding "belt" right under the topbar. The track's
-   markup is the link list duplicated once (the 2nd copy is aria-hidden +
-   unfocusable) so a translateX(-50%) loop is seamless — see index.html. */
-.link-belt {
-  overflow: hidden;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  padding: 10px 0;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-}
-.link-belt-track {
-  display: flex; align-items: center; gap: 10px; width: max-content;
-  animation: link-belt-scroll 26s linear infinite;
-}
-.link-belt:hover .link-belt-track,
-.link-belt-track:focus-within {
-  animation-play-state: paused;
-}
-@keyframes link-belt-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.link-belt .link-btn {
+/* Utility links (Fun Fact, Events, Volunteer, Resources, Join Waitlist) sit
+   statically on the right side of the topbar, next to the theme toggle. */
+.topbar-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.header-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.header-links .link-btn {
   display: inline-block; width: auto; white-space: nowrap; text-decoration: none; color: var(--text);
   border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 13px;
   flex-shrink: 0;
 }
-.link-belt .link-btn:hover { background: var(--bg); }
-/* Join Waitlist is the one belt item that's a real ask, not a browse
-   link — it gets its own filled, larger treatment so it doesn't read as
-   just another outline pill in the row. */
-.link-belt .link-btn-cta {
+.header-links .link-btn:hover { background: var(--bg); }
+/* Join Waitlist is the one link that's a real ask, not a browse link —
+   it gets its own filled, larger treatment so it doesn't read as just
+   another outline pill in the row. */
+.header-links .link-btn-cta {
   background: var(--primary); border-color: var(--primary); color: #fdf6ea;
   font-weight: 700; font-size: 14px; padding: 8px 18px;
 }
-.link-belt .link-btn-cta:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
-@media (prefers-reduced-motion: reduce) {
-  .link-belt-track { animation: none; overflow-x: auto; }
-  .link-belt { -webkit-mask-image: none; mask-image: none; }
-}
+.header-links .link-btn-cta:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
 
 #app {
   max-width: 880px;
@@ -195,7 +174,7 @@ em { color: var(--primary-dark); font-style: normal; }
   background-color: var(--surface);
   background-image:
     radial-gradient(circle at 15% 20%, rgba(255, 153, 51, 0.20), transparent 55%),
-    radial-gradient(circle at 85% 20%, rgba(194, 88, 47, 0.16), transparent 55%),
+    radial-gradient(circle at 85% 20%, rgba(var(--primary-rgb), 0.16), transparent 55%),
     radial-gradient(circle at 50% 90%, rgba(19, 136, 8, 0.14), transparent 60%);
 }
 @media (prefers-color-scheme: dark) {
@@ -576,7 +555,7 @@ em { color: var(--primary-dark); font-style: normal; }
 }
 .auth-card form { display: flex; flex-direction: column; gap: 14px; margin: 20px 0; text-align: left; }
 .auth-error { background: rgba(179, 69, 46, 0.1); border: 1px solid var(--danger); color: var(--danger); border-radius: 8px; padding: 10px 14px; font-size: 14px; text-align: left; }
-.auth-notice { background: rgba(194, 88, 47, 0.08); border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; padding: 10px 14px; font-size: 14px; text-align: left; }
+.auth-notice { background: rgba(var(--primary-rgb), 0.08); border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; padding: 10px 14px; font-size: 14px; text-align: left; }
 label { font-size: 14px; font-weight: 600; display: flex; flex-direction: column; gap: 6px; }
 input, select {
   font-family: inherit; font-size: 16px; padding: 10px 12px;
@@ -630,7 +609,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 }
 .chip input { width: auto; }
 .chip input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-.chip:has(input:checked) { border-color: var(--primary); background: rgba(194, 88, 47, 0.08); }
+.chip:has(input:checked) { border-color: var(--primary); background: rgba(var(--primary-rgb), 0.08); }
 @media (hover: hover) and (pointer: fine) {
   .chip:hover { border-color: var(--accent); }
 }
@@ -643,7 +622,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 
 .score-panel {
   display: flex; flex-direction: column; gap: 8px; align-items: flex-end; min-width: 220px;
-  background: linear-gradient(135deg, rgba(194, 88, 47, 0.07), rgba(232, 154, 28, 0.15));
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.07), rgba(232, 154, 28, 0.15));
   border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px;
 }
 .score-top { display: flex; align-items: center; gap: 10px; }
@@ -677,7 +656,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 .assistant-name { font-weight: 800; display: flex; align-items: center; gap: 8px; }
 .assistant-tag {
   font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
-  color: var(--primary); background: rgba(194, 88, 47, 0.1);
+  color: var(--primary); background: rgba(var(--primary-rgb), 0.1);
   padding: 2px 9px; border-radius: 999px;
 }
 .assistant-hint { font-size: 13px; color: var(--muted); }
@@ -791,7 +770,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
   cursor: pointer; display: grid; place-content: center;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
 }
-.step-check input:hover { border-color: var(--badge-color, var(--primary)); box-shadow: 0 0 0 4px rgba(194, 88, 47, 0.12); }
+.step-check input:hover { border-color: var(--badge-color, var(--primary)); box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.12); }
 .step-check input:active { transform: scale(0.9); }
 .step-check input:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 .step-check input:checked { background: var(--badge-color, var(--primary)); border-color: var(--badge-color, var(--primary)); }
@@ -808,7 +787,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 .step-points-earned { font-size: 12px; font-weight: 800; color: var(--primary); white-space: nowrap; }
 .step-why { color: var(--muted); font-size: 14px; }
 .step-action {
-  font-size: 14px; background: rgba(194, 88, 47, 0.06);
+  font-size: 14px; background: rgba(var(--primary-rgb), 0.06);
   border-radius: 8px; padding: 8px 12px; margin: 10px 0;
 }
 .step-sources { display: flex; flex-direction: column; gap: 4px; }
@@ -819,7 +798,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 .section-header { padding: 12px 20px; color: #fff; }
 .section-header-title { font-weight: 800; font-size: 16px; }
 .section-header-gold { background: linear-gradient(135deg, var(--gold), #a97a12); }
-.section-header-social { background: linear-gradient(135deg, #c2582f, var(--accent)); }
+.section-header-social { background: linear-gradient(135deg, var(--primary), var(--accent)); }
 .section-body { padding: 20px; }
 
 .avatar-circle {
@@ -836,7 +815,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 .leaderboard { margin-top: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
 .leaderboard-list { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .leaderboard-list li { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 8px; }
-.leaderboard-list li.me { background: rgba(194, 88, 47, 0.08); font-weight: 700; }
+.leaderboard-list li.me { background: rgba(var(--primary-rgb), 0.08); font-weight: 700; }
 .lb-rank { width: 24px; text-align: center; font-weight: 700; }
 .lb-name { flex: 1; }
 .lb-points { color: var(--primary); font-weight: 700; }
@@ -882,6 +861,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 @media (max-width: 640px) {
   #app { padding: 20px 14px 60px; }
   .topbar { padding: 12px 14px; }
+  .topbar-actions { width: 100%; justify-content: space-between; }
 
   .hero { padding: 28px 16px 12px; }
   .hero h1 { font-size: 23px; letter-spacing: -0.005em; }
@@ -926,7 +906,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); o
 
 /* ---------- Print / "Download PDF" (roadmap view only) ---------- */
 @media print {
-  .topbar, .link-belt, .header-actions, .roadmap-sidebar, .settings-modal { display: none !important; }
+  .topbar, .header-actions, .roadmap-sidebar, .settings-modal { display: none !important; }
   body { background: #fff; }
   #app { max-width: 100%; padding: 0; }
   .roadmap-layout { display: block; }
