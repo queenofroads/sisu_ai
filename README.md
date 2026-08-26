@@ -83,6 +83,13 @@ zero network dependency and never fails on stage even if Supabase or wifi does.
 - In **Authentication → Providers → Email**, turn **off** "Confirm email" for the demo — this
   lets signup log people in immediately without needing a live inbox on stage. (Leave it on for
   a real deployment.)
+- If "Confirm email" is on (e.g. for the real public link people are actually signing up at),
+  go to **Authentication → URL Configuration** and add your deployed URL (e.g.
+  `https://sisu-ai-sigma.vercel.app/**`) under **Redirect URLs**, and set **Site URL** to that
+  same domain. Supabase defaults both to `http://localhost:3000`, which is why confirmation
+  emails sent from the live site were redirecting people to `localhost:3000` instead of the app —
+  the code now passes `emailRedirectTo` explicitly (see `signUpWithEmail` in
+  `js/supabaseClient.js`), but Supabase still only honors it if the URL is on this allowlist.
 - Open the SQL editor and run the contents of [`supabase/schema.sql`](supabase/schema.sql). This
   creates `profiles` and `quest_completions` (both locked down with row-level security to the
   owning user) and a public `leaderboard` view that only exposes name + points.
