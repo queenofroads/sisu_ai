@@ -43,7 +43,19 @@ function friendlyAuthError(error) {
 
 async function signUpWithEmail({ email, password }) {
   const client = getSupabaseClient();
-  const { data, error } = await client.auth.signUp({ email, password });
+  // Without this, the confirmation email links back to whatever "Site URL"
+  // is set in the Supabase project's dashboard — which defaults to
+  // localhost:3000 and silently breaks the link for every real visitor
+  // until someone changes it. Passing the browser's actual origin here
+  // means it always points wherever the app is really being served from.
+  // Supabase still requires that origin to be listed under Authentication >
+  // URL Configuration > Redirect URLs in the dashboard, or it falls back to
+  // the Site URL anyway — see README for the one-time setup step.
+  const { data, error } = await client.auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo: window.location.origin },
+  });
   if (error) throw new Error(friendlyAuthError(error));
   // Whether this returns an active session depends on the Supabase
   // project's "Confirm email" setting. For a live demo, turn that setting
